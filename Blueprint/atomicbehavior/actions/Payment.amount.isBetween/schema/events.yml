@@ -1,0 +1,7 @@
+listen:
+  - Payment.amount.isBetween.requested
+emit:
+  - Payment.amount.isBetween.accepted
+  - Payment.amount.isBetween.responded
+  - Payment.amount.isBetween.denied
+  - Payment.amount.isBetween.authorization.requested

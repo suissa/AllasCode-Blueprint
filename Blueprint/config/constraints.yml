@@ -1,0 +1,23 @@
+constraints:
+
+  MinimumCommercialMargin:
+    applies_to: Sale
+    condition:
+      sale_unit_price >= supplier_base_cost * 1.10
+
+  CampaignValidity:
+    applies_to: Campaign
+    condition:
+      starts_at < ends_at
+
+  StockNonNegative:
+    applies_to: Stock
+    condition:
+      physical_quantity >= 0
+
+  ConsumerCredit:
+    applies_to: Consumer
+    condition:
+      financial.pending_obligations == 0
+      before: Sale.initiation
+      

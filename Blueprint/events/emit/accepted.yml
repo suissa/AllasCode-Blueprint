@@ -1,0 +1,4 @@
+canonical_label: Payment.amount.isBetween.accepted
+payload:
+  request_id:
+    type: RequestId

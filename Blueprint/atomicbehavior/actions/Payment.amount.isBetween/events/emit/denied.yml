@@ -1,0 +1,6 @@
+canonical_label: Payment.amount.isBetween.denied
+payload:
+  request_id:
+    type: RequestId
+  reason:
+    type: InvocationDenialReason

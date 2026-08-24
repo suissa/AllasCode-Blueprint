@@ -1,0 +1,8 @@
+scenario: unauthorized-agent
+given:
+  agent: CustomerAgent
+when:
+  invoke: Payment.amount.isBetween
+expected:
+  result: denied
+  code: AGENT_NOT_AUTHORIZED

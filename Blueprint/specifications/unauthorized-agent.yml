@@ -1,0 +1,14 @@
+scenario: unauthorized-agent
+
+given:
+  agent: CustomerAgent
+  entity: Payment
+  context: Payment.Validation
+
+when:
+  invoke: Payment.amount.isBetween
+
+then:
+  result: denied
+  reason:
+    code: AGENT_NOT_AUTHORIZED

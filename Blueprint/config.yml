@@ -1,0 +1,300 @@
+# allascode.yml
+
+manifest:
+  name: commerce-lifecycle
+  version: 0.1.0
+  paradigm:
+    - intent-driven-development
+    - semantic-as-code
+    - behavior-driven-architecture
+
+domain:
+
+  entities:
+
+    Consumer:
+      intent: identify_customer_and_enable_relationship
+      invariants:
+        - requires: validated_contact
+        - cannot: initiate_sale
+          when: financial.has_pending_obligation
+
+    Supplier:
+      intent: provide_products_for_replenishment
+      invariants:
+        - requires: active_fiscal_identity
+        - requires: supplied_product
+        - states:
+            - active
+            - suspended
+        - cannot: receive_purchase_order
+          when: state == suspended
+
+    Product:
+      intent: define_commercial_item
+      invariants:
+        - requires: descriptive_name
+        - requires: macro_category
+
+    SupplierProduct:
+      intent: define_supplier_relationship
+      invariants:
+        - requires: supplier
+        - requires: product
+        - requires: base_cost
+
+    Stock:
+      intent: control_physical_availability
+      invariants:
+        - requires: safety_quantity
+        - physical_quantity:
+            minimum: 0
+
+    Sale:
+      intent: formalize_commercial_transaction
+      invariants:
+        - total:
+            equals: item_subtotal - applied_discount
+
+    Campaign:
+      intent: attract_consumer_and_apply_discount
+      invariants:
+        - requires: starts_at
+        - requires: ends_at
+        - discount:
+            cannot_violate: minimum_margin
+
+    FinancialObligation:
+      intent: represent_money_flow
+      invariants:
+        - incoming_sale_requires: payment_confirmation
+        - supplier_payment_requires: physical_receipt
+
+
+  constraints:
+
+    MinimumCommercialMargin:
+      applies_to: Sale
+      condition:
+        sale_unit_price >= supplier_base_cost * 1.10
+
+    CampaignValidity:
+      applies_to: Campaign
+      condition:
+        starts_at < ends_at
+
+    StockNonNegative:
+      applies_to: Stock
+      condition:
+        physical_quantity >= 0
+
+    ConsumerCredit:
+      applies_to: Consumer
+      condition:
+        financial.pending_obligations == 0
+        before: Sale.initiation
+
+
+  intents:
+
+    AttractConsumer:
+      purpose: convert_market_attention_into_commercial_interest
+      actor: Marketing
+      produces:
+        - ConsumerInterest
+
+    InitiateSale:
+      purpose: start_commercial_transaction
+      actor: Consumer
+      requires:
+        - validated_contact
+        - no_pending_financial_obligation
+      invokes:
+        - ValidateOffer
+        - ReserveStock
+        - CreateSale
+
+    ReserveStock:
+      purpose: guarantee_product_availability_for_sale
+      actor: Sales
+      requires:
+        - stock.available_quantity >= requested_quantity
+      produces:
+        - StockReserved
+
+    ConfirmPayment:
+      purpose: establish_financial_confirmation
+      actor: Financial
+      requires:
+        - Sale
+        - payment_request
+      produces:
+        - PaymentConfirmed
+
+    CommitSale:
+      purpose: finalize_sale_after_financial_confirmation
+      actor: Sales
+      requires:
+        - StockReserved
+        - PaymentConfirmed
+      invokes:
+        - CommitStock
+      produces:
+        - SaleApproved
+
+    ReplenishStock:
+      purpose: restore_stock_after_reaching_safety_level
+      actor: Stock
+      requires:
+        - stock.quantity <= stock.safety_quantity
+      produces:
+        - ReplenishmentIntent
+
+    PurchaseFromSupplier:
+      purpose: restore_physical_stock
+      actor: Procurement
+      requires:
+        - ReplenishmentIntent
+        - Supplier.active
+      produces:
+        - PurchaseOrder
+
+    ReceiveStock:
+      purpose: confirm_physical_receipt_of_supplier_products
+      actor: Stock
+      requires:
+        - PurchaseOrder
+      produces:
+        - StockReceived
+
+    PaySupplier:
+      purpose: settle_supplier_obligation
+      actor: Financial
+      requires:
+        - StockReceived
+      produces:
+        - SupplierPaymentConfirmed
+
+
+  capabilities:
+
+    Marketing:
+      provides:
+        - attract_consumer
+        - create_campaign
+        - apply_discount
+
+    Sales:
+      provides:
+        - initiate_sale
+        - validate_sale
+        - reserve_stock
+        - commit_sale
+
+    StockManagement:
+      provides:
+        - check_availability
+        - reserve_stock
+        - commit_stock
+        - detect_replenishment
+        - receive_stock
+
+    SupplierManagement:
+      provides:
+        - validate_supplier
+        - create_purchase_order
+
+    Financial:
+      provides:
+        - request_payment
+        - confirm_payment
+        - create_supplier_obligation
+        - settle_supplier_obligation
+
+
+  events:
+
+    ConsumerInterest:
+      semantic: consumer_has_commercial_interest
+
+    StockReserved:
+      semantic: requested_quantity_is_temporarily_guaranteed
+
+    ReplenishmentIntent:
+      semantic: stock_requires_replenishment
+
+    PurchaseOrderCreated:
+      semantic: supplier_replenishment_was_requested
+
+    StockReceived:
+      semantic: physical_products_were_received
+
+    PaymentConfirmed:
+      semantic: sale_payment_was_confirmed
+
+    SaleApproved:
+      semantic: commercial_transaction_is_finalized
+
+    SupplierPaymentConfirmed:
+      semantic: supplier_obligation_was_settled
+
+
+  behaviors:
+
+    CompleteSale:
+      type: behavior_tree
+
+      root:
+        sequence:
+
+          - ValidateConsumer
+          - ValidateOffer
+          - ReserveStock
+          - RequestPayment
+          - WaitForPaymentConfirmation
+          - CommitStock
+          - ApproveSale
+
+      failure:
+        - ReleaseStockReservation
+        - CancelSale
+
+
+    ReplenishStock:
+      type: behavior_tree
+
+      root:
+        sequence:
+
+          - DetectSafetyThreshold
+          - CreateReplenishmentIntent
+          - ValidateSupplier
+          - CreatePurchaseOrder
+          - ReceiveStock
+          - CreateSupplierObligation
+          - SettleSupplierObligation
+
+
+  flows:
+
+    CommercialLifecycle:
+
+      sequence:
+
+        - Marketing.AttractConsumer
+
+        - Consumer.InitiateSale
+
+        - Sales.ReserveStock
+
+        - Financial.ConfirmPayment
+
+        - Sales.CommitSale
+
+        - Stock.DetectReplenishment
+
+        - Supplier.PurchaseFromSupplier
+
+        - Stock.ReceiveStock
+
+        - Financial.PaySupplier

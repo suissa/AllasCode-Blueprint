@@ -1,0 +1,4 @@
+canonical_label: Payment.created
+payload:
+  payment:
+    type: Payment

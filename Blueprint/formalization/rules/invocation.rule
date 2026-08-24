@@ -1,0 +1,2 @@
+If behavior.invocation.authorization.policy = restricted
+Then agent MUST belong to behavior.invocation.authorization.agents.allow

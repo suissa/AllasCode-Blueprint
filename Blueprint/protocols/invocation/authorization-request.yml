@@ -1,0 +1,9 @@
+canonical_label: Invocation.authorization-request
+required:
+  - request_id
+  - agent
+  - target
+properties:
+  request_id: RequestId
+  agent: AgentIdentity
+  target: CanonicalLabel

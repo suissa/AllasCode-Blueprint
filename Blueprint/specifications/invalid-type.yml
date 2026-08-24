@@ -1,0 +1,18 @@
+scenario: invalid-input-type
+
+given:
+  agent: PaymentAgent
+  entity: Payment
+  context: Payment.Validation
+  input:
+    value: invalid
+    lower: 5000
+    upper: 15000
+
+when:
+  invoke: Payment.amount.isBetween
+
+then:
+  result: denied
+  reason:
+    code: INVALID_INPUT_TYPE

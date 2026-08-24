@@ -1,0 +1,25 @@
+events:
+
+  ConsumerInterest:
+    semantic: consumer_has_commercial_interest
+
+  StockReserved:
+    semantic: requested_quantity_is_temporarily_guaranteed
+
+  ReplenishmentIntent:
+    semantic: stock_requires_replenishment
+
+  PurchaseOrderCreated:
+    semantic: supplier_replenishment_was_requested
+
+  StockReceived:
+    semantic: physical_products_were_received
+
+  PaymentConfirmed:
+    semantic: sale_payment_was_confirmed
+
+  SaleApproved:
+    semantic: commercial_transaction_is_finalized
+
+  SupplierPaymentConfirmed:
+    semantic: supplier_obligation_was_settled

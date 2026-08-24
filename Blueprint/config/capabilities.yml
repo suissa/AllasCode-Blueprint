@@ -1,0 +1,35 @@
+
+capabilities:
+
+  Marketing:
+    provides:
+      - attract_consumer
+      - create_campaign
+      - apply_discount
+
+  Sales:
+    provides:
+      - initiate_sale
+      - validate_sale
+      - reserve_stock
+      - commit_sale
+
+  StockManagement:
+    provides:
+      - check_availability
+      - reserve_stock
+      - commit_stock
+      - detect_replenishment
+      - receive_stock
+
+  SupplierManagement:
+    provides:
+      - validate_supplier
+      - create_purchase_order
+
+  Financial:
+    provides:
+      - request_payment
+      - confirm_payment
+      - create_supplier_obligation
+      - settle_supplier_obligation

@@ -1,0 +1,1 @@
+Invoke(agent, behavior) → Accepts(behavior, agent)

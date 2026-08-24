@@ -1,0 +1,9 @@
+type: object
+required:
+  - amount
+  - currency
+properties:
+  amount:
+    type: Money
+  currency:
+    type: Currency

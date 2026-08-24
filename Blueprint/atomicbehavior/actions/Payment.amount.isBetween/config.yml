@@ -1,0 +1,4 @@
+execution_timeout: 1000ms
+sandbox:
+  enabled: true
+  network: false

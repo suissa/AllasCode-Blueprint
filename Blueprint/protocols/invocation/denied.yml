@@ -1,0 +1,7 @@
+canonical_label: Invocation.denied
+required:
+  - request_id
+  - reason
+properties:
+  request_id: RequestId
+  reason: InvocationDenialReason

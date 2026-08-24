@@ -1,0 +1,1 @@
+Invoke(A, B) => CanInvoke(A, B)

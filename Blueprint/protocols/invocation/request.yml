@@ -1,0 +1,11 @@
+canonical_label: Invocation.request
+required:
+  - request_id
+  - agent
+  - target
+  - input
+properties:
+  request_id: RequestId
+  agent: AgentIdentity
+  target: CanonicalLabel
+  input: SemanticValue

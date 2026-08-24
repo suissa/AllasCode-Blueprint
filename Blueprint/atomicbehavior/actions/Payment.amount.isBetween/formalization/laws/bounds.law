@@ -1,0 +1,1 @@
+For all value, lower, upper: isBetween(value, lower, upper) is true iff lower <= value <= upper.

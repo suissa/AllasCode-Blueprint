@@ -1,0 +1,16 @@
+scenario: valid-payment-range
+
+given:
+  agent: PaymentAgent
+  entity: Payment
+  context: Payment.Validation
+  input:
+    value: 10000
+    lower: 5000
+    upper: 15000
+
+when:
+  invoke: Payment.amount.isBetween
+
+then:
+  result: true

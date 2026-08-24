@@ -1,0 +1,6 @@
+scenario: valid
+input:
+  value: 10000
+  lower: 5000
+  upper: 15000
+expected: true

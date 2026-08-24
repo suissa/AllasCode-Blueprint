@@ -1,0 +1,6 @@
+canonical_label: Payment.amount.isBetween.responded
+payload:
+  request_id:
+    type: RequestId
+  result:
+    type: Boolean

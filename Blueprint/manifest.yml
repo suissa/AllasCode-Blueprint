@@ -1,0 +1,93 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+
+identity:
+  canonical_label: Payment.amount.isBetween
+  name: isBetween
+  version: 1.0.0
+  universal_url: "allascode://atomicbehavior/Payment.amount.isBetween"
+
+semantic:
+  behavior_type: action
+
+  entity:
+    canonical_label: Payment
+
+  context:
+    canonical_label: Payment.Validation
+
+  specialization:
+    of: isBetween
+
+  description: >
+    Determines whether a payment amount is between two boundaries.
+
+  types:
+    input: Money
+    output: Boolean
+
+usage:
+  entities:
+    allow:
+      - Payment
+
+  contexts:
+    allow:
+      - Payment.Validation
+      - Payment.Analytics
+
+invocation:
+  mode: request
+
+  actor:
+    enabled: true
+
+  authorization:
+    policy: restricted
+
+    agents:
+      allow:
+        - FinancialAgent
+        - PaymentAgent
+
+    human_in_the_loop:
+      enabled: true
+      fallback: approval
+
+  request:
+    event: Payment.amount.isBetween.requested
+
+  response:
+    event: Payment.amount.isBetween.responded
+
+events:
+  listen:
+    - Payment.amount.isBetween.requested
+
+  emit:
+    - Payment.amount.isBetween.responded
+    - Payment.amount.isBetween.denied
+    - Payment.amount.isBetween.authorization.requested
+
+formalization:
+  behavior_type: Behavior.Typed
+  evidence:
+    required: true
+
+execution:
+  sandbox:
+    enabled: true
+
+  state:
+    mode: stateless
+
+  inference:
+    enabled: true
+
+schema:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  events: ./schema/events.yml
+
+implementation:
+  directory: ./implementation

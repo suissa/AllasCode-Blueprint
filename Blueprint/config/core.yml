@@ -1,0 +1,18 @@
+# Config core.yml
+
+manifest:
+  name: commerce-lifecycle
+  version: 0.1.0
+  paradigm:
+    - intent-driven-development
+    - semantic-as-code
+    - behavior-driven-architecture
+
+domain:
+  entities: "./entities.yml"
+  constraints: "./constraints.yml"
+  intents: "./intents.yml"
+  capabilities: "./capabilities.yml"
+  events: "./events.yml"
+  behaviors: "./behaviors.yml"
+  flows: "./flows.yml"

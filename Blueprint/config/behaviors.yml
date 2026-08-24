@@ -1,0 +1,35 @@
+behaviors:
+
+  CompleteSale:
+    type: behavior_tree
+
+    root:
+      sequence:
+
+        - ValidateConsumer
+        - ValidateOffer
+        - ReserveStock
+        - RequestPayment
+        - WaitForPaymentConfirmation
+        - CommitStock
+        - ApproveSale
+
+    failure:
+      - ReleaseStockReservation
+      - CancelSale
+
+
+  ReplenishStock:
+    type: behavior_tree
+
+    root:
+      sequence:
+
+        - DetectSafetyThreshold
+        - CreateReplenishmentIntent
+        - ValidateSupplier
+        - CreatePurchaseOrder
+        - ReceiveStock
+        - CreateSupplierObligation
+        - SettleSupplierObligation
+

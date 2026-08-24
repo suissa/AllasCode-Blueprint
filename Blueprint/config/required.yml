@@ -1,0 +1,66 @@
+# Padrão obrigatório para TODOS os módulos:
+# - README.md
+# - manifest.yml
+# - config.yml
+
+modules:
+  - agents:
+    - sequence.2flow
+    - protocols
+    - runtime
+
+  - architecture:
+    - behavior-typed-formalization
+    - formalization
+    - folder-structure.md
+
+  - behaviors:
+    - atomicbehavior
+    - interfaces.yml
+    - schema.yml
+    - implementation.{language}
+
+  - capabilities:
+    - tooling
+    - integrations
+
+  - compiler:
+    - language
+    - schemas
+
+  - constraints:
+    - specifications
+    - properties
+
+  - contexts: # bounded contexts ou shared contexts
+    - docs
+
+  - entities:
+    - sequence.2flow
+    - schema.yml
+
+  - events:
+    - interface.yml
+    - sequence.2flow
+
+  - flows:
+    - sequence.2flow
+
+  - infra:
+    - runtime
+    - integrations
+
+  - intents:
+    - sequence.2flow
+
+  - policies:
+    - specifications
+
+  - types:
+    - schemas
+    - examples
+
+  - tests:
+    - README.md
+    - manifest.yml
+    - config.yml

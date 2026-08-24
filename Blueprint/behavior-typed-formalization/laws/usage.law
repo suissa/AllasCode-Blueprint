@@ -1,0 +1,1 @@
+Use(A, B) => AcceptsUsage(B, A)

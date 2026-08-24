@@ -1,0 +1,80 @@
+intents:
+
+  AttractConsumer:
+    purpose: convert_market_attention_into_commercial_interest
+    actor: Marketing
+    produces:
+      - ConsumerInterest
+
+  InitiateSale:
+    purpose: start_commercial_transaction
+    actor: Consumer
+    requires:
+      - validated_contact
+      - no_pending_financial_obligation
+    invokes:
+      - ValidateOffer
+      - ReserveStock
+      - CreateSale
+
+  ReserveStock:
+    purpose: guarantee_product_availability_for_sale
+    actor: Sales
+    requires:
+      - stock.available_quantity >= requested_quantity
+    produces:
+      - StockReserved
+
+  ConfirmPayment:
+    purpose: establish_financial_confirmation
+    actor: Financial
+    requires:
+      - Sale
+      - payment_request
+    produces:
+      - PaymentConfirmed
+
+  CommitSale:
+    purpose: finalize_sale_after_financial_confirmation
+    actor: Sales
+    requires:
+      - StockReserved
+      - PaymentConfirmed
+    invokes:
+      - CommitStock
+    produces:
+      - SaleApproved
+
+  ReplenishStock:
+    purpose: restore_stock_after_reaching_safety_level
+    actor: Stock
+    requires:
+      - stock.quantity <= stock.safety_quantity
+    produces:
+      - ReplenishmentIntent
+
+  PurchaseFromSupplier:
+    purpose: restore_physical_stock
+    actor: Procurement
+    requires:
+      - ReplenishmentIntent
+      - Supplier.active
+    produces:
+      - PurchaseOrder
+
+  ReceiveStock:
+    purpose: confirm_physical_receipt_of_supplier_products
+    actor: Stock
+    requires:
+      - PurchaseOrder
+    produces:
+      - StockReceived
+
+  PaySupplier:
+    purpose: settle_supplier_obligation
+    actor: Financial
+    requires:
+      - StockReceived
+    produces:
+      - SupplierPaymentConfirmed
+

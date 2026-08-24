@@ -1,0 +1,13 @@
+type: object
+required:
+  - request
+  - response
+properties:
+  request:
+    type: string
+  response:
+    type: string
+  denied:
+    type: string
+  authorization_requested:
+    type: string

@@ -1,0 +1,16 @@
+type: object
+
+required:
+  - value
+  - lower
+  - upper
+
+properties:
+  value:
+    type: Money
+
+  lower:
+    type: Money
+
+  upper:
+    type: Money

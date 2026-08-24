@@ -1,0 +1,7 @@
+canonical_label: Invocation.response
+required:
+  - request_id
+  - result
+properties:
+  request_id: RequestId
+  result: SemanticValue

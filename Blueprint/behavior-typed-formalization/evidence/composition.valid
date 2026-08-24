@@ -1,0 +1,4 @@
+status: valid
+law: composition.law
+proof: composition.prov
+verified_by: Agda

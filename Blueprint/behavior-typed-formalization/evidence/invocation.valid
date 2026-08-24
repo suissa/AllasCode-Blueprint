@@ -1,0 +1,5 @@
+status: valid
+law: invocation.law
+proof: invocation.prov
+verified_by: Agda
+timestamp: 2026-08-23T00:00:00Z

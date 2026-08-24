@@ -1,0 +1,59 @@
+entities:
+
+  Consumer:
+    intent: identify_customer_and_enable_relationship
+    invariants:
+      - requires: validated_contact
+      - cannot: initiate_sale
+        when: financial.has_pending_obligation
+
+  Supplier:
+    intent: provide_products_for_replenishment
+    invariants:
+      - requires: active_fiscal_identity
+      - requires: supplied_product
+      - states:
+          - active
+          - suspended
+      - cannot: receive_purchase_order
+        when: state == suspended
+
+  Product:
+    intent: define_commercial_item
+    invariants:
+      - requires: descriptive_name
+      - requires: macro_category
+
+  SupplierProduct:
+    intent: define_supplier_relationship
+    invariants:
+      - requires: supplier
+      - requires: product
+      - requires: base_cost
+
+  Stock:
+    intent: control_physical_availability
+    invariants:
+      - requires: safety_quantity
+      - physical_quantity:
+          minimum: 0
+
+  Sale:
+    intent: formalize_commercial_transaction
+    invariants:
+      - total:
+          equals: item_subtotal - applied_discount
+
+  Campaign:
+    intent: attract_consumer_and_apply_discount
+    invariants:
+      - requires: starts_at
+      - requires: ends_at
+      - discount:
+          cannot_violate: minimum_margin
+
+  FinancialObligation:
+    intent: represent_money_flow
+    invariants:
+      - incoming_sale_requires: payment_confirmation
+      - supplier_payment_requires: physical_receipt

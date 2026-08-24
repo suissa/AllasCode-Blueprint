@@ -1,0 +1,5 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+identity:
+  canonical_label: Payment.amount.isBetween
+  version: 1.0.0

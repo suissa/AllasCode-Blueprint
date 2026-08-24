@@ -1,0 +1,8 @@
+scenario: invalid-type
+input:
+  value: invalid
+  lower: 5000
+  upper: 15000
+expected:
+  result: denied
+  code: INVALID_INPUT_TYPE

@@ -1,0 +1,1 @@
+Composition(A, B) MUST preserve the contracts of A and B.

@@ -1,0 +1,4 @@
+status: valid
+law: identity.law
+proof: identity.prov
+verified_by: Agda

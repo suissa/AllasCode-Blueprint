@@ -1,0 +1,14 @@
+canonical_label: Payment.amount.isBetween.requested
+
+payload:
+  agent:
+    type: AgentIdentity
+
+  context:
+    type: ContextIdentity
+
+  input:
+    type: Payment.Amount
+
+  request_id:
+    type: RequestId

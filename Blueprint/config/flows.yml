@@ -1,0 +1,23 @@
+flows:
+
+  CommercialLifecycle:
+
+    sequence:
+
+      - Marketing.AttractConsumer
+
+      - Consumer.InitiateSale
+
+      - Sales.ReserveStock
+
+      - Financial.ConfirmPayment
+
+      - Sales.CommitSale
+
+      - Stock.DetectReplenishment
+
+      - Supplier.PurchaseFromSupplier
+
+      - Stock.ReceiveStock
+
+      - Financial.PaySupplier
