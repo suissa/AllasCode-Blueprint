@@ -1,0 +1,12 @@
+name: Product
+semantic_id: commerce.entity.product
+properties:
+  id: ProductId
+  canonical_label: CanonicalLabel
+  name: Text
+  unit: Unit
+  category: ProductCategory
+invariants:
+  - id != null
+  - canonical_label != null
+  - name != null
