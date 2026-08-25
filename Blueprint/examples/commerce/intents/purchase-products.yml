@@ -1,0 +1,11 @@
+name: PurchaseProducts
+semantic_id: commerce.intent.purchase-products
+purpose: register_supplier_purchase_and_make_stock_available
+starts_when: PurchaseEvidenceReceived
+requires:
+  - purchase_evidence
+  - declared_or_extracted_items
+succeeds_when:
+  - PurchaseRegistered
+  - StockEntryCommitted
+flow: ../flows/purchase-products.2flow
