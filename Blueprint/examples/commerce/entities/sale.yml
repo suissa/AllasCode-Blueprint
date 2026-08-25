@@ -1,0 +1,11 @@
+name: Sale
+semantic_id: commerce.entity.sale
+properties:
+  id: SaleId
+  occurred_at: DateTime
+  total: CurrencyAmount
+  items: SaleItem[]
+  status: SaleStatus
+invariants:
+  - total >= 0
+  - items.length > 0
