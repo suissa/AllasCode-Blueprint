@@ -1,0 +1,24 @@
+name: RegisterPurchase
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.register-purchase
+
+purpose: register_structured_supplier_purchase
+
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+  specification: ./specifications/contract.yml
+  result: ../../events/result.yml
+
+uses:
+  atomicbehaviors:
+    - ResolveSupplier
+    - ResolveProduct
+    - ValidateQuantity
+    - ValidateCurrencyAmount
+
+emits:
+  - Ok<PurchaseRegistered>
+  - Error<PurchaseRegistrationError>
