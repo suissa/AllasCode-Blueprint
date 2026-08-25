@@ -1,0 +1,34 @@
+flow PurchaseProducts
+
+ProcurementAgent
+  -> PurchaseEvidenceReceived
+  ->> RegisterPurchase
+  <<- RegisterPurchase
+
+  Ok<PurchaseRegistered>
+    <- Ok<PurchaseRegistered>
+
+  Error<PurchaseRegistrationError>
+    <- Error<PurchaseRegistrationError>
+
+StockAgent
+  -> Ok<PurchaseRegistered>
+  ->> IncreaseStock
+  <<- IncreaseStock
+
+  Ok<StockEntryCommitted>
+    <- Ok<StockEntryCommitted>
+
+  Error<StockEntryError>
+    <- Error<StockEntryError>
+
+FinancialAgent
+  -> Ok<StockEntryCommitted>
+  ->> RegisterFinancialEntry
+  <<- RegisterFinancialEntry
+
+  Ok<FinancialEntryRegistered>
+    <- Ok<FinancialEntryRegistered>
+
+  Error<FinancialEntryError>
+    <- Error<FinancialEntryError>
