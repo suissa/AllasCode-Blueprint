@@ -1,0 +1,10 @@
+name: CurrencyAmountCandidate
+type: object
+required:
+  - value
+properties:
+  value:
+    type: any
+  currency:
+    type: string
+    default: BRL
