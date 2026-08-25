@@ -1,0 +1,13 @@
+name: Sales
+semantic_id: commerce.context.sales
+owns:
+  - Sale
+observes:
+  - Product
+  - Stock
+exposes_actions:
+  - ResolveSaleProducts
+  - CloseSale
+accepts:
+  - Ok<SaleDetected>
+  - Error<SaleDetectionFailed>
