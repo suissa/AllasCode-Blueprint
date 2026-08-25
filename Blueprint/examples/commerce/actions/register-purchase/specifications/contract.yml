@@ -1,0 +1,14 @@
+preconditions:
+  - items.length > 0
+  - purchase_total >= 0
+
+postconditions:
+  - on Ok<PurchaseRegistered>: value.purchase_id != null
+  - on Ok<PurchaseRegistered>: value.stock_entries == items.length
+
+invariants:
+  - no_stock_entry_may_produce_negative_quantity
+  - registered_purchase_total_must_equal_sum_of_item_totals
+
+failure_semantics:
+  - if contract cannot be satisfied after allowed healing: emit Error<PurchaseRegistrationError>
