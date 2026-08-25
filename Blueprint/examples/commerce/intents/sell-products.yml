@@ -1,0 +1,12 @@
+name: SellProducts
+semantic_id: commerce.intent.sell-products
+purpose: resolve_detected_sale_products_commit_stock_and_close_sale
+starts_when: SaleDetected
+requires:
+  - detected_sale
+  - merchant_product_identification
+succeeds_when:
+  - SaleResolved
+  - StockExitCommitted
+  - SaleClosed
+flow: ../flows/sale-products.2flow
