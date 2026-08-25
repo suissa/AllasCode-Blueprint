@@ -1,0 +1,13 @@
+name: PurchaseRegistered
+type: object
+required:
+  - purchase_id
+  - supplier_id
+  - stock_entries
+properties:
+  purchase_id:
+    type: string
+  supplier_id:
+    type: string
+  stock_entries:
+    type: integer
