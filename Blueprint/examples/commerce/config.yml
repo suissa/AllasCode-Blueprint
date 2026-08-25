@@ -1,0 +1,21 @@
+runtime:
+  mode: dynamic
+  message_transport:
+    local: memory
+    distributed: nats
+
+healing:
+  enabled: true
+  require_reversible_automatic_transformation: true
+  human_escalation: true
+
+commerce:
+  currency: BRL
+  stock:
+    allow_negative: false
+  sale_machine:
+    polling_interval_seconds: 60
+
+bindings:
+  purchase_flow: ./flows/purchase-products.2flow
+  sale_flow: ./flows/sale-products.2flow
