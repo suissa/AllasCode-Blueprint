@@ -1,0 +1,12 @@
+validation:
+  allow_representation_normalization: true
+
+healing:
+  enabled: true
+  max_attempts: 3
+  strategies:
+    - decimal_separator
+    - currency_symbol
+    - textual_amount
+  require_reversible_or_auditable: true
+  human_escalation: true
