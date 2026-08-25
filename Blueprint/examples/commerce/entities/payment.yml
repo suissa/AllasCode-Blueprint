@@ -1,0 +1,10 @@
+name: Payment
+semantic_id: commerce.entity.payment
+properties:
+  id: PaymentId
+  direction: PaymentDirection
+  amount: CurrencyAmount
+  method: PaymentMethod
+  status: PaymentStatus
+invariants:
+  - amount >= 0
