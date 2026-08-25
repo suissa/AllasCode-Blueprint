@@ -1,0 +1,33 @@
+result_algebra:
+  allowed:
+    - Ok
+    - Error
+  forbidden_as_third_result:
+    - null
+    - undefined
+    - exception
+    - timeout
+
+normalization:
+  allowed_scopes:
+    - validate
+    - self-healing
+  forbidden_scopes:
+    - domain-behavior
+    - orchestration
+
+self_healing:
+  intrinsic_to: SemanticAtomicBehaviorType
+  before_final_error: true
+  automatic_transformation:
+    requires_reversible_or_auditable: true
+  human_escalation:
+    represented_as: Error<HealingRequired>
+
+stock:
+  invariant:
+    - physical_quantity >= 0
+
+agent_context:
+  invariant:
+    - agent_may_not_access_foreign_context_internal_state
