@@ -1,0 +1,17 @@
+preconditions:
+  - sale_id != null
+  - sale_total >= 0
+  - merchant_declaration != null
+
+postconditions:
+  - on Ok<SaleResolved>: value.items.length > 0
+  - on Ok<SaleResolved>: every item.product_id != null
+
+invariants:
+  - resolved_product_must_exist
+  - resolved_quantity_must_be_positive
+  - sale_total_must_remain_consistent_with_detected_sale
+
+failure_semantics:
+  - ambiguity_without_safe_resolution: Error<SaleResolutionError>
+  - human_intervention_is_represented_inside_Error_payload
