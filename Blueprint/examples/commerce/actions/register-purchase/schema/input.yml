@@ -1,0 +1,25 @@
+name: RegisterPurchaseInput
+type: object
+required:
+  - supplier
+  - items
+  - purchase_total
+properties:
+  supplier:
+    type: object
+    properties:
+      tax_id:
+        type: string
+  items:
+    type: array
+    items:
+      type: object
+      properties:
+        product_label:
+          type: string
+        quantity:
+          type: number
+        unit_cost:
+          type: number
+  purchase_total:
+    type: number
