@@ -1,0 +1,9 @@
+name: Stock
+semantic_id: commerce.entity.stock
+properties:
+  product_id: ProductId
+  quantity: Quantity
+  safety_quantity: Quantity
+invariants:
+  - quantity >= 0
+  - safety_quantity >= 0
