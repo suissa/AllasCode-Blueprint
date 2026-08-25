@@ -1,0 +1,11 @@
+runtime:
+  execution: local
+  timeout_ms: 5000
+
+bindings:
+  product_resolver: ResolveProduct
+  quantity_validator: ValidateQuantity
+  currency_validator: ValidateCurrencyAmount
+
+healing:
+  human_escalation: true
