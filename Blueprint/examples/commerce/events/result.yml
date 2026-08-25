@@ -1,0 +1,17 @@
+result:
+  one_of:
+    - kind: Ok
+      generic: T
+      fields:
+        semantic: string
+        value: T
+        trace_id: string
+    - kind: Error
+      generic: E
+      fields:
+        semantic: string
+        error: E
+        healing:
+          attempted: boolean
+          human_required: boolean
+        trace_id: string
