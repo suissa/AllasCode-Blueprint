@@ -1,0 +1,12 @@
+name: ValidateCurrencyAmount
+version: 0.1.0
+kind: semantic-atomicbehavior-type
+semantic_id: commerce.atomicbehavior.validate-currency-amount
+input: ./schema/input.yml
+output: ./schema/output.yml
+result: ../../events/result.yml
+specification: ./specifications/behavior.yml
+healing: ./healing/pipeline.yml
+emits:
+  - Ok<CurrencyAmount>
+  - Error<CurrencyAmountError>
