@@ -1,0 +1,13 @@
+name: ResolveSaleProductsInput
+type: object
+required:
+  - sale_id
+  - sale_total
+  - merchant_declaration
+properties:
+  sale_id:
+    type: string
+  sale_total:
+    type: number
+  merchant_declaration:
+    type: string
