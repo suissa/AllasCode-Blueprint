@@ -1,0 +1,12 @@
+name: Procurement
+semantic_id: commerce.context.procurement
+owns:
+  - Supplier
+observes:
+  - Product
+  - Stock
+exposes_actions:
+  - RegisterPurchase
+accepts:
+  - Ok<PurchaseEvidenceReceived>
+  - Error<PurchaseEvidenceInvalid>
