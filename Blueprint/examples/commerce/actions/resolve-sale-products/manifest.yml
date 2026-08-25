@@ -1,0 +1,19 @@
+name: ResolveSaleProducts
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.resolve-sale-products
+purpose: resolve_products_declared_for_detected_sale
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+  specification: ./specifications/contract.yml
+  result: ../../events/result.yml
+uses:
+  atomicbehaviors:
+    - ResolveProduct
+    - ValidateQuantity
+    - ValidateCurrencyAmount
+emits:
+  - Ok<SaleResolved>
+  - Error<SaleResolutionError>
