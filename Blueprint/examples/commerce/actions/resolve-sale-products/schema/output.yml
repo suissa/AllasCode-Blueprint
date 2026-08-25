@@ -1,0 +1,20 @@
+name: SaleResolved
+type: object
+required:
+  - sale_id
+  - items
+properties:
+  sale_id:
+    type: string
+  items:
+    type: array
+    items:
+      type: object
+      required:
+        - product_id
+        - quantity
+      properties:
+        product_id:
+          type: string
+        quantity:
+          type: number
