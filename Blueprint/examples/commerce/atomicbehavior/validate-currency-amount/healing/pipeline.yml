@@ -1,0 +1,22 @@
+pipeline:
+  on_validation_failure:
+    - diagnose_representation
+    - try:
+        strategy: decimal_separator
+        reversible: true
+      then: revalidate
+    - try:
+        strategy: currency_symbol
+        reversible: true
+      then: revalidate
+    - try:
+        strategy: textual_amount
+        reversible_or_auditable: true
+      then: revalidate
+    - if_unresolved:
+        human_required: true
+        emit: Error<CurrencyAmountError>
+
+rules:
+  - normalization_is_allowed_only_inside_validate_or_self_healing
+  - original_value_must_be_preserved
