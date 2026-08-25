@@ -1,0 +1,12 @@
+runtime:
+  execution: local
+  timeout_ms: 5000
+
+bindings:
+  supplier_resolver: ResolveSupplier
+  product_resolver: ResolveProduct
+  quantity_validator: ValidateQuantity
+  currency_validator: ValidateCurrencyAmount
+
+persistence:
+  repository: PurchaseRepository
