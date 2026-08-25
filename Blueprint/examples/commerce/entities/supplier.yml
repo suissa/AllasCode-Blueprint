@@ -1,0 +1,10 @@
+name: Supplier
+semantic_id: commerce.entity.supplier
+properties:
+  id: SupplierId
+  canonical_label: CanonicalLabel
+  legal_name: Text
+  tax_id: TaxId
+invariants:
+  - id != null
+  - canonical_label != null
