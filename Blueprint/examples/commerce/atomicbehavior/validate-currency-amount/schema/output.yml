@@ -1,0 +1,13 @@
+name: CurrencyAmount
+type: object
+required:
+  - amount
+  - currency
+properties:
+  amount:
+    type: number
+  currency:
+    type: string
+example:
+  amount: 20.00
+  currency: BRL
