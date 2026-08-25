@@ -1,0 +1,11 @@
+name: Financial
+semantic_id: commerce.context.financial
+owns:
+  - Payment
+  - Sale
+exposes_actions:
+  - DetectNewSale
+  - RegisterFinancialEntry
+accepts:
+  - Ok<StockEntryCommitted>
+  - Error<StockEntryFailed>
