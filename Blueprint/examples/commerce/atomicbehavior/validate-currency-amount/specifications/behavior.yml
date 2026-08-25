@@ -1,0 +1,20 @@
+behavior:
+  semantic: validate_currency_amount
+  accepts_representations:
+    - numeric
+    - decimal_string
+    - localized_currency_string
+
+validation:
+  normalization_scope: validate-only
+  invariant:
+    - normalized amount must preserve the same monetary meaning
+    - amount >= 0
+
+self_healing:
+  normalization_scope: healing-only
+  revalidate_after_each_attempt: true
+
+result:
+  success: Ok<CurrencyAmount>
+  failure: Error<CurrencyAmountError>
