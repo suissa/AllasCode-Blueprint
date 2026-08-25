@@ -1,0 +1,12 @@
+name: Stock
+semantic_id: commerce.context.stock
+owns:
+  - Stock
+observes:
+  - Product
+exposes_actions:
+  - IncreaseStock
+  - DecreaseStock
+accepts:
+  - Ok<PurchaseRegistered>
+  - Ok<SaleResolved>
