@@ -1,0 +1,31 @@
+name: commerce-management-example
+version: 0.1.0
+kind: system
+semantic_id: allascode.examples.commerce-management
+
+purpose: manage_purchase_stock_sale_and_financial_lifecycle
+
+exposes:
+  intents:
+    - PurchaseProducts
+    - SellProducts
+  entities:
+    - Supplier
+    - Product
+    - Stock
+    - Sale
+    - Payment
+  events:
+    - Ok
+    - Error
+
+contracts:
+  result_algebra: ./events/result.yml
+  specifications: ./specifications/system.yml
+
+composition:
+  contexts: ./contexts
+  actions: ./actions
+  atomicbehaviors: ./atomicbehavior
+  intents: ./intents
+  flows: ./flows
