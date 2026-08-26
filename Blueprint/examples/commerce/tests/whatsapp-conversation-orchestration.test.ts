@@ -11,7 +11,7 @@ function harness(now='2026-08-26T08:00:00.000Z'){
   let current=new Date(now);
   const clock={now:()=>new Date(current)};
   const orchestrator=new WhatsAppConversationOrchestrator(domain,store,replyPort,{id:'whatsapp-conversation',permissions:['*']},30*60*1000,clock);
-  return{orchestrator,store,executions,replies,setNow:(value:string)=>{current=new Date(value);}};
+  return{orchestrator,store,executions,replies,clock,setNow:(value:string)=>{current=new Date(value);}};
 }
 function inbound(text:string,id:string,from='5511999999999@s.whatsapp.net',instance='sales'){return{intent:'WhatsAppInboundMessageIntent',payload:{provider:'evolution-go',instance,message_id:id,from,kind:'text' as const,text},correlation_id:`whatsapp:${instance}:${id}`,idempotency_key:id,principal_id:'whatsapp:evolution-go'};}
 
@@ -38,7 +38,7 @@ test('sale resolution waits for products and then dispatches ProcessSaleIntent',
 test('conversation store is external to orchestrator so a new runtime instance resumes the same session',async()=>{
   const first=harness();await first.orchestrator.execute(inbound('Comprei no fornecedor','R1'));
   const replies:Array<any>=[];const executions:Execution[]=[];
-  const second=new WhatsAppConversationOrchestrator({async execute(input:Execution){executions.push(input);return{outcome:'Ok' as const,data:{reply:'ok'}};}},first.store,{async sendText(input){replies.push(input);return{};}},{id:'conversation',permissions:['*']});
+  const second=new WhatsAppConversationOrchestrator({async execute(input:Execution){executions.push(input);return{outcome:'Ok' as const,data:{reply:'ok'}};}},first.store,{async sendText(input){replies.push(input);return{};}},{id:'conversation',permissions:['*']},30*60*1000,first.clock);
   await second.execute(inbound(JSON.stringify({purchase_id:'p2',supplier_id:'s2',items:[{product_id:'water',name:'Water',quantity:5,unit_price:2}],currency:'BRL'}),'R2'));
   assert.equal(executions[0]?.intent,'PurchaseProductsIntent');
 });
