@@ -20,7 +20,7 @@
     "test:actions": "npm run semantic-tests:materialize && tsx --test actions/*/tests/action.test.ts && npm run semantic-tests:annotate-action-proofs && npm run semantic-tests:validate && npm run semantic-tests:dashboard && npm run graph:build && npm run semantic-tests:validate-action-evidence",
     "test:architecture": "npm run semantic-tests:materialize && npm run graph:build && tsx --test tests/architecture-layers.test.ts tests/semantic-mutation-score.test.ts && npm run semantic-tests:validate && npm run semantic-tests:dashboard && npm run graph:build && npm run semantic-tests:coverage",
     "test:evidence": "npm run semantic-tests:stamp-provenance && npm run semantic-tests:freshness && npm run semantic-tests:validate && npm run graph:build && npm run semantic-tests:validate-action-evidence",
-    "test:core": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts tests/healing.test.ts tests/semantic-testing.test.ts tests/test-evidence-graph.test.ts tests/action-evidence.test.ts tests/semantic-impact.test.ts",
+    "test:core": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts tests/healing.test.ts tests/semantic-testing.test.ts tests/test-evidence-graph.test.ts tests/action-evidence.test.ts tests/semantic-impact.test.ts tests/selective-semantic-tests.test.ts",
     "test": "npm run test:actions && npm run test:architecture && npm run test:evidence && npm run test:core",
     "check": "tsc --noEmit && npm run graph:validate",
     "graph:validate": "tsx scripts/build-semantic-graph.ts --validate",
