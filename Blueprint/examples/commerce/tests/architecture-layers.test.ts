@@ -7,7 +7,7 @@ import { createExecutionKernel } from '../runtime/execution-kernel.js';
 import { createCommerceState } from '../runtime/state.js';
 import { FlowRuntime } from '../runtime/flow-runtime.js';
 import { InMemoryEventBus } from '../runtime/event-bus.js';
-import type { SemanticGraph, SemanticGraphNode } from '../runtime/semantic-graph.js';
+import type { SemanticGraphNode } from '../runtime/semantic-graph.js';
 import type { PurchaseInput, SaleInput } from '../runtime/types.js';
 
 const root = join(import.meta.dirname, '..');
@@ -102,10 +102,16 @@ async function semanticCheck(node:SemanticGraphNode,type:TestType):Promise<Metri
       break;
     }
     case 'Intent': {
-      ok(outgoing(node.id,'STARTS_WITH').length>0,'Intent must start with an Event');
       const implementing=incoming(node.id,'IMPLEMENTS_INTENT');
-      if(node.label==='SellProductsIntent') ok(implementing.length===0,'Legacy Intent must remain outside active runtime graph'); else ok(implementing.length>0,'Active Intent must resolve to a Flow');
-      if(type==='e2e'&&implementing.length){ await activeFlow(implementing[0]!.from.split(':').slice(1).join(':')); assertions+=2; }
+      const legacy=node.label==='SellProducts';
+      if(legacy){
+        ok(outgoing(node.id,'STARTS_WITH').length===0,'Legacy Intent events must remain outside the active event catalog');
+        ok(implementing.length===0,'Legacy Intent must remain outside active runtime graph');
+      } else {
+        ok(outgoing(node.id,'STARTS_WITH').length>0,'Active Intent must start with an Event');
+        ok(implementing.length>0,'Active Intent must resolve to a Flow');
+        if(type==='e2e'){ await activeFlow(implementing[0]!.from.split(':').slice(1).join(':')); assertions+=2; }
+      }
       break;
     }
     case 'Entity': {
