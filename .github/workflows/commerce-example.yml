@@ -1,0 +1,44 @@
+# GENERATED FILE
+# Do not edit manually.
+# Semantic source: Blueprint/examples/commerce/config.yml#ci
+# Language binding: AllasCode-infra/actions/languages/typescript.yml
+# Platform projection: AllasCode-infra/actions/platforms/github-actions.yml
+
+name: Commerce Example CI
+
+on:
+  pull_request:
+    branches:
+      - examples
+    paths:
+      - 'Blueprint/examples/commerce/**'
+      - '.github/workflows/commerce-example.yml'
+  workflow_dispatch:
+
+jobs:
+  semantic-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Blueprint/examples/commerce
+
+    steps:
+      - name: SourceCheckout
+        uses: actions/checkout@v4
+
+      - name: EnvironmentSetup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: DependencyInstall
+        run: npm install
+
+      - name: Validate
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      - name: Demo
+        run: npm run demo

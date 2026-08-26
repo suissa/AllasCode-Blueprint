@@ -1,0 +1,7 @@
+name: SalesActor
+kind: actor
+semantic_id: commerce.actor.sales
+context: Sales
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml
+actions: [ResolveSaleProducts]

@@ -1,0 +1,3 @@
+deny_direct_context_access: [Purchase, Inventory, Financial]
+allow_actor: SalesActor
+allow_tools: [SaleTerminalReader, ProductCatalogLookup]

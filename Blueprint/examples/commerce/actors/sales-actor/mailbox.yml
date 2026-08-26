@@ -1,0 +1,4 @@
+accepts:
+  - action: ResolveSaleProducts
+ordering: fifo
+concurrency: 1

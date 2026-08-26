@@ -1,0 +1,7 @@
+name: InventoryAgent
+kind: agent
+semantic_id: commerce.agent.inventory
+context: ../contexts/inventory.yml
+actor: ../../actors/inventory-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml

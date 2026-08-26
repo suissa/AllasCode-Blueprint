@@ -1,15 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { createRegistry, commerceRoot } from '../runtime/bootstrap.js';
+import { commerceRoot } from '../runtime/bootstrap.js';
+import { createExecutionKernel } from '../runtime/execution-kernel.js';
 import { InMemoryEventBus } from '../runtime/event-bus.js';
 import { FlowRuntime } from '../runtime/flow-runtime.js';
 import { createCommerceState } from '../runtime/state.js';
 import type { PurchaseInput, SaleInput } from '../runtime/types.js';
 
-test('purchase then sale preserves inventory and financial invariants', async () => {
+test('purchase then sale preserves inventory and financial invariants through agents and actors', async () => {
   const state = createCommerceState();
-  const runtime = new FlowRuntime(state, await createRegistry(), new InMemoryEventBus());
+  const kernel = await createExecutionKernel();
+  const runtime = new FlowRuntime(state, kernel.agents, new InMemoryEventBus());
 
   const purchase: PurchaseInput = {
     purchase_id: 'p1', supplier_id: 's1', supplier_name: 'Supplier', currency: 'BRL',
@@ -31,9 +33,10 @@ test('purchase then sale preserves inventory and financial invariants', async ()
   assert.equal(state.ledger.get('sale:v1')?.amount, 12);
 });
 
-test('sale cannot make stock negative', async () => {
+test('sale cannot make stock negative through agent and actor routing', async () => {
   const state = createCommerceState();
-  const runtime = new FlowRuntime(state, await createRegistry(), new InMemoryEventBus());
+  const kernel = await createExecutionKernel();
+  const runtime = new FlowRuntime(state, kernel.agents, new InMemoryEventBus());
   const sale: SaleInput = {
     sale_id: 'v2', currency: 'BRL',
     items: [{ product_id: 'beer', name: 'Beer', quantity: 1, unit_price: 6 }],

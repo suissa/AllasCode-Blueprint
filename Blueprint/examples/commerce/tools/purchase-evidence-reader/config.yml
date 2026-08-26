@@ -1,0 +1,5 @@
+provider: deterministic-example
+side_effects: none
+context_access: none
+normalization:
+  allowed: false

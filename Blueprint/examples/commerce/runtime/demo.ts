@@ -1,14 +1,15 @@
 import { join } from 'node:path';
-import { createRegistry, commerceRoot } from './bootstrap.js';
+import { commerceRoot } from './bootstrap.js';
+import { createExecutionKernel } from './execution-kernel.js';
 import { InMemoryEventBus } from './event-bus.js';
 import { FlowRuntime } from './flow-runtime.js';
 import { createCommerceState, snapshot } from './state.js';
 import type { PurchaseInput, SaleInput } from './types.js';
 
 const state = createCommerceState();
-const registry = await createRegistry();
+const kernel = await createExecutionKernel();
 const bus = new InMemoryEventBus();
-const runtime = new FlowRuntime(state, registry, bus);
+const runtime = new FlowRuntime(state, kernel.agents, bus);
 
 const purchase: PurchaseInput = {
   purchase_id: 'purchase-001',

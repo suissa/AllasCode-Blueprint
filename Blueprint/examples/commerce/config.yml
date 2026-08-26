@@ -20,3 +20,29 @@ policies:
   terminal-events:
     - Ok
     - Error
+
+ci:
+  source: AllasCode-infra
+  platform: github-actions
+  language: typescript
+  project-directory: Blueprint/examples/commerce
+  runtime:
+    provider: node
+    version: 24
+  variables:
+    package_manager: npm
+  triggers:
+    pull-request:
+      branches:
+        - examples
+      paths:
+        - Blueprint/examples/commerce/**
+        - .github/workflows/commerce-example.yml
+    manual: true
+  pipeline:
+    - capability: DependencyInstall
+    - capability: Validate
+      command: npm run check
+    - capability: Test
+    - capability: Demo
+      command: npm run demo

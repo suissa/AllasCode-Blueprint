@@ -1,0 +1,7 @@
+name: PurchaseActor
+kind: actor
+semantic_id: commerce.actor.purchase
+context: Purchase
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml
+actions: [RegisterPurchase]
