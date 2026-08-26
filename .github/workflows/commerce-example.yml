@@ -87,6 +87,8 @@ jobs:
         run: npm run test:architecture
       - name: EvidenceFreshness
         run: npm run test:evidence
+      - name: SemanticReleaseGate
+        run: npm run semantic-release-gate
       - name: CoreTests
         run: npm run test:core
       - name: Demo
