@@ -73,5 +73,10 @@ export function parseCsv(content:string):Record<string,string>[] {
  return matrix.map((values,index)=>{if(values.length!==headers.length)throw new Error(`CsvColumnCount:${index+2}`);return Object.fromEntries(headers.map((h,i)=>[h,values[i]??'']));});
 }
 
-function stable(value:unknown):string{if(Array.isArray(value))return`[${value.map(stable).join(',')}]`;if(value&&typeof value==='object')return`{${Object.keys(value as Record<string,unknown>).sort().map(k=>`${JSON.stringify(k)}:${stable((value as Record<string,unknown>)[k])}`).join(',')}}`;return JSON.stringify(value);}
+function stable(value:unknown):string{
+ if(Array.isArray(value))return`[${value.map(stable).join(',')}]`;
+ if(value&&typeof value==='object')return`{${Object.keys(value as Record<string,unknown>).sort().map(k=>`${JSON.stringify(k)}:${stable((value as Record<string,unknown>)[k])}`).join(',')}}`;
+ const encoded=JSON.stringify(value);
+ return encoded===undefined?'null':encoded;
+}
 function sha(value:string):string{return createHash('sha256').update(value).digest('hex');}
