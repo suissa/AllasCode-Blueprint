@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import type { CommerceState, ExecutionReport } from './types.js';
-import { ActionRegistry } from './action-registry.js';
+import { AgentRuntime } from './agent-runtime.js';
 import { InMemoryEventBus } from './event-bus.js';
 
 export class FlowRuntime {
   constructor(
     private readonly state: CommerceState,
-    private readonly registry: ActionRegistry,
+    private readonly agents: AgentRuntime,
     readonly events: InMemoryEventBus,
   ) {}
 
@@ -21,8 +21,20 @@ export class FlowRuntime {
       if (line.includes('.Error -> Error')) continue;
 
       if (line.startsWith('->>')) {
-        const actionKey = line.slice(3).trim();
-        const result = await this.registry.execute(actionKey, { state: this.state, payload });
+        const target = line.slice(3).trim();
+        const separator = target.indexOf('.');
+        if (separator <= 0 || separator === target.length - 1) {
+          return {
+            status: 'Error',
+            intent,
+            last_event: lastEvent,
+            payload: { message: `Invalid action target: ${target}` },
+          };
+        }
+
+        const agentName = target.slice(0, separator);
+        const actionName = target.slice(separator + 1);
+        const result = await this.agents.execute(agentName, actionName, { state: this.state, payload });
         this.events.emit(result.event, result.payload);
         lastEvent = result.event;
         payload = result.payload;
