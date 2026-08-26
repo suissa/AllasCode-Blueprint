@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {addBlockingDefect,assertExternalEvidence,createPilotReport,recordPilotEvidence,resolveBlockingDefect} from '../pilot/pilot-evidence.js';
+
+test('pilot starts blocked until every real acceptance check has evidence',()=>{const report=createPilotReport('v1.0.0-rc.1');assert.equal(report.ready_for_release,false);assert.equal(report.evidence.filter(x=>x.status==='pending').length,7);});
+test('real purchase and real-device pass require correlated external evidence',()=>{assert.throws(()=>assertExternalEvidence({check:'real-purchase',status:'passed'}),/ExternalPilotEvidenceRequired/);assert.throws(()=>assertExternalEvidence({check:'whatsapp-real-device',status:'passed'}),/ExternalPilotEvidenceRequired/);assert.doesNotThrow(()=>assertExternalEvidence({check:'real-purchase',status:'passed',correlation_id:'corr-real-1'}));});
+test('all passed checks still cannot release while a blocking defect exists',()=>{let r=createPilotReport('v1.0.0-rc.1');for(const e of r.evidence)r=recordPilotEvidence(r,{...e,status:'passed',correlation_id:'corr-'+e.check});r=addBlockingDefect(r,'BUG-1');assert.equal(r.ready_for_release,false);r=resolveBlockingDefect(r,'BUG-1');assert.equal(r.ready_for_release,true);});
+test('failed evidence keeps release blocked',()=>{let r=createPilotReport('v1.0.0-rc.1');r=recordPilotEvidence(r,{check:'backup-restore',status:'failed',notes:'restore checksum mismatch'});assert.equal(r.ready_for_release,false);});
