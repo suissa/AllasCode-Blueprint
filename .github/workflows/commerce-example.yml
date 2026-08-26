@@ -48,10 +48,16 @@ jobs:
       - name: SelectiveSemanticTests
         run: npm run test:selective
 
+      - name: SemanticCiPolicy
+        id: semantic_policy
+        run: npm run semantic-ci-policy
+
       - name: ActionTests
+        if: steps.semantic_policy.outputs.run_full_actions == 'true'
         run: npm run test:actions
 
       - name: ArchitectureTests
+        if: steps.semantic_policy.outputs.run_full_architecture == 'true'
         run: npm run test:architecture
 
       - name: EvidenceFreshness
