@@ -1,3 +1,5 @@
 # RecordPurchaseExpense
 
-Records the financial outflow caused by a purchase after stock entry has succeeded. This ordering prevents the simple example from declaring a completed purchase whose stock transition failed.
+Records the financial consequence of a completed supplier purchase. It creates the expense correlation required by the purchase lifecycle without changing inventory.
+
+Terminal results are only `Ok<PurchaseExpenseRecorded>` or `Error<PurchaseExpenseRecordingError>`.

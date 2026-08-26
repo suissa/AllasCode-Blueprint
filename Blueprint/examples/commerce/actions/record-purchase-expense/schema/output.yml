@@ -1,0 +1,5 @@
+type: object
+required: [purchase_id, financial_entry_id]
+properties:
+  purchase_id: { semantic_type: PurchaseId }
+  financial_entry_id: { semantic_type: FinancialEntryId }

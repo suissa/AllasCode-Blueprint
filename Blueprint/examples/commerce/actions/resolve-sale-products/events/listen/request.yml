@@ -1,0 +1,3 @@
+name: ResolveSaleProductsRequested
+kind: request
+payload: ../../schema/input.yml

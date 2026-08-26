@@ -1,0 +1,4 @@
+result: Error
+payload:
+  event: PurchaseRegistrationError
+  schema: ../../schema/error.yml

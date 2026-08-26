@@ -1,0 +1,8 @@
+type: object
+required: [sale_id, movements]
+properties:
+  sale_id: { semantic_type: SaleId }
+  movements:
+    type: array
+    items:
+      required: [product_id, quantity_removed]

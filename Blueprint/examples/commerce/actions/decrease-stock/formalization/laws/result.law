@@ -1,0 +1,5 @@
+law DecreaseStockIdempotency:
+  same(sale_id) -> stock_decrease_occurs_at_most_once
+
+law DecreaseStockResultExclusivity:
+  DecreaseStock(x) -> exactly_one(Ok(StockDecreased), Error(StockDecreaseError))

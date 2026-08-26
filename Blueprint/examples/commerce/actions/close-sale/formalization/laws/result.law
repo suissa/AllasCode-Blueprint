@@ -1,0 +1,5 @@
+law SaleCloseOrdering:
+  SaleCompleted -> happened_before(SaleProductsResolved, StockDecreased)
+
+law CloseSaleResultExclusivity:
+  CloseSale(x) -> exactly_one(Ok(SaleCompleted), Error(SaleCloseError))

@@ -1,0 +1,8 @@
+type: object
+required: [sale_id, amount, currency, products_resolved, stock_decreased]
+properties:
+  sale_id: { semantic_type: SaleId }
+  amount: { semantic_type: CurrencyAmount }
+  currency: { semantic_type: CurrencyCode }
+  products_resolved: { const: true }
+  stock_decreased: { const: true }

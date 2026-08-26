@@ -1,0 +1,3 @@
+evidence:
+  contract: ../../specifications/contract.yml
+  status: reference-example

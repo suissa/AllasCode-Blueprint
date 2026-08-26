@@ -1,0 +1,5 @@
+law IncreaseStockIdempotency:
+  same(purchase_id) -> stock_increase_occurs_at_most_once
+
+law IncreaseStockResultExclusivity:
+  IncreaseStock(x) -> exactly_one(Ok(StockIncreased), Error(StockIncreaseError))

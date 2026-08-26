@@ -1,6 +1,8 @@
 type: object
-required: [inventory_id, purchase_id, updated_items]
+required: [purchase_id, movements]
 properties:
-  inventory_id: SemanticId
-  purchase_id: SemanticId
-  updated_items: StockBalanceList
+  purchase_id: { semantic_type: PurchaseId }
+  movements:
+    type: array
+    items:
+      required: [product_id, quantity_added]

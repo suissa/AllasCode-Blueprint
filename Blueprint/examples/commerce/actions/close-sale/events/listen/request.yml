@@ -1,0 +1,3 @@
+name: CloseSaleRequested
+kind: request
+payload: ../../schema/input.yml

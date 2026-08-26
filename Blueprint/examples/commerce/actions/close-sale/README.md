@@ -1,3 +1,5 @@
 # CloseSale
 
-Closes the sale financially after inventory has been decreased successfully. It records the sale revenue and changes the sale semantic state to `completed`.
+Finalizes the financial representation of a sale after its products have been resolved and inventory has been decreased. It correlates the external sale with the completed domain sale.
+
+Terminal results are only `Ok<SaleCompleted>` or `Error<SaleCloseError>`.

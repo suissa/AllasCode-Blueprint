@@ -1,0 +1,4 @@
+result: Error
+payload:
+  event: StockDecreaseError
+  schema: ../../schema/error.yml

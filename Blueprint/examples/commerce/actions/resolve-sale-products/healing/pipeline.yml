@@ -1,0 +1,11 @@
+pipeline:
+  - inspect
+  - validate
+  - normalize_reversibly
+  - resolve_product_candidates
+  - revalidate
+  - request_human_context
+rules:
+  reversible_only: true
+  auto_select_ambiguous_product: false
+  terminal_on_unresolved: Error

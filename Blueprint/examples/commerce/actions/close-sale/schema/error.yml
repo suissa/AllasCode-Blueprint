@@ -1,0 +1,6 @@
+type: object
+required: [code, reason]
+properties:
+  code:
+    enum: [PRODUCTS_NOT_RESOLVED, STOCK_NOT_DECREASED, DUPLICATE_CLOSE, FINANCIAL_REJECTED]
+  reason: { semantic_type: HumanReadableReason }

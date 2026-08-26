@@ -1,0 +1,2 @@
+law ResolveSaleProductsResultExclusivity:
+  ResolveSaleProducts(x) -> exactly_one(Ok(SaleProductsResolved), Error(SaleProductsResolutionError))

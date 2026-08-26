@@ -1,0 +1,4 @@
+result: Ok
+payload:
+  event: SaleProductsResolved
+  schema: ../../schema/output.yml

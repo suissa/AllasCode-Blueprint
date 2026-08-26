@@ -1,0 +1,7 @@
+proof_obligation:
+  subject: CloseSale
+  prove:
+    - terminal_result_is_exclusive
+    - completion_requires_resolved_products
+    - completion_requires_stock_decrease
+    - close_is_idempotent

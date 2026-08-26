@@ -1,0 +1,7 @@
+type: object
+required: [purchase_id, amount, currency]
+properties:
+  purchase_id: { semantic_type: PurchaseId }
+  amount: { semantic_type: CurrencyAmount }
+  currency: { semantic_type: CurrencyCode }
+  supplier_id: { semantic_type: SupplierId }

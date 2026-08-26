@@ -1,0 +1,4 @@
+result: Error
+payload:
+  event: SaleProductsResolutionError
+  schema: ../../schema/error.yml

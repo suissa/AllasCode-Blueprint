@@ -1,0 +1,10 @@
+preconditions:
+  - purchase_id_is_known
+  - amount_is_valid_currency_amount
+postconditions:
+  Ok:
+    - one_financial_expense_is_correlated_to_purchase_id
+  Error:
+    - success_event_not_emitted
+invariants:
+  - same_purchase_id_creates_at_most_one_purchase_expense

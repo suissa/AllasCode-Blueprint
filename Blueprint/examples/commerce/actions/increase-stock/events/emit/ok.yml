@@ -1,0 +1,4 @@
+result: Ok
+payload:
+  event: StockIncreased
+  schema: ../../schema/output.yml

@@ -1,3 +1,5 @@
 # DecreaseStock
 
-Subtracts resolved sale items from inventory. It may only execute after the sale products are known and validated.
+Applies resolved sold products to inventory. Each sale item decreases the corresponding product quantity exactly once for the same `sale_id`.
+
+Terminal results are only `Ok<StockDecreased>` or `Error<StockDecreaseError>`.

@@ -1,0 +1,2 @@
+rule PurchaseRegisteredRequiresValidPurchase:
+  emit Ok<PurchaseRegistered> only_if purchase_id exists and items are non_empty and total >= 0

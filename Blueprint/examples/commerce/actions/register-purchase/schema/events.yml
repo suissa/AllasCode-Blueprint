@@ -1,0 +1,5 @@
+listen:
+  - RegisterPurchaseRequested
+emit:
+  ok: PurchaseRegistered
+  error: PurchaseRegistrationError

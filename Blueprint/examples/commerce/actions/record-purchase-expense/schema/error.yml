@@ -1,0 +1,6 @@
+type: object
+required: [code, reason]
+properties:
+  code:
+    enum: [INVALID_AMOUNT, DUPLICATE_EXPENSE, FINANCIAL_REJECTED]
+  reason: { semantic_type: HumanReadableReason }

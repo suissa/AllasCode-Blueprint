@@ -1,0 +1,3 @@
+name: IncreaseStockRequested
+kind: request
+payload: ../../schema/input.yml

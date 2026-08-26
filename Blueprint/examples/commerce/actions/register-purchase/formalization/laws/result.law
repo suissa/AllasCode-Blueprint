@@ -1,0 +1,2 @@
+law RegisterPurchaseResultExclusivity:
+  RegisterPurchase(x) -> exactly_one(Ok(PurchaseRegistered), Error(PurchaseRegistrationError))
