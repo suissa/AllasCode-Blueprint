@@ -6,6 +6,9 @@ contexts:
   inventory: ./contexts/inventory.yml
   financial: ./contexts/financial.yml
   sales: ./contexts/sales.yml
+  identity: ./contexts/identity.yml
+  fiscal: ./contexts/fiscal.yml
+  accounting: ./contexts/accounting.yml
 
 flows:
   purchase-products: ./flows/purchase-products.2flow
