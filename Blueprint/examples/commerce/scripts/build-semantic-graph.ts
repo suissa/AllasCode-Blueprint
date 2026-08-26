@@ -3,15 +3,22 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileRuntimeSemanticGraph } from '../runtime/runtime-graph.js';
 import { validateSemanticGraph } from '../runtime/semantic-graph.js';
+import { compileSemanticTests } from '../runtime/test-graph.js';
+import { governSemanticGraph } from '../runtime/semantic-governor.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
 const graph = await compileRuntimeSemanticGraph(root);
-const errors = validateSemanticGraph(graph);
+const testErrors = await compileSemanticTests(root, graph);
+const governance = governSemanticGraph(graph);
+const errors = [...validateSemanticGraph(graph), ...testErrors, ...governance.errors];
 if (errors.length) throw new Error(errors.join('\n'));
 
 if (process.argv.includes('--validate')) {
-  console.log(`Semantic graph valid: ${graph.nodes.length} nodes, ${graph.edges.length} edges`);
+  const testNodes = graph.nodes.filter(node => node.type === 'Test').length;
+  const resultNodes = graph.nodes.filter(node => node.type === 'TestResult').length;
+  const metricNodes = graph.nodes.filter(node => node.type === 'Metric').length;
+  console.log(`Semantic graph valid: ${graph.nodes.length} nodes, ${graph.edges.length} edges; tests=${testNodes}, results=${resultNodes}, metrics=${metricNodes}`);
 } else {
   const output = join(root, 'generated', 'semantic-graph.json');
   await mkdir(dirname(output), { recursive: true });

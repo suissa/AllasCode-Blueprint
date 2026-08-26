@@ -4,11 +4,11 @@ import { parse } from 'yaml';
 import { loadSemanticArchitecture } from './semantic-loader.js';
 import { validateSemanticArchitecture } from './semantic-validator.js';
 
-export type SemanticNodeType = 'Entity' | 'Intent' | 'Event' | 'Agent' | 'Actor' | 'Action' | 'Tool' | 'Flow';
+export type SemanticNodeType = 'Entity' | 'Intent' | 'Event' | 'Agent' | 'Actor' | 'Action' | 'Tool' | 'Flow' | 'Test' | 'TestResult' | 'Metric';
 
 export interface SemanticGraphNode {
   id: string;
-  type: SemanticNodeType;
+  type: SemanticNodeType | string;
   label: string;
   semantic_id?: string;
   metadata?: Record<string, unknown>;
@@ -160,22 +160,8 @@ export async function compileSemanticGraph(root: string): Promise<SemanticGraph>
     graph.edges.push({ id: edgeId(type, from, to, ordinal), type, from, to, ...(metadata ? { metadata } : {}) });
   };
 
-  for (const entity of entities) {
-    addNode({
-      id: nodeId('Entity', entity.id),
-      type: 'Entity',
-      label: entity.id,
-      ...(entity.semantic_id ? { semantic_id: entity.semantic_id } : {}),
-    });
-  }
-  for (const intent of intents) {
-    addNode({
-      id: nodeId('Intent', intent.id),
-      type: 'Intent',
-      label: intent.id,
-      ...(intent.semantic_id ? { semantic_id: intent.semantic_id } : {}),
-    });
-  }
+  for (const entity of entities) addNode({ id: nodeId('Entity', entity.id), type: 'Entity', label: entity.id, ...(entity.semantic_id ? { semantic_id: entity.semantic_id } : {}) });
+  for (const intent of intents) addNode({ id: nodeId('Intent', intent.id), type: 'Intent', label: intent.id, ...(intent.semantic_id ? { semantic_id: intent.semantic_id } : {}) });
   for (const event of events) addNode({ id: nodeId('Event', event), type: 'Event', label: event });
   for (const agent of architecture.agents) addNode({ id: nodeId('Agent', agent.name), type: 'Agent', label: agent.name });
   for (const actor of architecture.actors) addNode({ id: nodeId('Actor', actor.name), type: 'Actor', label: actor.name, metadata: { mailboxCapacity: actor.mailboxCapacity } });
@@ -188,40 +174,25 @@ export async function compileSemanticGraph(root: string): Promise<SemanticGraph>
     for (const [relation, raw] of Object.entries(entity.relations ?? {}).sort(([a], [b]) => a.localeCompare(b))) {
       const target = relationTarget(raw);
       const cardinality = raw.slice(target.length);
-      addEdge(
-        'ENTITY_RELATION',
-        nodeId('Entity', entity.id),
-        nodeId('Entity', target),
-        { relation, ...(cardinality ? { cardinality } : {}) },
-        ordinal++,
-      );
+      addEdge('ENTITY_RELATION', nodeId('Entity', entity.id), nodeId('Entity', target), { relation, ...(cardinality ? { cardinality } : {}) }, ordinal++);
     }
   }
-
   for (const agent of architecture.agents) {
     addEdge('OWNS_ACTOR', nodeId('Agent', agent.name), nodeId('Actor', agent.actor));
     agent.actions.slice().sort().forEach(action => addEdge('ALLOWS_ACTION', nodeId('Agent', agent.name), nodeId('Action', action)));
     agent.tools.slice().sort().forEach(tool => addEdge('ALLOWS_TOOL', nodeId('Agent', agent.name), nodeId('Tool', tool)));
   }
-
-  for (const actor of architecture.actors) {
-    actor.actions.slice().sort().forEach(action => addEdge('ACCEPTS_ACTION', nodeId('Actor', actor.name), nodeId('Action', action)));
-  }
-
+  for (const actor of architecture.actors) actor.actions.slice().sort().forEach(action => addEdge('ACCEPTS_ACTION', nodeId('Actor', actor.name), nodeId('Action', action)));
   for (const action of architecture.actions) {
     addEdge('ACTION_OWNER', nodeId('Action', action.manifest.name), nodeId('Agent', action.ownerAgent));
     addEdge('EMITS_OK', nodeId('Action', action.manifest.name), nodeId('Event', action.manifest.results.Ok));
   }
-
   for (const intent of intents) {
     const start = intent['starts-with'] ?? intent.starts_when;
     if (start && events.includes(start)) addEdge('STARTS_WITH', nodeId('Intent', intent.id), nodeId('Event', start));
     if (intent.success && events.includes(intent.success)) addEdge('SUCCEEDS_WITH', nodeId('Intent', intent.id), nodeId('Event', intent.success));
-    for (const success of intent.succeeds_when ?? []) {
-      if (events.includes(success)) addEdge('SUCCEEDS_WITH', nodeId('Intent', intent.id), nodeId('Event', success));
-    }
+    for (const success of intent.succeeds_when ?? []) if (events.includes(success)) addEdge('SUCCEEDS_WITH', nodeId('Intent', intent.id), nodeId('Event', success));
   }
-
   for (const flow of flows) {
     const lines = flow.source.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
     const intent = lines[0];
@@ -230,22 +201,14 @@ export async function compileSemanticGraph(root: string): Promise<SemanticGraph>
     for (const line of lines.slice(1)) {
       if (line.includes('.Error -> Error')) continue;
       if (line.startsWith('->>')) {
-        const key = line.slice(3).trim();
-        const dot = key.indexOf('.');
+        const key = line.slice(3).trim(); const dot = key.indexOf('.');
         if (dot > 0) {
-          const agent = key.slice(0, dot);
-          const action = key.slice(dot + 1);
+          const agent = key.slice(0, dot); const action = key.slice(dot + 1);
           addEdge('FLOW_CALLS_AGENT', nodeId('Flow', flow.name), nodeId('Agent', agent), { order: ordinal }, ordinal);
-          addEdge('FLOW_CALLS_ACTION', nodeId('Flow', flow.name), nodeId('Action', action), { order: ordinal }, ordinal);
-          ordinal++;
+          addEdge('FLOW_CALLS_ACTION', nodeId('Flow', flow.name), nodeId('Action', action), { order: ordinal }, ordinal); ordinal++;
         }
-      } else if (line.startsWith('<-')) {
-        const event = line.slice(2).trim();
-        addEdge('FLOW_EXPECTS_EVENT', nodeId('Flow', flow.name), nodeId('Event', event), { order: ordinal }, ordinal++);
-      } else if (line.startsWith('->')) {
-        const event = line.slice(2).trim();
-        addEdge('FLOW_EMITS_EVENT', nodeId('Flow', flow.name), nodeId('Event', event), { order: ordinal }, ordinal++);
-      }
+      } else if (line.startsWith('<-')) addEdge('FLOW_EXPECTS_EVENT', nodeId('Flow', flow.name), nodeId('Event', line.slice(2).trim()), { order: ordinal }, ordinal++);
+      else if (line.startsWith('->')) addEdge('FLOW_EMITS_EVENT', nodeId('Flow', flow.name), nodeId('Event', line.slice(2).trim()), { order: ordinal }, ordinal++);
     }
   }
 

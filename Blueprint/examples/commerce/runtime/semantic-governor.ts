@@ -25,6 +25,34 @@ function validateAlternative(graph: SemanticGraph, source: string, target: strin
   return errors;
 }
 
+function validateTestEvidence(graph: SemanticGraph): string[] {
+  const errors: string[] = [];
+  const governanceTypes = new Set(['Invariant','Policy','Law']);
+
+  for (const test of nodesOf(graph, 'Test')) {
+    if (incoming(graph, test.id, 'TESTED_BY').length !== 1) errors.push(`${test.id} must be referenced by exactly one TESTED_BY edge`);
+    if (outgoing(graph, test.id, 'PRODUCES').length !== 1) errors.push(`${test.id} must PRODUCE exactly one TestResult`);
+  }
+
+  for (const result of nodesOf(graph, 'TestResult')) {
+    const producer = incoming(graph, result.id, 'PRODUCES');
+    if (producer.length !== 1) errors.push(`${result.id} must have exactly one PRODUCES source`);
+    for (const edge of [...outgoing(graph, result.id, 'PROVES'), ...outgoing(graph, result.id, 'VIOLATES')]) {
+      const target = graph.nodes.find(node => node.id === edge.to);
+      if (!target || !governanceTypes.has(String(target.type))) errors.push(`${edge.id} must target Invariant, Policy or Law`);
+    }
+    for (const edge of outgoing(graph, result.id, 'MEASURES')) {
+      const target = graph.nodes.find(node => node.id === edge.to);
+      if (!target || target.type !== 'Metric') errors.push(`${edge.id} must target Metric`);
+    }
+  }
+
+  for (const metric of nodesOf(graph, 'Metric')) {
+    if (incoming(graph, metric.id, 'MEASURES').length === 0) errors.push(`${metric.id} is not measured by any TestResult`);
+  }
+  return errors;
+}
+
 export function governSemanticGraph(graph: SemanticGraph): GovernorDecision {
   const errors: string[] = [];
   for (const agent of nodesOf(graph, 'Agent')) {
@@ -56,6 +84,8 @@ export function governSemanticGraph(graph: SemanticGraph): GovernorDecision {
     errors.push(...validateAlternative(graph, edge.from, edge.to));
     if (!graph.edges.some(candidate => candidate.type === 'SEMANTICALLY_EQUIVALENT_TO' && candidate.from === edge.from && candidate.to === edge.to)) errors.push(`${edge.id} requires explicit SEMANTICALLY_EQUIVALENT_TO`);
   }
+
+  errors.push(...validateTestEvidence(graph));
   return { allowed: errors.length === 0, errors };
 }
 
