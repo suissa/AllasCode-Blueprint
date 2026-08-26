@@ -11,13 +11,26 @@ const baseRef = process.env.SEMANTIC_DIFF_BASE ?? (process.env.GITHUB_BASE_REF ?
 const temp = await mkdtemp(join(tmpdir(), 'allascode-semantic-base-'));
 const baseWorktree = join(temp, 'worktree');
 
+function run(cwd: string, command: string, args: string[]): void {
+  execFileSync(command, args, { cwd, stdio: 'ignore' });
+}
+
 try {
-  execFileSync('git', ['worktree', 'add', '--detach', baseWorktree, baseRef], { cwd: repoRoot, stdio: 'ignore' });
+  run(repoRoot, 'git', ['worktree', 'add', '--detach', baseWorktree, baseRef]);
   const baseCommerce = join(baseWorktree, 'Blueprint', 'examples', 'commerce');
   await symlink(join(root, 'node_modules'), join(baseCommerce, 'node_modules'), 'dir');
-  execFileSync(join(root, 'node_modules', '.bin', 'tsx'), ['scripts/build-semantic-graph.ts'], { cwd: baseCommerce, stdio: 'ignore' });
 
-  execFileSync('npm', ['run', 'graph:build'], { cwd: root, stdio: 'ignore' });
+  // Normalize both revisions through the same semantic preparation pipeline before graph compilation.
+  // This prevents generated Test/TestResult/Metric nodes from appearing as false architectural changes.
+  run(baseCommerce, 'npm', ['run', 'semantic-tests:materialize']);
+  run(baseCommerce, 'npm', ['run', 'semantic-tests:validate']);
+  run(baseCommerce, 'npm', ['run', 'semantic-tests:dashboard']);
+  run(baseCommerce, 'npm', ['run', 'graph:build']);
+
+  run(root, 'npm', ['run', 'semantic-tests:materialize']);
+  run(root, 'npm', ['run', 'semantic-tests:validate']);
+  run(root, 'npm', ['run', 'semantic-tests:dashboard']);
+  run(root, 'npm', ['run', 'graph:build']);
 
   const [baseGraph, headGraph] = await Promise.all([
     readFile(join(baseCommerce, 'generated', 'semantic-graph.json'), 'utf8').then(value => JSON.parse(value) as SemanticGraph),
@@ -38,6 +51,6 @@ try {
   await writeFile(join(root, 'tests', 'dashboard', 'semantic-pr-diff.md'), markdown, 'utf8');
   console.log(`Semantic PR diff: +${diff.summary.node_additions}/-${diff.summary.node_removals} nodes, +${diff.summary.edge_additions}/-${diff.summary.edge_removals} edges, breaking=${diff.summary.breaking_changes}`);
 } finally {
-  try { execFileSync('git', ['worktree', 'remove', '--force', baseWorktree], { cwd: repoRoot, stdio: 'ignore' }); } catch {}
+  try { run(repoRoot, 'git', ['worktree', 'remove', '--force', baseWorktree]); } catch {}
   await rm(temp, { recursive: true, force: true });
 }
