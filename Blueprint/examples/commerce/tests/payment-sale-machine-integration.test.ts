@@ -1,5 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {InMemoryExternalTransactionStore,PaymentSaleMachineIngress,type ExternalSaleTransaction} from '../integrations/payment-sale-machine/index.js';
+import {EvolutionGoSaleResolutionFollowUp} from '../integrations/payment-sale-machine/evolution-go-follow-up.js';
 
 function tx(overrides:Partial<ExternalSaleTransaction>={}):ExternalSaleTransaction{return {provider:'sandbox-terminal',transaction_id:'tx-1',amount:42.5,currency:'BRL',occurred_at:'2026-08-26T10:00:00-03:00',payment_method:'credit',status:'approved',...overrides};}
 function harness(transactions:ExternalSaleTransaction[]=[]){const commands:any[]=[];const followups:any[]=[];const provider:any={provider:'sandbox-terminal',discover:async()=>({transactions,cursor:'next'}),normalizeWebhook:async(payload:any)=>[payload]};const semantic:any={command:async(...args:any[])=>{commands.push(args);return {outcome:'Ok'};}};const followUp:any={request:async(input:any)=>{followups.push(input);}};return{ingress:new PaymentSaleMachineIngress(provider,new InMemoryExternalTransactionStore(),semantic,followUp),commands,followups};}
@@ -9,6 +10,8 @@ test('approved transaction preserves provider facts and dispatches ProcessSaleIn
 test('duplicate external transaction id is idempotent across webhook retries',async()=>{const h=harness();const payload=tx();await h.ingress.webhook(payload);await h.ingress.webhook(payload);assert.equal(h.commands.length,1);assert.equal(h.followups.length,1);});
 
 test('unknown product composition requests follow-up after semantic sale handoff',async()=>{const h=harness([tx({products:undefined})]);await h.ingress.poll();assert.equal(h.commands[0][0],'ProcessSaleIntent');assert.equal(h.followups.length,1);assert.equal(h.followups[0].transaction.transaction_id,'tx-1');assert.equal(h.followups[0].correlation_id,'payment:sandbox-terminal:tx-1');});
+
+test('Evolution Go follow-up only transports the unresolved-sale question to the operator',async()=>{const sent:any[]=[];const whatsapp:any={sendText:async(...args:any[])=>{sent.push(args);return {provider_message_id:'m1',raw:{}};}};const followUp=new EvolutionGoSaleResolutionFollowUp(whatsapp,'5511999999999');await followUp.request({transaction:tx({products:undefined}),correlation_id:'payment:sandbox-terminal:tx-1'});assert.equal(sent.length,1);assert.equal(sent[0][0],'5511999999999');assert.match(sent[0][1],/tx-1/);assert.match(sent[0][1],/Quais produtos e quantidades/);assert.match(sent[0][1],/payment:sandbox-terminal:tx-1/);});
 
 test('known product composition does not create unnecessary follow-up',async()=>{const h=harness([tx({products:[{product_id:'beer',label:'Beer',quantity:1,unit_price:42.5}]})]);await h.ingress.poll();assert.equal(h.followups.length,0);});
 
