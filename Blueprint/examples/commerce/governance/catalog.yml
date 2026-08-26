@@ -52,7 +52,8 @@ laws:
   - { id: PurchaseCostConservation, preserved_by_flows: [purchase-products] }
   - { id: PurchaseHappensBeforeStock, preserved_by_flows: [purchase-products] }
   - { id: SaleResolutionBeforeMutation, preserved_by_flows: [process-sale] }
-  - { id: EventChoreographyIsolation, preserved_by_flows: [purchase-products, process-sale] }
+  - id: EventChoreographyIsolation
+    preserved_by_flows: [purchase-products, process-sale, authorize-operator, associate-customer-to-sale, issue-sale-invoice, record-accounting-effect]
 
 constraints:
   - { id: DecreaseWithinAvailableStock, constrains: [DecreaseStock, DecreaseStockVerified], protects: [StockNonNegative] }
