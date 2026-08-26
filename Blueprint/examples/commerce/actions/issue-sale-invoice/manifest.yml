@@ -1,0 +1,8 @@
+name: IssueSaleInvoice
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.issue-sale-invoice
+purpose: issue_a_fiscal_document_after_a_completed_sale_event
+results:
+  Ok: SaleInvoiceIssued
+  Error: SaleInvoiceIssueError
