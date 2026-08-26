@@ -1,0 +1,38 @@
+name: Commerce Example CI
+
+on:
+  pull_request:
+    branches:
+      - examples
+    paths:
+      - 'Blueprint/examples/commerce/**'
+      - '.github/workflows/commerce-example.yml'
+  workflow_dispatch:
+
+jobs:
+  build-test-demo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Blueprint/examples/commerce
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Type check
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      - name: Demo
+        run: npm run demo
