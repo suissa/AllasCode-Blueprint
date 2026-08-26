@@ -25,6 +25,9 @@ export function createState(): CommerceState {
     purchases: new Map(),
     sales: new Map(),
     ledger: new Map(),
+    users: new Map(),
+    invoices: new Map(),
+    accounting_entries: new Map(),
     applied_purchase_stock: new Set(),
     applied_sale_stock: new Set(),
   };
@@ -36,6 +39,9 @@ function snapshot(state: CommerceState): string {
     purchases: [...state.purchases.entries()].sort(),
     sales: [...state.sales.entries()].sort(),
     ledger: [...state.ledger.entries()].sort(),
+    users: [...state.users.entries()].sort(),
+    invoices: [...state.invoices.entries()].sort(),
+    accounting_entries: [...state.accounting_entries.entries()].sort(),
     applied_purchase_stock: [...state.applied_purchase_stock].sort(),
     applied_sale_stock: [...state.applied_sale_stock].sort(),
   });

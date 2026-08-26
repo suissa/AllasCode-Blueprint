@@ -1,0 +1,6 @@
+IssueSaleInvoiceIntent
+-> SaleCompleted
+->> FiscalAgent.IssueSaleInvoice
+<- SaleInvoiceIssued
+
+IssueSaleInvoice.Error -> Error

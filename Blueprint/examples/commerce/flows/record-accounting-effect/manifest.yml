@@ -1,0 +1,6 @@
+name: record-accounting-effect
+kind: flow
+semantic_id: commerce.flow.record-accounting-effect
+source: ../record-accounting-effect.2flow
+active: true
+intent: RecordAccountingEffectIntent

@@ -1,0 +1,7 @@
+id: Customer
+kind: Entity
+semantic_id: commerce.entity.customer
+identity: customer_id
+properties: ./properties.yml
+relations:
+  sales: Sale[*]

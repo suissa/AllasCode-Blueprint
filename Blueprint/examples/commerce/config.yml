@@ -6,20 +6,23 @@ contexts:
   inventory: ./contexts/inventory.yml
   financial: ./contexts/financial.yml
   sales: ./contexts/sales.yml
+  identity: ./contexts/identity.yml
+  fiscal: ./contexts/fiscal.yml
+  accounting: ./contexts/accounting.yml
 
 flows:
   purchase-products: ./flows/purchase-products.2flow
   process-sale: ./flows/process-sale.2flow
+  authorize-operator: ./flows/authorize-operator.2flow
+  associate-customer-to-sale: ./flows/associate-customer-to-sale.2flow
+  issue-sale-invoice: ./flows/issue-sale-invoice.2flow
+  record-accounting-effect: ./flows/record-accounting-effect.2flow
 
 policies:
   self-healing: enabled
   normalization:
-    allowed-in:
-      - validation
-      - self-healing
-  terminal-events:
-    - Ok
-    - Error
+    allowed-in: [validation, self-healing]
+  terminal-events: [Ok, Error]
 
 ci:
   source: AllasCode-infra
@@ -33,11 +36,8 @@ ci:
     package_manager: npm
   triggers:
     pull-request:
-      branches:
-        - examples
-      paths:
-        - Blueprint/examples/commerce/**
-        - .github/workflows/commerce-example.yml
+      branches: [examples]
+      paths: [Blueprint/examples/commerce/**, .github/workflows/commerce-example.yml]
     manual: true
   pipeline:
     - capability: DependencyInstall

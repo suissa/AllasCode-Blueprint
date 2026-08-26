@@ -1,0 +1,6 @@
+id: RecordAccountingEffectIntent
+starts-with: SaleInvoiceIssued
+success: AccountingEffectRecorded
+failure: Error
+requires:
+  - validated fiscal event

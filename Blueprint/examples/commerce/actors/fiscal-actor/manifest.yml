@@ -1,0 +1,7 @@
+name: FiscalActor
+kind: actor
+semantic_id: commerce.actor.fiscal
+context: Fiscal
+actions: [IssueSaleInvoice]
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml

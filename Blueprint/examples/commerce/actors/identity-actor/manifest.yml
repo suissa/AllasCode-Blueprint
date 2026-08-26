@@ -1,0 +1,7 @@
+name: IdentityActor
+kind: actor
+semantic_id: commerce.actor.identity
+context: Identity
+actions: [AuthorizeOperatorIntent]
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml

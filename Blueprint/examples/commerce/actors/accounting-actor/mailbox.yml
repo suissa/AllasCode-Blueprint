@@ -1,0 +1,4 @@
+accepts:
+  - action: RecordAccountingEffect
+ordering: fifo
+concurrency: 1

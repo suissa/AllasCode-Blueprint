@@ -1,95 +1,68 @@
-version: 0.1.0
+version: 0.2.0
 
 contexts:
-  - id: PurchaseContext
-    agent: PurchaseAgent
-  - id: InventoryContext
-    agent: InventoryAgent
-  - id: FinancialContext
-    agent: FinancialAgent
-  - id: SalesContext
-    agent: SalesAgent
+  - { id: PurchaseContext, agent: PurchaseAgent }
+  - { id: InventoryContext, agent: InventoryAgent }
+  - { id: FinancialContext, agent: FinancialAgent }
+  - { id: SalesContext, agent: SalesAgent }
+  - { id: IdentityContext, agent: IdentityAgent }
+  - { id: FiscalContext, agent: FiscalAgent }
+  - { id: AccountingContext, agent: AccountingAgent }
 
 capabilities:
-  - id: PurchaseRegistration
-    required_by: [RegisterPurchase]
-    implemented_by: [PurchaseActor]
-  - id: StockIncrease
-    required_by: [IncreaseStock]
-    implemented_by: [InventoryActor]
-  - id: StockDecrease
-    required_by: [DecreaseStock, DecreaseStockVerified]
-    implemented_by: [InventoryActor]
-  - id: PurchaseExpenseRecording
-    required_by: [RecordPurchaseExpense]
-    implemented_by: [FinancialActor]
-  - id: SaleProductResolution
-    required_by: [ResolveSaleProducts]
-    implemented_by: [SalesActor, ProductCatalogLookup]
-  - id: SaleClosing
-    required_by: [CloseSale]
-    implemented_by: [FinancialActor]
-  - id: PurchaseEvidenceReading
-    required_by: []
-    implemented_by: [PurchaseEvidenceReader]
-  - id: SaleTerminalReading
-    required_by: []
-    implemented_by: [SaleTerminalReader]
+  - { id: PurchaseRegistration, required_by: [RegisterPurchase], implemented_by: [PurchaseActor] }
+  - { id: StockIncrease, required_by: [IncreaseStock], implemented_by: [InventoryActor] }
+  - { id: StockDecrease, required_by: [DecreaseStock, DecreaseStockVerified], implemented_by: [InventoryActor] }
+  - { id: PurchaseExpenseRecording, required_by: [RecordPurchaseExpense], implemented_by: [FinancialActor] }
+  - { id: SaleProductResolution, required_by: [ResolveSaleProducts], implemented_by: [SalesActor, ProductCatalogLookup] }
+  - { id: SaleClosing, required_by: [CloseSale], implemented_by: [FinancialActor] }
+  - { id: CustomerSaleAssociation, required_by: [AssociateCustomerToSale], implemented_by: [SalesActor] }
+  - { id: OperatorAuthorization, required_by: [AuthorizeOperatorIntent], implemented_by: [IdentityActor] }
+  - { id: FiscalIssuance, required_by: [IssueSaleInvoice], implemented_by: [FiscalActor] }
+  - { id: AccountingRecording, required_by: [RecordAccountingEffect], implemented_by: [AccountingActor] }
+  - { id: PurchaseEvidenceReading, required_by: [], implemented_by: [PurchaseEvidenceReader] }
+  - { id: SaleTerminalReading, required_by: [], implemented_by: [SaleTerminalReader] }
 
 policies:
   - id: ContextIsolation
-    applies_to: [Agent:PurchaseAgent, Agent:InventoryAgent, Agent:FinancialAgent, Agent:SalesAgent]
+    applies_to: [Agent:PurchaseAgent, Agent:InventoryAgent, Agent:FinancialAgent, Agent:SalesAgent, Agent:IdentityAgent, Agent:FiscalAgent, Agent:AccountingAgent]
   - id: IdempotentMutation
-    applies_to: [Action:RegisterPurchase, Action:IncreaseStock, Action:DecreaseStock, Action:DecreaseStockVerified, Action:RecordPurchaseExpense, Action:CloseSale]
-  - id: StockMutationAuthority
-    applies_to: [Entity:Stock, Action:IncreaseStock, Action:DecreaseStock, Action:DecreaseStockVerified]
-  - id: AvailableQuantityPolicy
-    applies_to: [Entity:Stock, Action:DecreaseStock, Action:DecreaseStockVerified]
-  - id: AppendOnlyFinancialLedger
-    applies_to: [Entity:Financial, Action:RecordPurchaseExpense, Action:CloseSale]
-  - id: ResolvedProductsBeforeSaleMutation
-    applies_to: [Entity:Sale, Action:ResolveSaleProducts, Action:DecreaseStock, Action:DecreaseStockVerified]
+    applies_to: [Action:RegisterPurchase, Action:IncreaseStock, Action:DecreaseStock, Action:DecreaseStockVerified, Action:RecordPurchaseExpense, Action:CloseSale, Action:AssociateCustomerToSale, Action:IssueSaleInvoice, Action:RecordAccountingEffect]
+  - { id: StockMutationAuthority, applies_to: [Entity:Stock, Action:IncreaseStock, Action:DecreaseStock, Action:DecreaseStockVerified] }
+  - { id: AvailableQuantityPolicy, applies_to: [Entity:Stock, Action:DecreaseStock, Action:DecreaseStockVerified] }
+  - { id: AppendOnlyFinancialLedger, applies_to: [Entity:Financial, Action:RecordPurchaseExpense, Action:CloseSale] }
+  - { id: ResolvedProductsBeforeSaleMutation, applies_to: [Entity:Sale, Action:ResolveSaleProducts, Action:DecreaseStock, Action:DecreaseStockVerified] }
+  - { id: ActiveOperatorRequired, applies_to: [Entity:User, Action:AuthorizeOperatorIntent] }
+  - { id: StableCustomerAssociation, applies_to: [Entity:Sale, Action:AssociateCustomerToSale] }
+  - { id: InvoiceImmutability, applies_to: [Entity:Invoice, Action:IssueSaleInvoice] }
+  - { id: AppendOnlyAccountingLedger, applies_to: [Entity:AccountingEntry, Action:RecordAccountingEffect] }
 
 invariants:
-  - id: StockNonNegative
-    entity: Stock
-    preserved_by: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
-  - id: StockIdentityStable
-    entity: Stock
-    preserved_by: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
-  - id: PurchaseSingleStockEffect
-    entity: Purchase
-    preserved_by: [RegisterPurchase, IncreaseStock, RecordPurchaseExpense]
-  - id: SaleSingleStockEffect
-    entity: Sale
-    preserved_by: [ResolveSaleProducts, DecreaseStock, DecreaseStockVerified, CloseSale]
-  - id: FinancialAppendOnly
-    entity: Financial
-    preserved_by: [RecordPurchaseExpense, CloseSale]
+  - { id: StockNonNegative, entity: Stock, preserved_by: [IncreaseStock, DecreaseStock, DecreaseStockVerified] }
+  - { id: StockIdentityStable, entity: Stock, preserved_by: [IncreaseStock, DecreaseStock, DecreaseStockVerified] }
+  - { id: PurchaseSingleStockEffect, entity: Purchase, preserved_by: [RegisterPurchase, IncreaseStock, RecordPurchaseExpense] }
+  - { id: SaleSingleStockEffect, entity: Sale, preserved_by: [ResolveSaleProducts, DecreaseStock, DecreaseStockVerified, CloseSale] }
+  - { id: FinancialAppendOnly, entity: Financial, preserved_by: [RecordPurchaseExpense, CloseSale] }
+  - { id: UserAuthorizationState, entity: User, preserved_by: [AuthorizeOperatorIntent] }
+  - { id: SaleCustomerAssociationStable, entity: Sale, preserved_by: [AssociateCustomerToSale] }
+  - { id: InvoiceIdentityStable, entity: Invoice, preserved_by: [IssueSaleInvoice] }
+  - { id: AccountingAppendOnly, entity: AccountingEntry, preserved_by: [RecordAccountingEffect] }
 
 laws:
-  - id: PurchaseCostConservation
-    preserved_by_flows: [purchase-products]
-  - id: PurchaseHappensBeforeStock
-    preserved_by_flows: [purchase-products]
-  - id: SaleResolutionBeforeMutation
-    preserved_by_flows: [process-sale]
+  - { id: PurchaseCostConservation, preserved_by_flows: [purchase-products] }
+  - { id: PurchaseHappensBeforeStock, preserved_by_flows: [purchase-products] }
+  - { id: SaleResolutionBeforeMutation, preserved_by_flows: [process-sale] }
   - id: EventChoreographyIsolation
-    preserved_by_flows: [purchase-products, process-sale]
+    preserved_by_flows: [purchase-products, process-sale, authorize-operator, associate-customer-to-sale, issue-sale-invoice, record-accounting-effect]
 
 constraints:
-  - id: DecreaseWithinAvailableStock
-    constrains: [DecreaseStock, DecreaseStockVerified]
-    protects: [StockNonNegative]
-  - id: PositiveStockMutationQuantity
-    constrains: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
-    protects: [StockNonNegative]
-  - id: PurchaseIdempotencyKey
-    constrains: [RegisterPurchase, IncreaseStock, RecordPurchaseExpense]
-    protects: [PurchaseSingleStockEffect]
-  - id: SaleIdempotencyKey
-    constrains: [ResolveSaleProducts, DecreaseStock, DecreaseStockVerified, CloseSale]
-    protects: [SaleSingleStockEffect]
+  - { id: DecreaseWithinAvailableStock, constrains: [DecreaseStock, DecreaseStockVerified], protects: [StockNonNegative] }
+  - { id: PositiveStockMutationQuantity, constrains: [IncreaseStock, DecreaseStock, DecreaseStockVerified], protects: [StockNonNegative] }
+  - { id: PurchaseIdempotencyKey, constrains: [RegisterPurchase, IncreaseStock, RecordPurchaseExpense], protects: [PurchaseSingleStockEffect] }
+  - { id: SaleIdempotencyKey, constrains: [ResolveSaleProducts, DecreaseStock, DecreaseStockVerified, CloseSale], protects: [SaleSingleStockEffect] }
+  - { id: OneCustomerPerSale, constrains: [AssociateCustomerToSale], protects: [SaleCustomerAssociationStable] }
+  - { id: InvoiceIdentityKey, constrains: [IssueSaleInvoice], protects: [InvoiceIdentityStable] }
+  - { id: AccountingEntryIdentityKey, constrains: [RecordAccountingEffect], protects: [AccountingAppendOnly] }
 
 semantic_alternatives:
   - source: DecreaseStock

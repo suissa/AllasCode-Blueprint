@@ -1,0 +1,6 @@
+name: IssueSaleInvoiceIntent
+kind: intent
+semantic_id: commerce.intent.issue-sale-invoice
+source: ../issue-sale-invoice.yml
+active: true
+flow: issue-sale-invoice

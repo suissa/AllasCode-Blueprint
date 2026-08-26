@@ -1,0 +1,7 @@
+id: AssociateCustomerToSaleIntent
+starts-with: CustomerAssociationRequested
+success: CustomerAssociatedToSale
+failure: Error
+requires:
+  - sale semantic identity
+  - customer semantic identity

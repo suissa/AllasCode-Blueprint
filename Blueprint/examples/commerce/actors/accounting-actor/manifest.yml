@@ -1,0 +1,7 @@
+name: AccountingActor
+kind: actor
+semantic_id: commerce.actor.accounting
+context: Accounting
+actions: [RecordAccountingEffect]
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml
