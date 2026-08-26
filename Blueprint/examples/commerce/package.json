@@ -4,10 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "pretest": "npm run graph:build",
+    "semantic-tests:materialize": "tsx scripts/materialize-semantic-tests.ts",
+    "semantic-tests:validate": "tsx scripts/validate-semantic-tests.ts",
+    "semantic-tests:dashboard": "tsx scripts/build-test-dashboard.ts",
+    "precheck": "npm run semantic-tests:materialize && npm run semantic-tests:validate && npm run semantic-tests:dashboard",
+    "pretest": "npm run graph:build && npm run semantic-tests:materialize && npm run semantic-tests:validate && npm run semantic-tests:dashboard",
     "predemo": "npm run graph:build",
     "demo": "tsx runtime/demo.ts",
-    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts tests/healing.test.ts",
+    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts tests/healing.test.ts tests/semantic-testing.test.ts",
     "check": "tsc --noEmit && npm run graph:validate",
     "graph:validate": "tsx scripts/build-semantic-graph.ts --validate",
     "graph:build": "tsx scripts/build-semantic-graph.ts"
