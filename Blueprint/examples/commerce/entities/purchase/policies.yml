@@ -1,0 +1,13 @@
+policies:
+  idempotency:
+    key: purchase_id
+    duplicate_registration: return-existing-fact
+  evidence:
+    required_for_completion: false
+    preserve_when_present: true
+  side_effects:
+    stock_increase_once: true
+    financial_expense_once: true
+  normalization:
+    allowed_only_in: [validation, self-healing]
+    reversible_only: true

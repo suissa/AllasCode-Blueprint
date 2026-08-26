@@ -1,0 +1,9 @@
+invariants:
+  - purchase_id is immutable
+  - items is not empty
+  - every item quantity > 0
+  - every item unit_price >= 0
+  - total >= 0
+  - completed implies registered
+  - completed implies stock increased exactly once
+  - completed implies purchase expense recorded exactly once

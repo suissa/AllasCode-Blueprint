@@ -1,0 +1,8 @@
+policies:
+  mutation_serialization: per-stock
+  negative_stock: forbidden
+  stock_authority: Stock
+  cross_context_access: events-only
+  duplicate_effects:
+    purchase_id: ignore-after-first-application
+    sale_id: ignore-after-first-application

@@ -1,0 +1,5 @@
+participates_in:
+  - flow: PurchaseProductsIntent
+    role: acquired-item
+  - flow: ProcessSaleIntent
+    role: sold-item

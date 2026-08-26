@@ -1,0 +1,6 @@
+laws:
+  AppendOnlyLedger: recorded(entry) implies future ledger contains the same immutable entry
+  PurchaseExpenseOnce: count(purchase-expense where reference_id = purchase_id) <= 1
+  SaleRevenueOnce: count(sale-revenue where reference_id = sale_id) <= 1
+  ProjectionDerivation: balance_projection = fold(entries)
+  ContextIsolation: Financial never mutates Purchase, Sale, Stock or Product state directly

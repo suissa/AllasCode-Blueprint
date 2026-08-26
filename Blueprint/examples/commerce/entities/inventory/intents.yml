@@ -1,0 +1,7 @@
+intents:
+  - id: IncreaseInventory
+    goal: reflect an accepted inbound stock fact
+  - id: DecreaseInventory
+    goal: reflect an accepted outbound stock fact
+  - id: QueryInventory
+    goal: project current stock without mutating it

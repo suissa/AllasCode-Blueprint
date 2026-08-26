@@ -1,0 +1,5 @@
+invariants:
+  - supplier_id is immutable
+  - name is not empty
+  - status is one of [active, inactive]
+  - disabling a supplier never deletes purchase history

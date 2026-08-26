@@ -1,0 +1,7 @@
+stock_id: SemanticId
+inventory_id: SemanticId
+product_id: SemanticId
+quantity: NonNegativeNumber
+unit: UnitOfMeasure
+version: NonNegativeInteger
+updated_at: DateTime

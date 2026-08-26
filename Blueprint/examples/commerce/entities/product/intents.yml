@@ -1,0 +1,7 @@
+intents:
+  - id: RegisterProduct
+    goal: establish product identity and catalog information
+  - id: UpdateProductCatalog
+    goal: change descriptive or commercial catalog data
+  - id: DisableProduct
+    goal: stop new commercial use without deleting history

@@ -1,0 +1,7 @@
+policies:
+  concurrency: optimistic-or-serialized-per-stock
+  quantity_floor: 0
+  idempotency:
+    inbound_key: purchase_id
+    outbound_key: sale_id
+  mutation_authority: InventoryActor

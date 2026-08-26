@@ -1,0 +1,14 @@
+id: Financial
+kind: Entity
+semantic_id: commerce.entity.financial
+identity: ledger_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  purchases: Purchase[*]
+  sales: Sale[*]
+  payments: Payment[*]

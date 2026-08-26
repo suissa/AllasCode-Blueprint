@@ -1,0 +1,6 @@
+ledger_id: SemanticId
+currency: Currency
+entries: LedgerEntryList
+balance_projection: CurrencyAmount
+version: NonNegativeInteger
+updated_at: DateTime

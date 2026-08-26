@@ -1,0 +1,14 @@
+id: Product
+kind: Entity
+semantic_id: commerce.entity.product
+identity: product_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  stock: Stock[0..1]
+  purchases: Purchase[*]
+  sales: Sale[*]

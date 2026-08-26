@@ -1,0 +1,13 @@
+id: Inventory
+kind: Entity
+semantic_id: commerce.entity.inventory
+identity: inventory_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  stocks: Stock[*]
+  products: Product[*]

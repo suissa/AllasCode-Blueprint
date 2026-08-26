@@ -1,0 +1,6 @@
+laws:
+  IdempotentRegistration: register(Purchase, same purchase_id) creates at most one Purchase fact
+  SingleStockEffect: PurchaseCompleted implies count(StockIncrease by purchase_id) = 1
+  SingleFinancialEffect: PurchaseCompleted implies count(PurchaseExpense by purchase_id) = 1
+  CausalOrder: PurchaseCompleted implies PurchaseRegistered happened-before StockIncreased happened-before PurchaseCompleted
+  ConservationOfCost: Purchase.total = sum(items.quantity * items.unit_price)

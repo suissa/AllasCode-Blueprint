@@ -1,0 +1,7 @@
+invariants:
+  - sale_id is immutable
+  - amount >= 0
+  - completed implies products-resolved
+  - completed implies stock decreased exactly once
+  - completed implies sale revenue recorded exactly once
+  - resolved products total must be compatible with identified sale amount under configured pricing tolerance

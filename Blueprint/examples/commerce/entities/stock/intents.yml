@@ -1,0 +1,7 @@
+intents:
+  - id: IncreaseStock
+    goal: add accepted inbound quantity to a product stock
+  - id: DecreaseStock
+    goal: subtract accepted outbound quantity without crossing zero
+  - id: ObserveStock
+    goal: expose current quantity as a projection

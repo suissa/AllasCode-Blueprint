@@ -1,0 +1,7 @@
+participates_in:
+  - flow: PurchaseProductsIntent
+    mutation: increase
+    correlation_key: purchase_id
+  - flow: ProcessSaleIntent
+    mutation: decrease
+    correlation_key: sale_id

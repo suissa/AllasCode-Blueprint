@@ -1,0 +1,6 @@
+invariants:
+  - product_id is immutable
+  - name is not empty
+  - Product never stores authoritative stock quantity
+  - sale_price when present is >= 0
+  - status is one of [active, inactive]
