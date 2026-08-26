@@ -1,8 +1,10 @@
 import type { ApplicationApi, ApiPrincipal } from '../../api/application-api.js';
 
 export type NormalizedWhatsAppMessage={
-  provider:'evolution-go';instance:string;message_id:string;from:string;timestamp?:string;push_name?:string;
-  kind:'text'|'image'|'audio'|'document'|'unknown';text?:string;media?:Record<string,unknown>;raw:unknown;
+  provider:'evolution-go';instance:string;message_id:string;from:string;
+  timestamp?:string|undefined;push_name?:string|undefined;
+  kind:'text'|'image'|'audio'|'document'|'unknown';
+  text?:string|undefined;media?:Record<string,unknown>|undefined;raw:unknown;
 };
 export type DeliveryRecord={message_id:string;event:string;at:string;raw:unknown};
 export interface MessageIdStore{has(id:string):boolean;add(id:string):void;}
