@@ -12,3 +12,8 @@ strategies:
     message_regex: '(missing|required|ambiguous|unknown|resolve|identify|evidence|at least one product)'
     resume_ttl_ms: 86400000
     required_context: [original-event, original-payload, action-error, action-governance, correlation-id]
+
+fallbacks:
+  - source: DecreaseStock
+    target: DecreaseStockVerified
+    when_strategy: RetryTransientFailure
