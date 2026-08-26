@@ -1,0 +1,14 @@
+id: Invoice
+identity: invoice_id
+properties:
+  invoice_id: SemanticId
+  sale_id: SemanticId
+  amount: CurrencyAmount
+  issued_at: DateTime
+  status: InvoiceStatus
+states: [pending, issued, cancelled]
+invariants:
+  - invoice_id is immutable
+  - amount >= 0
+  - an issued invoice must reference a sale
+  - a cancelled invoice cannot become issued again
