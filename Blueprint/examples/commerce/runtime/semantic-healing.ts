@@ -4,7 +4,7 @@ import { InMemoryHealingStore, type HealingCase } from './healing-store.js';
 
 export type HealingDecision =
   | { kind: 'Retry'; reason: string; strategy: string; max_attempts: number; timeout_ms: number; backoff_ms: number }
-  | { kind: 'Alternative'; reason: string; agent: string; action: string; relation: 'FALLBACK_TO'; strategy?: string }
+  | { kind: 'Alternative'; reason: string; agent: string; action: string; relation: 'FALLBACK_TO' }
   | { kind: 'Human'; reason: string; strategy: string; required_context: string[]; resume_ttl_ms: number; case?: HealingCase }
   | { kind: 'Terminal'; reason: string };
 
@@ -43,7 +43,7 @@ function declaredErrorEvent(graph: SemanticGraph, action: string): string {
   return edge ? label(edge.to) : 'Error';
 }
 
-export function findSemanticFallback(graph: SemanticGraph, action: string, error: ActionError): { agent: string; action: string; strategy?: string } | undefined {
+export function findSemanticFallback(graph: SemanticGraph, action: string, error: ActionError): { agent: string; action: string } | undefined {
   const source = `Action:${action}`;
   const candidates = graph.edges.filter(edge => edge.type === 'FALLBACK_TO' && edge.from === source);
   for (const edge of candidates) {
@@ -55,7 +55,7 @@ export function findSemanticFallback(graph: SemanticGraph, action: string, error
     }
     const owner = graph.edges.find(candidate => candidate.type === 'ACTION_OWNER' && candidate.from === edge.to)?.to;
     if (!owner) continue;
-    return { agent: label(owner), action: label(edge.to), ...(strategyName ? { strategy: strategyName } : {}) };
+    return { agent: label(owner), action: label(edge.to) };
   }
   return undefined;
 }
@@ -81,7 +81,7 @@ export function diagnoseHealing(graph: SemanticGraph, context: HealingContext): 
   }
 
   const fallback = findSemanticFallback(graph, context.action, context.error);
-  if (fallback) return { kind: 'Alternative', reason: 'Graph-declared fallback preserves the source Action semantic contract.', agent: fallback.agent, action: fallback.action, relation: 'FALLBACK_TO', strategy:fallback.strategy };
+  if (fallback) return { kind: 'Alternative', reason: 'Graph-declared fallback preserves the source Action semantic contract.', agent: fallback.agent, action: fallback.action, relation: 'FALLBACK_TO' };
 
   const human = strategies.find(node => node.metadata?.kind === 'human');
   if (human) return {
@@ -133,7 +133,7 @@ export async function executeWithSemanticHealing(
   }
 
   if (decision.kind === 'Alternative' && executeAlternative) {
-    store?.audit({ kind:'fallback', agent:activeAgent, action:activeAction, detail:`${activeAction} -> ${decision.action} via ${decision.strategy ?? 'FALLBACK_TO'}` });
+    store?.audit({ kind:'fallback', agent:activeAgent, action:activeAction, detail:`${activeAction} -> ${decision.action}` });
     activeAgent = decision.agent;
     activeAction = decision.action;
     attempts += 1;
