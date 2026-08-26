@@ -1,4 +1,4 @@
-name: SellProductsIntent
+name: SellProducts
 kind: intent
 semantic_id: commerce.intent.sell-products
 source: ../sell-products.yml
