@@ -3,10 +3,11 @@ import type { SemanticGraph, SemanticGraphEdge } from './semantic-graph.js';
 import { AgentRuntime } from './agent-runtime.js';
 import { InMemoryEventBus } from './event-bus.js';
 import { executeWithSemanticHealing } from './semantic-healing.js';
+import { InMemoryHealingStore } from './healing-store.js';
 
 function label(id: string): string { const separator = id.indexOf(':'); return separator >= 0 ? id.slice(separator + 1) : id; }
 function order(edge: SemanticGraphEdge): number { return Number(edge.metadata?.order ?? 0); }
-function flowContract(graph: SemanticGraph, flowName: string): { intent: string; initialEvent: string; terminalEvent: string } {
+function flowContract(graph: SemanticGraph, flowName: string): { flow: string; intent: string; initialEvent: string; terminalEvent: string } {
   const flowId = `Flow:${flowName}`;
   if (!graph.nodes.some(node => node.id === flowId)) throw new Error(`Flow not found in Semantic Graph: ${flowName}`);
   const intentEdge = graph.edges.find(edge => edge.type === 'IMPLEMENTS_INTENT' && edge.from === flowId);
@@ -15,15 +16,75 @@ function flowContract(graph: SemanticGraph, flowName: string): { intent: string;
   const terminal = graph.edges.filter(edge => edge.type === 'FLOW_EXPECTS_EVENT' && edge.from === flowId).sort((a, b) => order(a) - order(b)).at(-1);
   if (!initial) throw new Error(`Flow ${flowName} has no initial Event`);
   if (!terminal) throw new Error(`Flow ${flowName} has no terminal Event`);
-  return { intent: label(intentEdge.to), initialEvent: label(initial.to), terminalEvent: label(terminal.to) };
+  return { flow: flowName, intent: label(intentEdge.to), initialEvent: label(initial.to), terminalEvent: label(terminal.to) };
+}
+function contractForIntent(graph: SemanticGraph, intent: string) {
+  const edge = graph.edges.find(candidate => candidate.type === 'IMPLEMENTS_INTENT' && candidate.to === `Intent:${intent}`);
+  if (!edge) throw new Error(`No Flow implements Intent ${intent}`);
+  return flowContract(graph, label(edge.from));
+}
+function correlationId(payload: unknown, intent: string, action: string): string {
+  if (payload && typeof payload === 'object') {
+    const value = payload as Record<string, unknown>;
+    for (const key of ['correlation_id','idempotency_key','sale_id','purchase_id','invoice_id','accounting_entry_id','user_id']) {
+      if (typeof value[key] === 'string' && value[key]) return `${intent}:${action}:${value[key]}`;
+    }
+  }
+  return `${intent}:${action}`;
+}
+function mergeHumanPayload(original: unknown, human: unknown): unknown {
+  if (original && human && typeof original === 'object' && typeof human === 'object' && !Array.isArray(original) && !Array.isArray(human)) return { ...(original as Record<string,unknown>), ...(human as Record<string,unknown>) };
+  return human ?? original;
 }
 
 export class FlowRuntime {
-  constructor(private readonly state: CommerceState, private readonly agents: AgentRuntime, readonly events: InMemoryEventBus, private readonly graph: SemanticGraph) {}
+  readonly healingStore: InMemoryHealingStore;
+
+  constructor(
+    private readonly state: CommerceState,
+    private readonly agents: AgentRuntime,
+    readonly events: InMemoryEventBus,
+    private readonly graph: SemanticGraph,
+    healingStore?: InMemoryHealingStore,
+  ) { this.healingStore = healingStore ?? new InMemoryHealingStore(); }
 
   async execute(flowName: string, initialPayload: unknown): Promise<ExecutionReport> {
     const contract = flowContract(this.graph, flowName);
-    const queue: Array<{ event: string; payload: unknown }> = [{ event: contract.initialEvent, payload: initialPayload }];
+    return this.runQueue(contract, [{ event: contract.initialEvent, payload: initialPayload }], initialPayload);
+  }
+
+  async resume(caseId: string, resumeToken: string, humanPayload: unknown): Promise<ExecutionReport> {
+    const healingCase = this.healingStore.consumeResume(caseId, resumeToken);
+    const contract = contractForIntent(this.graph, healingCase.intent);
+    const correctedPayload = mergeHumanPayload(healingCase.original_payload, humanPayload);
+    const context = { state: this.state, payload: correctedPayload };
+    const healing = await executeWithSemanticHealing(
+      this.graph,
+      healingCase.agent,
+      healingCase.action,
+      () => Promise.resolve(this.agents.execute(healingCase.agent, healingCase.action, context)),
+      (alternativeAgent, alternativeAction) => Promise.resolve(this.agents.execute(alternativeAgent, alternativeAction, context)),
+      {
+        intent: healingCase.intent,
+        original_event: healingCase.original_event,
+        original_payload: correctedPayload,
+        correlation_id: healingCase.correlation_id,
+        store: this.healingStore,
+      },
+    );
+    if (healing.result.status === 'Error') {
+      this.events.emit(healing.result.event, healing.result.payload);
+      return { status:'Error', intent:healingCase.intent, last_event:healing.result.event, payload:{ ...healing.result.payload, healing:healing.decision } };
+    }
+    return this.runQueue(contract, [{ event: healing.result.event, payload: healing.result.payload }], correctedPayload);
+  }
+
+  private async runQueue(
+    contract: { flow:string; intent:string; initialEvent:string; terminalEvent:string },
+    initialQueue: Array<{ event:string; payload:unknown }>,
+    initialPayload: unknown,
+  ): Promise<ExecutionReport> {
+    const queue = [...initialQueue];
     let terminalPayload: unknown = initialPayload;
     let terminalSeen = false;
     let lastEvent: string | undefined;
@@ -50,6 +111,13 @@ export class FlowRuntime {
           action,
           () => Promise.resolve(this.agents.execute(agent, action, context)),
           (alternativeAgent, alternativeAction) => Promise.resolve(this.agents.execute(alternativeAgent, alternativeAction, context)),
+          {
+            intent: contract.intent,
+            original_event: message.event,
+            original_payload: message.payload,
+            correlation_id: correlationId(message.payload, contract.intent, action),
+            store: this.healingStore,
+          },
         );
         const result = healing.result;
         if (result.status === 'Error') {

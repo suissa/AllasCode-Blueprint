@@ -1,12 +1,13 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { compileRuntimeSemanticGraph } from '../runtime/runtime-graph.js';
+import { enrichHealingGraph } from '../runtime/healing-graph.js';
 import { compileSemanticTests } from '../runtime/test-graph.js';
 import { governSemanticGraph } from '../runtime/semantic-governor.js';
 
 const root = join(import.meta.dirname, '..');
 const strictEvidence = process.argv.includes('--strict-evidence');
-const graph = await compileRuntimeSemanticGraph(root);
+const graph = await enrichHealingGraph(root, await compileRuntimeSemanticGraph(root));
 const testErrors = await compileSemanticTests(root, graph);
 const governance = governSemanticGraph(graph);
 
@@ -45,10 +46,12 @@ for (const flow of nodes('Flow')) {
 if (!blocking.some(e => e.includes('Intent') || e.includes('Flow:') || e.includes('STARTS_WITH') || e.includes('SUCCEEDS_WITH'))) passed.push('Every configured Flow resolves to one typed active Intent with aligned initial and success events.');
 
 const activeIntentIds = new Set(graph.edges.filter(edge => edge.type === 'IMPLEMENTS_INTENT').map(edge => edge.to));
-for (const intent of nodes('Intent')) {
-  if (!activeIntentIds.has(intent.id)) blocking.push(`${intent.id} is not implemented by a configured Flow; inactive/legacy Intents are forbidden in the frozen v1 graph.`);
-}
+for (const intent of nodes('Intent')) if (!activeIntentIds.has(intent.id)) blocking.push(`${intent.id} is not implemented by a configured Flow; inactive/legacy Intents are forbidden in the frozen v1 graph.`);
 if (!blocking.some(e => e.includes('inactive/legacy Intents'))) passed.push('Every v1 Intent is active and implemented by a configured Flow; legacy contracts are excluded from the executable graph.');
+
+const healingStrategies = nodes('HealingStrategy');
+if (healingStrategies.length === 0) blocking.push('v1 requires graph-declared HealingStrategy nodes.');
+else if (healingStrategies.every(strategy => incoming(strategy.id, 'HEALED_BY').length > 0)) passed.push(`Semantic healing is graph-declared (${healingStrategies.length} strategies) and startup-governed.`);
 
 const forbiddenDirect = graph.edges.filter(edge => {
   const from = graph.nodes.find(node => node.id === edge.from);
@@ -86,7 +89,7 @@ const report = {
   version: '1.0-candidate',
   mode: strictEvidence ? 'strict-evidence' : 'structural',
   status: blocking.length ? 'FAILED' : 'CANDIDATE_VALID',
-  summary: { nodes: graph.nodes.length, edges: graph.edges.length, actions: nodes('Action').length, flows: nodes('Flow').length, intents: nodes('Intent').length, governance_evidence: `${evidenceProved}/${evidenceRequired}`, blocking: blocking.length, warnings: warnings.length },
+  summary: { nodes: graph.nodes.length, edges: graph.edges.length, actions: nodes('Action').length, flows: nodes('Flow').length, intents: nodes('Intent').length, healing_strategies: healingStrategies.length, governance_evidence: `${evidenceProved}/${evidenceRequired}`, blocking: blocking.length, warnings: warnings.length },
   passed, blocking, warnings,
 };
 await mkdir(join(root,'tests','dashboard'),{recursive:true});

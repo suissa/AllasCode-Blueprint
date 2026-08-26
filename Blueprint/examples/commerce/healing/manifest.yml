@@ -1,0 +1,9 @@
+id: SemanticHealing
+kind: RuntimeCapability
+semantic_id: commerce.runtime.semantic-healing
+config: ./config.yml
+contracts:
+  decisions: [Retry, Alternative, Human, Terminal]
+  normalization: reversible-only
+  audit: required
+  resume: idempotent

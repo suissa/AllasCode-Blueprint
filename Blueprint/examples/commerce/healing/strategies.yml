@@ -1,0 +1,19 @@
+strategies:
+  - id: RetryTransientFailure
+    kind: retry
+    applies_to: [RegisterPurchase, IncreaseStock, DecreaseStock, DecreaseStockVerified, RecordPurchaseExpense, ResolveSaleProducts, CloseSale, AssociateCustomerToSale, AuthorizeOperatorIntent, IssueSaleInvoice, RecordAccountingEffect]
+    message_regex: '(transient|timeout|temporar|unavailable|busy)'
+    max_attempts: 2
+    timeout_ms: 1500
+    backoff_ms: 25
+  - id: HumanMissingInformation
+    kind: human
+    applies_to: [RegisterPurchase, ResolveSaleProducts, AssociateCustomerToSale, IssueSaleInvoice]
+    message_regex: '(missing|required|ambiguous|unknown|resolve|identify|evidence|at least one product)'
+    resume_ttl_ms: 86400000
+    required_context: [original-event, original-payload, action-error, action-governance, correlation-id]
+
+fallbacks:
+  - source: DecreaseStock
+    target: DecreaseStockVerified
+    when_strategy: RetryTransientFailure
