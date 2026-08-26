@@ -1,0 +1,7 @@
+name: AccountingAgent
+kind: agent
+semantic_id: commerce.agent.accounting
+context: ../../contexts/accounting.yml
+actor: ../../actors/accounting-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml
