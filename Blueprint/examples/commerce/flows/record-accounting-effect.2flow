@@ -1,0 +1,6 @@
+RecordAccountingEffectIntent
+-> SaleInvoiceIssued
+->> AccountingAgent.RecordAccountingEffect
+<- AccountingEffectRecorded
+
+RecordAccountingEffect.Error -> Error

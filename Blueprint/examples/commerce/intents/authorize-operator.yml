@@ -1,0 +1,6 @@
+id: AuthorizeOperatorIntent
+starts-with: AuthorizeOperatorRequested
+success: OperatorAuthorized
+failure: Error
+requires:
+  - operator semantic identity

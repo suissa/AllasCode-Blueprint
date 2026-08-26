@@ -1,0 +1,6 @@
+name: AuthorizeOperatorIntent
+kind: intent
+semantic_id: commerce.intent.authorize-operator
+source: ../authorize-operator.yml
+active: true
+flow: authorize-operator
