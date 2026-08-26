@@ -1,0 +1,15 @@
+name: SellProducts
+semantic_id: commerce.intent.sell-products
+status: archived
+replaced_by: ProcessSaleIntent
+archive_reason: legacy intent superseded by the typed executable v1 ProcessSaleIntent contract
+purpose: resolve_detected_sale_products_commit_stock_and_close_sale
+starts_when: SaleDetected
+requires:
+  - detected_sale
+  - merchant_product_identification
+succeeds_when:
+  - SaleResolved
+  - StockExitCommitted
+  - SaleClosed
+flow: ../flows/sale-products.2flow
