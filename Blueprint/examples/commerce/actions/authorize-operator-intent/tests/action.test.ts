@@ -5,7 +5,6 @@ import { authorizeOperatorIntent } from '../implementation/implementation.js';
 const actionDir = join(import.meta.dirname, '..');
 defineActionTests({
   name: 'AuthorizeOperatorIntent',
-  semantic_id: 'commerce.action.authorize-operator-intent',
   manifest: { name: 'AuthorizeOperatorIntent', semantic_id: 'commerce.action.authorize-operator-intent', results: { Ok: 'OperatorAuthorized', Error: 'OperatorAuthorizationError' } },
   implementation: authorizeOperatorIntent,
   actionDir,
