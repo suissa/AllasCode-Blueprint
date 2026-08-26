@@ -3,40 +3,27 @@ import { AgentRuntime } from './agent-runtime.js';
 import { ToolRegistry } from './tool-registry.js';
 import { ActionRegistry } from './action-registry.js';
 import { commerceRoot } from './bootstrap.js';
-import { loadSemanticArchitecture } from './semantic-loader.js';
-import { assertSemanticArchitecture, validateSemanticArchitecture } from './semantic-validator.js';
+import { loadCompiledSemanticGraph, projectRuntimeFromGraph } from './runtime-graph.js';
 
 export async function createExecutionKernel() {
-  const definitions = await loadSemanticArchitecture(commerceRoot);
-  const validation = await validateSemanticArchitecture(commerceRoot, definitions);
-  assertSemanticArchitecture(validation);
+  const graph = await loadCompiledSemanticGraph(commerceRoot);
+  const projection = await projectRuntimeFromGraph(commerceRoot, graph);
 
   const actions = new ActionRegistry();
-  for (const definition of definitions.actions) {
-    actions.register(definition.ownerAgent, definition.manifest, definition.implementation);
+  for (const definition of projection.actions) {
+    actions.register(definition.agent, definition.manifest, definition.implementation);
   }
 
   const tools = new ToolRegistry();
-  for (const definition of definitions.tools) {
+  for (const definition of projection.tools) {
     tools.register(definition.name, definition.ok, definition.error, definition.implementation);
   }
 
   const actors = new ActorSystem(actions);
-  for (const definition of definitions.actors) {
-    const owner = definitions.agents.find(agent => agent.actor === definition.name);
-    if (!owner) throw new Error(`No Agent owns actor ${definition.name}`);
-    actors.register({
-      name: definition.name,
-      agent: owner.name,
-      actions: definition.actions,
-      mailboxCapacity: definition.mailboxCapacity,
-    });
-  }
+  for (const definition of projection.actors) actors.register(definition);
 
   const agents = new AgentRuntime(actors, tools);
-  for (const definition of definitions.agents) {
-    agents.register(definition);
-  }
+  for (const definition of projection.agents) agents.register(definition);
 
-  return { actions, tools, actors, agents, definitions, validation };
+  return { graph, projection, actions, tools, actors, agents };
 }

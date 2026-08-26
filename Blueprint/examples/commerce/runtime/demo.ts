@@ -1,5 +1,3 @@
-import { join } from 'node:path';
-import { commerceRoot } from './bootstrap.js';
 import { createExecutionKernel } from './execution-kernel.js';
 import { InMemoryEventBus } from './event-bus.js';
 import { FlowRuntime } from './flow-runtime.js';
@@ -9,7 +7,7 @@ import type { PurchaseInput, SaleInput } from './types.js';
 const state = createCommerceState();
 const kernel = await createExecutionKernel();
 const bus = new InMemoryEventBus();
-const runtime = new FlowRuntime(state, kernel.agents, bus);
+const runtime = new FlowRuntime(state, kernel.agents, bus, kernel.graph);
 
 const purchase: PurchaseInput = {
   purchase_id: 'purchase-001',
@@ -22,7 +20,7 @@ const purchase: PurchaseInput = {
   ],
 };
 
-const purchaseResult = await runtime.execute(join(commerceRoot, 'flows', 'purchase-products.2flow'), purchase);
+const purchaseResult = await runtime.execute('purchase-products', purchase);
 console.log('\nPURCHASE RESULT');
 console.dir(purchaseResult, { depth: null });
 console.log('\nSTATE AFTER PURCHASE');
@@ -37,7 +35,7 @@ const sale: SaleInput = {
   ],
 };
 
-const saleResult = await runtime.execute(join(commerceRoot, 'flows', 'process-sale.2flow'), sale);
+const saleResult = await runtime.execute('process-sale', sale);
 console.log('\nSALE RESULT');
 console.dir(saleResult, { depth: null });
 console.log('\nFINAL STATE');

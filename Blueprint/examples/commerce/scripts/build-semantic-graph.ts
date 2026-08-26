@@ -1,11 +1,12 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compileSemanticGraph, validateSemanticGraph } from '../runtime/semantic-graph.js';
+import { compileRuntimeSemanticGraph } from '../runtime/runtime-graph.js';
+import { validateSemanticGraph } from '../runtime/semantic-graph.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
-const graph = await compileSemanticGraph(root);
+const graph = await compileRuntimeSemanticGraph(root);
 const errors = validateSemanticGraph(graph);
 if (errors.length) throw new Error(errors.join('\n'));
 

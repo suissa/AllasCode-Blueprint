@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "pretest": "npm run graph:build",
+    "predemo": "npm run graph:build",
     "demo": "tsx runtime/demo.ts",
     "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts",
     "check": "tsc --noEmit && npm run graph:validate",
