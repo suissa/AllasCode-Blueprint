@@ -7,6 +7,7 @@ export interface HealingCase {
   agent: string;
   action: string;
   original_event: string;
+  original_payload: unknown;
   original_payload_hash: string;
   error_event: string;
   error_message: string;
@@ -35,12 +36,13 @@ export class InMemoryHealingStore {
   audit(entry: Omit<HealingAuditEntry,'at'>): void { this.audits.push({ at: new Date().toISOString(), ...entry }); }
   auditLog(): readonly HealingAuditEntry[] { return this.audits; }
   listPending(): HealingCase[] { return [...this.cases.values()].filter(value => value.status === 'pending-human'); }
+  get(caseId: string): HealingCase | undefined { return this.cases.get(caseId); }
 
-  escalate(input: Omit<HealingCase,'id'|'resume_token'|'created_at'|'expires_at'|'status'|'attempts'>, ttlMs: number): HealingCase {
+  escalate(input: Omit<HealingCase,'id'|'resume_token'|'created_at'|'expires_at'|'status'|'attempts'|'original_payload_hash'>, ttlMs: number): HealingCase {
     const existing = [...this.cases.values()].find(value => value.correlation_id === input.correlation_id && value.action === input.action && value.status === 'pending-human');
     if (existing) return existing;
     const now = Date.now();
-    const value: HealingCase = { ...input, id: randomUUID(), resume_token: randomUUID(), created_at: new Date(now).toISOString(), expires_at: new Date(now + ttlMs).toISOString(), status: 'pending-human', attempts: 0 };
+    const value: HealingCase = { ...input, original_payload_hash:this.hash(input.original_payload), id: randomUUID(), resume_token: randomUUID(), created_at: new Date(now).toISOString(), expires_at: new Date(now + ttlMs).toISOString(), status: 'pending-human', attempts: 0 };
     this.cases.set(value.id, value);
     this.audit({ kind:'human-escalation', case_id:value.id, agent:value.agent, action:value.action, detail:value.error_message });
     return value;
