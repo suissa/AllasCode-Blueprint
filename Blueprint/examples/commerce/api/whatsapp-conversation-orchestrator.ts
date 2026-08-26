@@ -1,4 +1,5 @@
 import type { ApiPrincipal, IntentRuntime } from './application-api.js';
+import type { MessageUnderstandingPort, UnderstandingResult } from './whatsapp-semantic-understanding.js';
 
 export type WhatsAppMessageKind='text'|'image'|'audio'|'document'|'unknown';
 export type WhatsAppInboundMessage={
@@ -66,6 +67,13 @@ function mergeContext(context:Record<string,unknown>,message:WhatsAppInboundMess
   const evidence=message.kind!=='text'&&message.kind!=='unknown'?{kind:message.kind,media:message.media,provider_message_id:message.message_id}:undefined;
   return {...context,...(parsed??{}),...(evidence?{purchase_evidence:evidence}:{})};
 }
+function mergeUnderstanding(context:Record<string,unknown>,result:UnderstandingResult):Record<string,unknown>{
+  const refs=Array.isArray(context.extraction_evidence)?context.extraction_evidence as unknown[]:[];
+  return {...context,...result.candidates,...(result.evidence?{extraction_evidence:[...refs,{evidence_id:result.evidence.evidence_id,message_id:result.evidence.message_id,kind:result.evidence.kind,confidence:result.evidence.confidence}]}:{})};
+}
+function pendingUnderstanding(context:Record<string,unknown>,result:UnderstandingResult):Record<string,unknown>{
+  return {...context,pending_extraction:{candidates:result.candidates,confidence:result.confidence,ambiguities:result.ambiguities,evidence_id:result.evidence?.evidence_id}};
+}
 function semanticReply(result:{outcome:'Ok'|'Error';data?:unknown;error?:{code:string;message:string}}):string{
   if(result.outcome==='Error')return `Não consegui concluir: ${result.error?.message??'resultado semântico inválido'}. Vou manter o contexto para correção.`;
   const data=result.data as any;
@@ -82,6 +90,7 @@ export class WhatsAppConversationOrchestrator implements IntentRuntime{
     private readonly principal:ApiPrincipal,
     private readonly timeoutMs=30*60*1000,
     private readonly clock:Clock={now:()=>new Date()},
+    private readonly understanding?:MessageUnderstandingPort,
   ){}
 
   async execute(input:{intent:string;payload:unknown;correlation_id:string;idempotency_key:string;principal_id:string}):Promise<{outcome:'Ok'|'Error';data?:unknown;error?:{code:string;message:string}}>{
@@ -95,9 +104,18 @@ export class WhatsAppConversationOrchestrator implements IntentRuntime{
     if(session&&Date.parse(session.expires_at)<=now.getTime())session=undefined;
     if(!session)session={id,participant:canonicalParticipant(message.from),instance:message.instance,mode:'idle',status:'active',context:{},turns:[],updated_at:now.toISOString(),expires_at:new Date(now.getTime()+this.timeoutMs).toISOString()};
     session.turns.push({direction:'inbound',message_id:message.message_id,text:message.text,kind:message.kind,at:now.toISOString()});
-    session.context=mergeContext(session.context,message);
-    if(session.mode==='idle'&&message.text)session.mode=initialMode(message.text);
 
+    if(this.understanding){
+      const understood=await this.understanding.understand(message);
+      if(understood.requires_confirmation&&Object.keys(understood.candidates).length>0){
+        session.context=pendingUnderstanding(session.context,understood);
+        if(session.mode==='idle'&&message.text)session.mode=initialMode(message.text);
+        return this.clarify(session,input.correlation_id,understood.confirmation_prompt??'Preciso confirmar os dados extraídos antes de continuar.');
+      }
+      session.context=mergeUnderstanding(session.context,understood);
+    }else session.context=mergeContext(session.context,message);
+
+    if(session.mode==='idle'&&message.text)session.mode=initialMode(message.text);
     if(session.mode==='idle')return this.clarify(session,input.correlation_id,'Preciso saber a intenção: esta conversa é sobre uma compra de fornecedor ou sobre uma venda?');
     const missing=session.mode==='purchase'?missingPurchase(session.context):missingSale(session.context);
     if(missing.length)return this.clarify(session,input.correlation_id,`Falta contexto para continuar: ${missing.join('; ')}. Envie esses dados; não vou inventá-los.`);
