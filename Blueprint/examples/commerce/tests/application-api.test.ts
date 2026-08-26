@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {ApplicationApi} from '../api/application-api.js';
+const principal={id:'operator-1',permissions:['*']};
+const access={allows:()=>true};
+
+test('command addresses Intent and propagates correlation/idempotency',async()=>{let seen:any;const api=new ApplicationApi({execute:async x=>(seen=x,{outcome:'Ok',data:{accepted:true}})}, {read:async()=>[]}, access);const r=await api.command({intent:'ProcessSaleIntent',payload:{sale_id:'s1'},correlation_id:'c1',idempotency_key:'i1',principal});assert.equal(r.outcome,'Ok');assert.equal(seen.intent,'ProcessSaleIntent');assert.equal(seen.correlation_id,'c1');assert.equal(seen.idempotency_key,'i1');});
+test('missing idempotency never reaches runtime',async()=>{let calls=0;const api=new ApplicationApi({execute:async()=>{calls++;return {outcome:'Ok'}}},{read:async()=>[]},access);const r=await api.command({intent:'X',payload:{},correlation_id:'c',idempotency_key:'',principal});assert.equal(r.outcome,'Error');assert.equal(calls,0);});
+test('authorization is enforced at boundary',async()=>{let calls=0;const api=new ApplicationApi({execute:async()=>{calls++;return {outcome:'Ok'}}},{read:async()=>[]},{allows:()=>false});const r=await api.command({intent:'X',payload:{},correlation_id:'c',idempotency_key:'i',principal});assert.equal(r.error?.code,'FORBIDDEN');assert.equal(calls,0);});
+test('semantic Error is preserved',async()=>{const api=new ApplicationApi({execute:async()=>({outcome:'Error',error:{code:'INVALID_SALE',message:'invalid'}})},{read:async()=>[]},access);const r=await api.command({intent:'ProcessSaleIntent',payload:{},correlation_id:'c',idempotency_key:'i',principal});assert.deepEqual(r.error,{code:'INVALID_SALE',message:'invalid'});});
+test('queries are paginated and capped',async()=>{let seen:any;const api=new ApplicationApi({execute:async()=>({outcome:'Ok'})},{read:async x=>(seen=x,[])},access,100);const r=await api.query({projection:'sales',page:0,page_size:999,principal,correlation_id:'q1'});assert.equal(r.outcome,'Ok');assert.equal(seen.page,1);assert.equal(seen.page_size,100);});
