@@ -16,6 +16,7 @@
     "selector-confidence": "npm run graph:build && tsx scripts/selector-confidence.ts",
     "semantic-ci-policy": "tsx scripts/semantic-ci-policy.ts",
     "semantic-pr-diff": "tsx scripts/semantic-pr-diff.ts",
+    "semantic-merge-gate": "tsx scripts/semantic-merge-gate.ts",
     "precheck": "npm run semantic-tests:materialize && npm run semantic-tests:validate && npm run semantic-tests:dashboard",
     "predemo": "npm run graph:build",
     "demo": "tsx runtime/demo.ts",
