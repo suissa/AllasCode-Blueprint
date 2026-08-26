@@ -14,7 +14,7 @@ test('runtime architecture is discovered from Blueprint definitions', async () =
   assert.deepEqual(names(architecture.actors), ['FinancialActor', 'InventoryActor', 'PurchaseActor', 'SalesActor']);
   assert.deepEqual(names(architecture.tools), ['ProductCatalogLookup', 'PurchaseEvidenceReader', 'SaleTerminalReader']);
   assert.deepEqual(
-    names(architecture.actions),
+    architecture.actions.map(action => action.manifest.name).sort(),
     ['CloseSale', 'DecreaseStock', 'IncreaseStock', 'RecordPurchaseExpense', 'RegisterPurchase', 'ResolveSaleProducts'],
   );
 
