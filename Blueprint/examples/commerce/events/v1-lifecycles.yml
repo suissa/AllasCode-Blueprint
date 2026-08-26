@@ -1,0 +1,21 @@
+events:
+  AuthorizeOperatorRequested:
+    payload: [user_id]
+  OperatorAuthorized:
+    payload: [user_id]
+  OperatorAuthorizationError:
+    payload: [message]
+  CustomerAssociationRequested:
+    payload: [sale_id, customer_id]
+  CustomerAssociatedToSale:
+    payload: [sale_id, customer_id]
+  CustomerAssociationError:
+    payload: [message]
+  SaleInvoiceIssued:
+    payload: [invoice_id, sale_id, amount, currency]
+  SaleInvoiceIssueError:
+    payload: [message]
+  AccountingEffectRecorded:
+    payload: [accounting_entry_id, source_id, source_type, debit, credit, currency]
+  AccountingEffectRecordError:
+    payload: [message]
