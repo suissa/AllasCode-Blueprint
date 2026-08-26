@@ -48,10 +48,22 @@ function titleKind(kind: string): string {
   return ({ action:'Action', actor:'Actor', agent:'Agent', tool:'Tool', entity:'Entity', flow:'Flow', intent:'Intent', event:'Event' } as Record<string,string>)[kind] ?? kind;
 }
 
-function artifactNode(graph: SemanticGraph, result: TestResultDocument): string | undefined {
+function artifactNode(graph: SemanticGraph, result: TestResultDocument): string {
   const typed = `${titleKind(result.artifact.kind)}:${result.artifact.id}`;
   if (graph.nodes.some(node => node.id === typed)) return typed;
-  return graph.nodes.find(node => node.label === result.artifact.id)?.id;
+  const byLabel = graph.nodes.find(node => node.label === result.artifact.id)?.id;
+  if (byLabel) return byLabel;
+  const artifactId = `Artifact:${result.artifact.kind}:${result.artifact.id}`;
+  ensureNode(graph, {
+    id: artifactId,
+    type: 'Artifact',
+    label: result.artifact.id,
+    metadata: {
+      kind: result.artifact.kind,
+      ...(result.artifact.path ? { path: result.artifact.path } : {}),
+    },
+  });
+  return artifactId;
 }
 
 function governanceNode(graph: SemanticGraph, raw: string): string | undefined {
@@ -67,7 +79,6 @@ export async function compileSemanticTests(root: string, graph: SemanticGraph): 
     catch { errors.push(`${file}: invalid JSON`); continue; }
     errors.push(...validateResult(result, file));
     const artifact = artifactNode(graph, result);
-    if (!artifact) { errors.push(`${file}: artifact ${result.artifact.kind}:${result.artifact.id} not found in Semantic Graph`); continue; }
 
     const key = `${result.artifact.kind}:${result.artifact.id}:${result.test.type}`;
     const testId = `Test:${key}`;
