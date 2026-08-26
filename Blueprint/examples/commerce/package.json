@@ -7,7 +7,7 @@
     "pretest": "npm run graph:build",
     "predemo": "npm run graph:build",
     "demo": "tsx runtime/demo.ts",
-    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts",
+    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts",
     "check": "tsc --noEmit && npm run graph:validate",
     "graph:validate": "tsx scripts/build-semantic-graph.ts --validate",
     "graph:build": "tsx scripts/build-semantic-graph.ts"
