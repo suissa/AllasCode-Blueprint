@@ -42,6 +42,9 @@ jobs:
       - name: SemanticImpact
         run: npm run semantic-impact
 
+      - name: SelectorConfidence
+        run: npm run selector-confidence
+
       - name: SelectiveSemanticTests
         run: npm run test:selective
 
