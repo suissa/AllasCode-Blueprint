@@ -7,20 +7,12 @@
     "pretest": "npm run graph:build",
     "predemo": "npm run graph:build",
     "demo": "tsx runtime/demo.ts",
-    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts",
+    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts tests/semantic-governor.test.ts tests/healing.test.ts",
     "check": "tsc --noEmit && npm run graph:validate",
     "graph:validate": "tsx scripts/build-semantic-graph.ts --validate",
     "graph:build": "tsx scripts/build-semantic-graph.ts"
   },
-  "dependencies": {
-    "yaml": "^2.8.1"
-  },
-  "devDependencies": {
-    "@types/node": "^24.3.0",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
-  },
-  "engines": {
-    "node": ">=20"
-  }
+  "dependencies": { "yaml": "^2.8.1" },
+  "devDependencies": { "@types/node": "^24.3.0", "tsx": "^4.20.5", "typescript": "^5.9.2" },
+  "engines": { "node": ">=20" }
 }
