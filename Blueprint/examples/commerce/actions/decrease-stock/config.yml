@@ -1,0 +1,5 @@
+entity: Inventory
+behavior: Decrease
+property: balances
+constraint: resulting-quantity-non-negative
+self-healing: enabled

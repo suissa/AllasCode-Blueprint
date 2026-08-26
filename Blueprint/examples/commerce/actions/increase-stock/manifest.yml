@@ -1,0 +1,10 @@
+id: IncreaseStock
+kind: Action
+receives: PurchaseRegistered
+emits:
+  Ok: StockIncreased
+  Error: Error
+schema:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml

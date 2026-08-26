@@ -1,11 +1,11 @@
-name: Sale
-semantic_id: commerce.entity.sale
+id: Sale
+identity: sale_id
 properties:
-  id: SaleId
-  occurred_at: DateTime
-  total: CurrencyAmount
-  items: SaleItem[]
-  status: SaleStatus
+  sale_id: SemanticId
+  amount: CurrencyAmount
+  products: SaleItemList
+  identified_at: DateTime
+states: [identified, products-resolved, completed]
 invariants:
-  - total >= 0
-  - items.length > 0
+  - amount >= 0
+  - a sale cannot be completed before its products are resolved

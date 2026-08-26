@@ -1,0 +1,12 @@
+ProcessSaleIntent
+-> SaleIdentified
+->> SalesAgent.ResolveSaleProducts
+<- SaleProductsResolved
+->> InventoryAgent.DecreaseStock
+<- StockDecreased
+->> FinancialAgent.CloseSale
+<- SaleCompleted
+
+ResolveSaleProducts.Error -> Error
+DecreaseStock.Error -> Error
+CloseSale.Error -> Error

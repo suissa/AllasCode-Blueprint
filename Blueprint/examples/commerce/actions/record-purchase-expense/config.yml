@@ -1,0 +1,4 @@
+entity: Financial
+behavior: Create
+entry-type: purchase-expense
+self-healing: enabled

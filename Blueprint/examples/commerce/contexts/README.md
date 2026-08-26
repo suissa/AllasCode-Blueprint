@@ -1,24 +1,5 @@
 # Contexts
 
-Contexts define knowledge boundaries. An Agent may reason only with the entities, actions and data exposed by its own context. Cross-context communication occurs through emitted `Ok<T>` / `Error<E>` results, not by directly reaching into another context's internals.
+A context defines the maximum knowledge boundary available to an agent or semantic operation. Context isolation prevents lower-level parts from acquiring knowledge about unrelated domains.
 
-## Files
-
-- `procurement.yml` — supplier purchase knowledge and purchase-entry actions.
-- `stock.yml` — physical inventory knowledge and stock mutations.
-- `financial.yml` — payment, sale-machine and financial-record knowledge.
-- `sales.yml` — sale composition and closing knowledge.
-
-Each file declares the context's semantic identity, entities it owns or observes, actions it exposes, and events it may receive.
-
-Example:
-
-```yaml
-name: Stock
-owns:
-  - Stock
-observes:
-  - Product
-accepts:
-  - Ok<PurchaseRegistered>
-```
+The commerce example is divided into Purchase, Inventory, Financial, and Sales contexts. Shared identifiers may cross boundaries through events, but private state does not.

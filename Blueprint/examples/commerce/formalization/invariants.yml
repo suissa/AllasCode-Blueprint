@@ -1,0 +1,9 @@
+invariants:
+  - id: inventory.non-negative
+    statement: completed inventory balances are never negative
+  - id: purchase.single-effect
+    statement: one purchase_id may increase stock at most once
+  - id: sale.single-effect
+    statement: one sale_id may decrease stock and create revenue at most once
+  - id: action.binary-terminal
+    statement: every action emits exactly one terminal result, Ok or Error

@@ -1,0 +1,9 @@
+events:
+  PurchaseProductsRequested:
+    payload: [evidence, description]
+  PurchaseRegistered:
+    payload: [purchase_id, supplier_id, items, total]
+  StockIncreased:
+    payload: [purchase_id, inventory_id, updated_items]
+  PurchaseCompleted:
+    payload: [purchase_id, financial_entry_id]

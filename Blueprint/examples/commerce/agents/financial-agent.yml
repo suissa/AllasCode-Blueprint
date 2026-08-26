@@ -1,0 +1,15 @@
+id: FinancialAgent
+context: FinancialContext
+knows:
+  - Financial
+  - Sale
+can-invoke:
+  - RecordPurchaseExpense
+  - CloseSale
+listens:
+  - StockIncreased
+  - StockDecreased
+emits:
+  - PurchaseCompleted
+  - SaleCompleted
+  - Error

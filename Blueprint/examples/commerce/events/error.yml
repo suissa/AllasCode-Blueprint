@@ -1,0 +1,6 @@
+id: Error
+payload:
+  action: SemanticId
+  reason: ErrorReason
+  original_payload: OptionalPayload
+  healing_status: HealingStatus

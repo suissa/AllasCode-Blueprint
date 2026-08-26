@@ -1,0 +1,6 @@
+id: RecordPurchaseExpense
+kind: Action
+receives: StockIncreased
+emits:
+  Ok: PurchaseCompleted
+  Error: Error

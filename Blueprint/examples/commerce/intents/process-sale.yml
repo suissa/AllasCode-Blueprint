@@ -1,0 +1,7 @@
+id: ProcessSaleIntent
+starts-with: SaleIdentified
+success: SaleCompleted
+failure: Error
+requires:
+  - identified sale amount
+  - products sold, resolved directly or through human interaction

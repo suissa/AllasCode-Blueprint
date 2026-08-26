@@ -1,0 +1,6 @@
+id: PurchaseContext
+entities: [Supplier, Purchase, Product]
+accepts: [PurchaseProductsRequested]
+exports: [PurchaseRegistered]
+private-properties:
+  - Purchase.evidence

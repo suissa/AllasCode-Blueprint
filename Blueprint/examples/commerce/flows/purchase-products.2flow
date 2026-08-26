@@ -1,34 +1,12 @@
-flow PurchaseProducts
+PurchaseProductsIntent
+-> PurchaseProductsRequested
+->> PurchaseAgent.RegisterPurchase
+<- PurchaseRegistered
+->> InventoryAgent.IncreaseStock
+<- StockIncreased
+->> FinancialAgent.RecordPurchaseExpense
+<- PurchaseCompleted
 
-ProcurementAgent
-  -> PurchaseEvidenceReceived
-  ->> RegisterPurchase
-  <<- RegisterPurchase
-
-  Ok<PurchaseRegistered>
-    <- Ok<PurchaseRegistered>
-
-  Error<PurchaseRegistrationError>
-    <- Error<PurchaseRegistrationError>
-
-StockAgent
-  -> Ok<PurchaseRegistered>
-  ->> IncreaseStock
-  <<- IncreaseStock
-
-  Ok<StockEntryCommitted>
-    <- Ok<StockEntryCommitted>
-
-  Error<StockEntryError>
-    <- Error<StockEntryError>
-
-FinancialAgent
-  -> Ok<StockEntryCommitted>
-  ->> RegisterFinancialEntry
-  <<- RegisterFinancialEntry
-
-  Ok<FinancialEntryRegistered>
-    <- Ok<FinancialEntryRegistered>
-
-  Error<FinancialEntryError>
-    <- Error<FinancialEntryError>
+RegisterPurchase.Error -> Error
+IncreaseStock.Error -> Error
+RecordPurchaseExpense.Error -> Error

@@ -1,0 +1,9 @@
+id: Financial
+identity: financial_id
+properties:
+  financial_id: SemanticId
+  entries: FinancialEntryList
+invariants:
+  - every entry references the business fact that originated it
+  - purchase expense is an outflow
+  - completed sale revenue is an inflow

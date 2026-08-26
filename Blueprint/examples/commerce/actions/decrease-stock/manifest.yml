@@ -1,0 +1,6 @@
+id: DecreaseStock
+kind: Action
+receives: SaleProductsResolved
+emits:
+  Ok: StockDecreased
+  Error: Error

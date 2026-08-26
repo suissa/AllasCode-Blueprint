@@ -1,0 +1,12 @@
+id: PurchaseAgent
+context: PurchaseContext
+knows:
+  - Supplier
+  - Purchase
+can-invoke:
+  - RegisterPurchase
+listens:
+  - PurchaseProductsRequested
+emits:
+  - PurchaseRegistered
+  - Error

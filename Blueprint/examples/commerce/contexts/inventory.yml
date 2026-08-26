@@ -1,0 +1,4 @@
+id: InventoryContext
+entities: [Product, Inventory]
+accepts: [PurchaseRegistered, SaleProductsResolved]
+exports: [StockIncreased, StockDecreased]

@@ -1,11 +1,7 @@
-name: PurchaseProducts
-semantic_id: commerce.intent.purchase-products
-purpose: register_supplier_purchase_and_make_stock_available
-starts_when: PurchaseEvidenceReceived
+id: PurchaseProductsIntent
+starts-with: PurchaseProductsRequested
+success: PurchaseCompleted
+failure: Error
 requires:
-  - purchase_evidence
-  - declared_or_extracted_items
-succeeds_when:
-  - PurchaseRegistered
-  - StockEntryCommitted
-flow: ../flows/purchase-products.2flow
+  - purchase evidence or equivalent purchase description
+  - enough information to resolve supplier, items, quantities and prices

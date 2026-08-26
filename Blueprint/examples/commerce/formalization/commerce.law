@@ -1,0 +1,14 @@
+LAW InventoryConservation
+A completed purchase increases inventory by the registered purchased quantities exactly once.
+A completed sale decreases inventory by the resolved sold quantities exactly once.
+
+LAW FinancialCausality
+Every purchase financial outflow references one registered purchase.
+Every sale financial inflow references one completed sale.
+
+LAW CompletionOrdering
+PurchaseCompleted implies StockIncreased occurred successfully.
+SaleCompleted implies SaleProductsResolved and StockDecreased occurred successfully.
+
+LAW TerminalResult
+Every action invocation terminates semantically as exactly one of Ok or Error.

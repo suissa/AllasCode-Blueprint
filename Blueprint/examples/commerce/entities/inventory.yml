@@ -1,0 +1,7 @@
+id: Inventory
+identity: inventory_id
+properties:
+  inventory_id: SemanticId
+  balances: StockBalanceList
+invariants:
+  - available quantity cannot be negative after a completed transition

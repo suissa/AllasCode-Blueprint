@@ -1,0 +1,9 @@
+events:
+  SaleIdentified:
+    payload: [sale_id, amount, identified_at]
+  SaleProductsResolved:
+    payload: [sale_id, products]
+  StockDecreased:
+    payload: [sale_id, inventory_id, updated_items]
+  SaleCompleted:
+    payload: [sale_id, financial_entry_id]

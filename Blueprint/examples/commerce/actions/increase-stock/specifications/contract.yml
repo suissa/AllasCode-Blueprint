@@ -1,0 +1,8 @@
+given: a registered purchase with resolved products and positive quantities
+when: IncreaseStock is invoked
+then:
+  - each purchased quantity is added exactly once
+  - inventory remains non-negative
+  - result is Ok with StockIncreased
+error:
+  - result is Error and no completed inventory transition is produced

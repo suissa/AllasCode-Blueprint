@@ -1,30 +1,5 @@
 # Entities
 
-Entities represent durable domain identities. They declare semantic identity, properties and invariants, but do not contain orchestration.
+Entities are semantic identities with lifecycle continuity. Their files declare business properties and invariants; they do not prescribe persistence or class implementations.
 
-## Files
-
-- `supplier.yml` — identifies the supplier that sold the goods.
-- `product.yml` — canonical commercial product identity.
-- `stock.yml` — current physical quantity of a product.
-- `sale.yml` — commercial sale detected or confirmed.
-- `payment.yml` — financial settlement associated with a purchase or sale.
-
-Each entity file contains:
-
-- `name` / `semantic_id` — stable semantic identity.
-- `properties` — data that characterizes the identity.
-- `invariants` — rules that must always remain true.
-
-Example:
-
-```yaml
-name: Stock
-properties:
-  product_id: ProductId
-  quantity: Quantity
-invariants:
-  - quantity >= 0
-```
-
-An Entity does not decide how to change itself. An Action invokes AtomicBehaviors that produce a valid new state or `Error<E>`.
+`Purchase` represents an acquisition already made with a supplier. `Inventory` represents available quantities. `Financial` represents monetary effects. `Sale` represents the commercial sale lifecycle. `Product` and `Supplier` provide stable identities referenced by those processes.

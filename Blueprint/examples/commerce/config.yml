@@ -1,21 +1,22 @@
-runtime:
-  mode: dynamic
-  message_transport:
-    local: memory
-    distributed: nats
+system:
+  canonical-label: commerce.simple
 
-healing:
-  enabled: true
-  require_reversible_automatic_transformation: true
-  human_escalation: true
+contexts:
+  purchase: ./contexts/purchase.yml
+  inventory: ./contexts/inventory.yml
+  financial: ./contexts/financial.yml
+  sales: ./contexts/sales.yml
 
-commerce:
-  currency: BRL
-  stock:
-    allow_negative: false
-  sale_machine:
-    polling_interval_seconds: 60
+flows:
+  purchase-products: ./flows/purchase-products.2flow
+  process-sale: ./flows/process-sale.2flow
 
-bindings:
-  purchase_flow: ./flows/purchase-products.2flow
-  sale_flow: ./flows/sale-products.2flow
+policies:
+  self-healing: enabled
+  normalization:
+    allowed-in:
+      - validation
+      - self-healing
+  terminal-events:
+    - Ok
+    - Error

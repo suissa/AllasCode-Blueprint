@@ -1,0 +1,4 @@
+entities: [Sale, Financial]
+behavior: Close
+financial-entry-type: sale-revenue
+self-healing: enabled

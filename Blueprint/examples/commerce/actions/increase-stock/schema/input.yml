@@ -1,0 +1,5 @@
+type: object
+required: [purchase_id, items]
+properties:
+  purchase_id: SemanticId
+  items: PurchaseItemList

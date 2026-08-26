@@ -1,0 +1,6 @@
+type: object
+required: [inventory_id, purchase_id, updated_items]
+properties:
+  inventory_id: SemanticId
+  purchase_id: SemanticId
+  updated_items: StockBalanceList

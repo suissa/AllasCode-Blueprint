@@ -1,0 +1,6 @@
+id: CloseSale
+kind: Action
+receives: StockDecreased
+emits:
+  Ok: SaleCompleted
+  Error: Error

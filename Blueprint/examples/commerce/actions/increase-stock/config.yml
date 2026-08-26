@@ -1,0 +1,6 @@
+entity: Inventory
+behavior: Increase
+property: balances
+validation:
+  quantity: positive
+self-healing: enabled
