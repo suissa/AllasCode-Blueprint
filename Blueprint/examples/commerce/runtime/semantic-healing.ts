@@ -38,6 +38,10 @@ function stringArrayMeta(node: SemanticGraphNode, key: string): string[] {
   const value = node.metadata?.[key];
   return Array.isArray(value) ? value.map(String) : [];
 }
+function declaredErrorEvent(graph: SemanticGraph, action: string): string {
+  const edge = graph.edges.find(candidate => candidate.type === 'EMITS_ERROR' && candidate.from === `Action:${action}`);
+  return edge ? label(edge.to) : 'Error';
+}
 
 export function findSemanticFallback(graph: SemanticGraph, action: string, error: ActionError): { agent: string; action: string } | undefined {
   const source = `Action:${action}`;
@@ -89,11 +93,11 @@ export function diagnoseHealing(graph: SemanticGraph, context: HealingContext): 
   return { kind: 'Terminal', reason: 'No reversible semantic healing strategy is declared.' };
 }
 
-async function executeBounded(execute: () => Promise<ActionResult>, timeoutMs: number): Promise<ActionResult> {
+async function executeBounded(execute: () => Promise<ActionResult>, timeoutMs: number, errorEvent: string): Promise<ActionResult> {
   if (timeoutMs <= 0) return execute();
   return Promise.race([
     execute(),
-    new Promise<ActionResult>(resolve => setTimeout(() => resolve({ status:'Error', event:'HealingTimeout', payload:{ message:`Healing execution timeout after ${timeoutMs}ms` } }), timeoutMs)),
+    new Promise<ActionResult>(resolve => setTimeout(() => resolve({ status:'Error', event:errorEvent, payload:{ message:`timeout after ${timeoutMs}ms during healing retry` } }), timeoutMs)),
   ]);
 }
 async function backoff(ms: number): Promise<void> { if (ms > 0) await new Promise(resolve => setTimeout(resolve, ms)); }
@@ -107,6 +111,7 @@ export async function executeWithSemanticHealing(
   executionContext: HealingExecutionContext = {},
 ): Promise<HealingOutcome> {
   const store = executionContext.store;
+  const errorEvent = declaredErrorEvent(graph, action);
   let attempts = 1;
   store?.audit({ kind:'attempt', agent, action, detail:'Initial Action execution.' });
   let result = await execute();
@@ -117,7 +122,7 @@ export async function executeWithSemanticHealing(
     store?.audit({ kind:'retry', agent, action, detail:`${decision.strategy} attempt ${attempts + 1}/${decision.max_attempts}` });
     await backoff(decision.backoff_ms);
     attempts += 1;
-    result = await executeBounded(execute, decision.timeout_ms);
+    result = await executeBounded(execute, decision.timeout_ms, errorEvent);
     if (result.status === 'Ok') return { result, healed: true, decision, attempts };
     decision = diagnoseHealing(graph, { agent, action, error: result, attempt: attempts - 1 });
   }
