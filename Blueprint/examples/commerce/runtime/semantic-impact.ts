@@ -9,9 +9,9 @@ export interface SemanticImpactReport {
   risk_score: number;
 }
 
-const ARCH_TYPES = new Set(['Entity','Intent','Event','Agent','Actor','Action','Tool','Flow','Context','Capability','Policy','Invariant','Law','Constraint','Schema','Property','Artifact']);
-const HIGH_TYPES = new Set(['Action','Flow','Policy','Invariant','Law','Constraint','Schema']);
-const CRITICAL_TYPES = new Set(['Policy','Invariant','Law','Constraint']);
+const ARCH_TYPES = new Set(['Entity','Intent','Event','Agent','Actor','Action','Tool','Flow','Context','Capability','Policy','Invariant','Law','Constraint','Schema','Property','Artifact','HealingStrategy']);
+const HIGH_TYPES = new Set(['Action','Flow','Policy','Invariant','Law','Constraint','Schema','HealingStrategy']);
+const CRITICAL_TYPES = new Set(['Policy','Invariant','Law','Constraint','HealingStrategy']);
 
 function kebab(value: string): string {
   return value.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/_/g, '-').toLowerCase();
@@ -22,7 +22,7 @@ export function mapChangedFilesToSeeds(graph: SemanticGraph, changedFiles: strin
   const architectureNodes = graph.nodes.filter(node => ARCH_TYPES.has(node.type));
   for (const file of changedFiles) {
     const normalized = file.replaceAll('\\','/');
-    const global = /\/governance\/|\/graph\/|\/archive\/legacy\/|\/entities\/domain-graph\.yml$|\/config\.yml$|\/package\.json$|\/runtime\/semantic-(graph|governor|impact)\.ts$|\/scripts\/(semantic-impact|validate-v1-semantic-baseline)\.ts$|\/tests\/architecture-layers\.test\.ts$|\.github\/workflows\/commerce-example\.yml$/.test(normalized);
+    const global = /\/governance\/|\/healing\/|\/graph\/|\/archive\/legacy\/|\/entities\/domain-graph\.yml$|\/config\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|healing)|healing-(graph|store))\.ts$|\/scripts\/(semantic-impact|validate-v1-semantic-baseline)\.ts$|\/tests\/(architecture-layers|healing)\.test\.ts$|\.github\/workflows\/commerce-example\.yml$/.test(normalized);
     if (global) {
       architectureNodes.forEach(node => seeds.add(node.id));
       continue;
@@ -71,7 +71,7 @@ export function analyzeSemanticImpact(graph: SemanticGraph, changedFiles: string
     if (!node) continue;
     score += CRITICAL_TYPES.has(node.type) ? 8 : HIGH_TYPES.has(node.type) ? 5 : 2;
   }
-  if (changedFiles.some(file => /governance|archive\/legacy|domain-graph\.yml|config\.yml|semantic-governor|semantic-impact|validate-v1-semantic-baseline|architecture-layers\.test|package\.json|commerce-example\.yml/.test(file))) score += 20;
+  if (changedFiles.some(file => /governance|healing|archive\/legacy|domain-graph\.yml|config\.yml|semantic-governor|semantic-impact|validate-v1-semantic-baseline|architecture-layers\.test|package\.json|commerce-example\.yml/.test(file))) score += 20;
   const risk = score >= 80 ? 'CRITICAL' : score >= 40 ? 'HIGH' : score >= 15 ? 'MEDIUM' : 'LOW';
   return { changed_files:[...changedFiles].sort(), seed_nodes:seeds, impacted_nodes:[...impacted].sort(), required_tests:[...requiredTests].sort(), risk, risk_score:score };
 }
