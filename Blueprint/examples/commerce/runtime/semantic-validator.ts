@@ -134,7 +134,8 @@ export async function validateSemanticArchitecture(
   for (const flow of flows) {
     const lines = flow.source.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
     const flowIntent = lines[0];
-    if (!intentNames.has(flowIntent)) errors.push(`Flow ${flow.name} references unknown Intent ${flowIntent}`);
+    if (!flowIntent) errors.push(`Flow ${flow.name} has no Intent declaration`);
+    else if (!intentNames.has(flowIntent)) errors.push(`Flow ${flow.name} references unknown Intent ${flowIntent}`);
     let previousAction: LoadedAction | undefined;
     for (const line of lines.slice(1)) {
       if (line.includes('.Error -> Error')) continue;
