@@ -25,7 +25,7 @@ test('noisy audio remains traceable candidate and requests human confirmation',a
   await orchestrator.execute({intent:'WhatsAppInboundMessageIntent',payload:message('text','T1','venda'),correlation_id:'c1',idempotency_key:'T1',principal_id:'channel'});
   const result=await orchestrator.execute({intent:'WhatsAppInboundMessageIntent',payload:message('audio','A1'),correlation_id:'c2',idempotency_key:'A1',principal_id:'channel'});
   assert.equal(result.outcome,'Ok');assert.equal(d.calls.length,0);assert.match(r.sent.at(-1).text,/confirmar a extração/i);
-  const saved=await u.evidence.load('whatsapp-evidence:commerce:A1');assert.equal(saved?.kind,'audio');assert.equal(saved?.confidence,0.54);assert.equal(saved?.original_payload.provider_raw,'A1');
+  const saved=await u.evidence.load('whatsapp-evidence:commerce:A1');assert.equal(saved?.kind,'audio');assert.equal(saved?.confidence,0.54);assert.equal((saved?.original_payload as any)?.provider_raw,'A1');
 });
 
 test('partial receipt never invents missing commercial fields',async()=>{
