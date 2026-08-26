@@ -48,9 +48,9 @@ test('runtime topology is projected from compiled graph', async () => {
   const kernel = await createExecutionKernel();
   assert.equal(kernel.projection.agents.length, 4);
   assert.equal(kernel.projection.actors.length, 4);
-  assert.equal(kernel.projection.actions.length, 6);
+  assert.equal(kernel.projection.actions.length, 7);
   assert.equal(kernel.projection.tools.length, 3);
   const inventory = kernel.projection.agents.find(agent => agent.name === 'InventoryAgent');
   assert.equal(inventory?.actor, 'InventoryActor');
-  assert.deepEqual(inventory?.actions, ['DecreaseStock', 'IncreaseStock']);
+  assert.deepEqual(inventory?.actions, ['DecreaseStock', 'DecreaseStockVerified', 'IncreaseStock']);
 });

@@ -4,4 +4,4 @@ semantic_id: commerce.actor.inventory
 context: Inventory
 mailbox: ./mailbox.yml
 supervision: ./supervision.yml
-actions: [IncreaseStock, DecreaseStock]
+actions: [IncreaseStock, DecreaseStock, DecreaseStockVerified]

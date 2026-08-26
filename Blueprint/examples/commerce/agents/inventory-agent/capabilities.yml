@@ -1,2 +1,2 @@
-actions: [IncreaseStock, DecreaseStock]
+actions: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
 tools: [ProductCatalogLookup]

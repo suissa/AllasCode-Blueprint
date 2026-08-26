@@ -18,7 +18,7 @@ capabilities:
     required_by: [IncreaseStock]
     implemented_by: [InventoryActor]
   - id: StockDecrease
-    required_by: [DecreaseStock]
+    required_by: [DecreaseStock, DecreaseStockVerified]
     implemented_by: [InventoryActor]
   - id: PurchaseExpenseRecording
     required_by: [RecordPurchaseExpense]
@@ -40,29 +40,29 @@ policies:
   - id: ContextIsolation
     applies_to: [Agent:PurchaseAgent, Agent:InventoryAgent, Agent:FinancialAgent, Agent:SalesAgent]
   - id: IdempotentMutation
-    applies_to: [Action:RegisterPurchase, Action:IncreaseStock, Action:DecreaseStock, Action:RecordPurchaseExpense, Action:CloseSale]
+    applies_to: [Action:RegisterPurchase, Action:IncreaseStock, Action:DecreaseStock, Action:DecreaseStockVerified, Action:RecordPurchaseExpense, Action:CloseSale]
   - id: StockMutationAuthority
-    applies_to: [Entity:Stock, Action:IncreaseStock, Action:DecreaseStock]
+    applies_to: [Entity:Stock, Action:IncreaseStock, Action:DecreaseStock, Action:DecreaseStockVerified]
   - id: AvailableQuantityPolicy
-    applies_to: [Entity:Stock, Action:DecreaseStock]
+    applies_to: [Entity:Stock, Action:DecreaseStock, Action:DecreaseStockVerified]
   - id: AppendOnlyFinancialLedger
     applies_to: [Entity:Financial, Action:RecordPurchaseExpense, Action:CloseSale]
   - id: ResolvedProductsBeforeSaleMutation
-    applies_to: [Entity:Sale, Action:ResolveSaleProducts, Action:DecreaseStock]
+    applies_to: [Entity:Sale, Action:ResolveSaleProducts, Action:DecreaseStock, Action:DecreaseStockVerified]
 
 invariants:
   - id: StockNonNegative
     entity: Stock
-    preserved_by: [IncreaseStock, DecreaseStock]
+    preserved_by: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
   - id: StockIdentityStable
     entity: Stock
-    preserved_by: [IncreaseStock, DecreaseStock]
+    preserved_by: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
   - id: PurchaseSingleStockEffect
     entity: Purchase
     preserved_by: [RegisterPurchase, IncreaseStock, RecordPurchaseExpense]
   - id: SaleSingleStockEffect
     entity: Sale
-    preserved_by: [ResolveSaleProducts, DecreaseStock, CloseSale]
+    preserved_by: [ResolveSaleProducts, DecreaseStock, DecreaseStockVerified, CloseSale]
   - id: FinancialAppendOnly
     entity: Financial
     preserved_by: [RecordPurchaseExpense, CloseSale]
@@ -79,14 +79,28 @@ laws:
 
 constraints:
   - id: DecreaseWithinAvailableStock
-    constrains: [DecreaseStock]
+    constrains: [DecreaseStock, DecreaseStockVerified]
     protects: [StockNonNegative]
   - id: PositiveStockMutationQuantity
-    constrains: [IncreaseStock, DecreaseStock]
+    constrains: [IncreaseStock, DecreaseStock, DecreaseStockVerified]
     protects: [StockNonNegative]
   - id: PurchaseIdempotencyKey
     constrains: [RegisterPurchase, IncreaseStock, RecordPurchaseExpense]
     protects: [PurchaseSingleStockEffect]
   - id: SaleIdempotencyKey
-    constrains: [ResolveSaleProducts, DecreaseStock, CloseSale]
+    constrains: [ResolveSaleProducts, DecreaseStock, DecreaseStockVerified, CloseSale]
     protects: [SaleSingleStockEffect]
+
+semantic_alternatives:
+  - source: DecreaseStock
+    target: DecreaseStockVerified
+    equivalent: true
+    substitutable: true
+    fallback_on: [transient]
+    preserve:
+      same_owner: true
+      same_results: true
+      same_capabilities: true
+      policies: superset
+      invariants: superset
+      constraints: superset
