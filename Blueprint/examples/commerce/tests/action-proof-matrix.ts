@@ -5,7 +5,7 @@ export const ACTION_PROOF_MATRIX: Record<string, Partial<Record<ActionTestType, 
     unit: ['Invariant:PurchaseSingleStockEffect', 'Policy:IdempotentMutation'],
   },
   IncreaseStock: {
-    unit: ['Invariant:StockNonNegative', 'Invariant:StockIdentityStable', 'Invariant:PurchaseSingleStockEffect'],
+    unit: ['Invariant:StockNonNegative', 'Invariant:StockIdentityStable', 'Invariant:PurchaseSingleStockEffect', 'Policy:IdempotentMutation'],
     security: ['Policy:StockMutationAuthority'],
   },
   DecreaseStock: {
