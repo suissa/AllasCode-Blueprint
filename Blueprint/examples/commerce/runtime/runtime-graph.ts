@@ -5,14 +5,25 @@ import { parse } from 'yaml';
 import { compileSemanticGraph, validateSemanticGraph, type SemanticGraph, type SemanticGraphEdge, type SemanticGraphNode } from './semantic-graph.js';
 import type { ActionImplementation, ActionManifest } from './types.js';
 import type { ToolImplementation } from './tool-registry.js';
+import { governSemanticGraph } from './semantic-governor.js';
 
 interface ResultManifest {
   name: string;
   results: { Ok: string; Error: string };
+  contract?: { events?: string };
 }
 
 interface ListenerDefinition {
   listeners?: Array<{ event: string; dispatch: string }>;
+}
+
+interface GovernanceCatalog {
+  contexts?: Array<{ id: string; agent: string }>;
+  capabilities?: Array<{ id: string; required_by?: string[]; implemented_by?: string[] }>;
+  policies?: Array<{ id: string; applies_to?: string[] }>;
+  invariants?: Array<{ id: string; entity: string; preserved_by?: string[] }>;
+  laws?: Array<{ id: string; preserved_by_flows?: string[] }>;
+  constraints?: Array<{ id: string; constrains?: string[]; protects?: string[] }>;
 }
 
 function edgeId(type: string, from: string, to: string, ordinal = 0): string {
@@ -28,9 +39,16 @@ async function dirs(path: string): Promise<string[]> {
   return entries.filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
 }
 
+function ensureNode(graph: SemanticGraph, type: string, label: string, metadata?: Record<string, unknown>): string {
+  const id = `${type}:${label}`;
+  if (!graph.nodes.some(node => node.id === id)) {
+    graph.nodes.push({ id, type, label, ...(metadata ? { metadata } : {}) } as unknown as SemanticGraphNode);
+  }
+  return id;
+}
+
 function ensureEvent(graph: SemanticGraph, event: string): void {
-  const id = `Event:${event}`;
-  if (!graph.nodes.some(node => node.id === id)) graph.nodes.push({ id, type: 'Event', label: event });
+  ensureNode(graph, 'Event', event);
 }
 
 function addEdge(graph: SemanticGraph, type: string, from: string, to: string, metadata?: Record<string, unknown>, ordinal = 0): void {
@@ -86,6 +104,75 @@ function validateEventChoreography(graph: SemanticGraph): string[] {
   return errors;
 }
 
+async function compileProperties(root: string, graph: SemanticGraph): Promise<void> {
+  for (const folder of await dirs(join(root, 'entities'))) {
+    const manifest = await yaml<{ id: string }>(join(root, 'entities', folder, 'manifest.yml'));
+    const properties = await yaml<Record<string, unknown>>(join(root, 'entities', folder, 'properties.yml'));
+    for (const [name, valueType] of Object.entries(properties)) {
+      const propertyId = ensureNode(graph, 'Property', `${manifest.id}.${name}`, { valueType });
+      addEdge(graph, 'HAS_PROPERTY', `Entity:${manifest.id}`, propertyId);
+    }
+  }
+}
+
+async function compileEventSchemas(root: string, graph: SemanticGraph): Promise<void> {
+  for (const folder of await dirs(join(root, 'actions'))) {
+    const manifest = await yaml<ResultManifest>(join(root, 'actions', folder, 'manifest.yml'));
+    const schemaId = ensureNode(graph, 'Schema', `${manifest.name}.events`, { path: `actions/${folder}/${manifest.contract?.events ?? 'schema/events.yml'}` });
+    for (const event of [manifest.results.Ok, manifest.results.Error]) {
+      ensureEvent(graph, event);
+      addEdge(graph, 'VALIDATED_BY', `Event:${event}`, schemaId);
+    }
+  }
+}
+
+function targetId(raw: string): string {
+  if (raw.includes(':')) return raw;
+  throw new Error(`Governance target must be typed: ${raw}`);
+}
+
+async function compileGovernance(root: string, graph: SemanticGraph): Promise<void> {
+  const catalog = await yaml<GovernanceCatalog>(join(root, 'governance', 'catalog.yml'));
+
+  for (const context of catalog.contexts ?? []) {
+    const contextId = ensureNode(graph, 'Context', context.id);
+    addEdge(graph, 'BOUND_TO', `Agent:${context.agent}`, contextId);
+  }
+
+  for (const capability of catalog.capabilities ?? []) {
+    const capabilityId = ensureNode(graph, 'Capability', capability.id);
+    for (const action of capability.required_by ?? []) addEdge(graph, 'REQUIRES', `Action:${action}`, capabilityId);
+    for (const implementation of capability.implemented_by ?? []) {
+      const actorId = `Actor:${implementation}`;
+      const toolId = `Tool:${implementation}`;
+      const implementationId = graph.nodes.some(node => node.id === actorId) ? actorId : toolId;
+      addEdge(graph, 'IMPLEMENTS', implementationId, capabilityId);
+    }
+  }
+
+  for (const policy of catalog.policies ?? []) {
+    const policyId = ensureNode(graph, 'Policy', policy.id);
+    for (const target of policy.applies_to ?? []) addEdge(graph, 'GOVERNED_BY', targetId(target), policyId);
+  }
+
+  for (const invariant of catalog.invariants ?? []) {
+    const invariantId = ensureNode(graph, 'Invariant', invariant.id);
+    addEdge(graph, 'GUARDED_BY', `Entity:${invariant.entity}`, invariantId);
+    for (const action of invariant.preserved_by ?? []) addEdge(graph, 'PRESERVES', `Action:${action}`, invariantId);
+  }
+
+  for (const law of catalog.laws ?? []) {
+    const lawId = ensureNode(graph, 'Law', law.id);
+    for (const flow of law.preserved_by_flows ?? []) addEdge(graph, 'PRESERVES_LAW', `Flow:${flow}`, lawId);
+  }
+
+  for (const constraint of catalog.constraints ?? []) {
+    const constraintId = ensureNode(graph, 'Constraint', constraint.id);
+    for (const action of constraint.constrains ?? []) addEdge(graph, 'CONSTRAINED_BY', `Action:${action}`, constraintId);
+    for (const invariant of constraint.protects ?? []) addEdge(graph, 'PROTECTS', constraintId, `Invariant:${invariant}`);
+  }
+}
+
 export async function compileRuntimeSemanticGraph(root: string): Promise<SemanticGraph> {
   const graph = await compileSemanticGraph(root);
 
@@ -114,16 +201,22 @@ export async function compileRuntimeSemanticGraph(root: string): Promise<Semanti
     }
   }
 
+  await compileProperties(root, graph);
+  await compileEventSchemas(root, graph);
+  await compileGovernance(root, graph);
+
   graph.nodes.sort((a, b) => a.id.localeCompare(b.id));
   graph.edges.sort((a, b) => a.id.localeCompare(b.id));
-  const errors = [...validateSemanticGraph(graph), ...validateEventChoreography(graph)];
+  const governance = governSemanticGraph(graph);
+  const errors = [...validateSemanticGraph(graph), ...validateEventChoreography(graph), ...governance.errors];
   if (errors.length) throw new Error(`Invalid runtime semantic graph:\n- ${errors.join('\n- ')}`);
   return graph;
 }
 
 export async function loadCompiledSemanticGraph(root: string): Promise<SemanticGraph> {
   const graph = JSON.parse(await readFile(join(root, 'generated', 'semantic-graph.json'), 'utf8')) as SemanticGraph;
-  const errors = [...validateSemanticGraph(graph), ...validateEventChoreography(graph)];
+  const governance = governSemanticGraph(graph);
+  const errors = [...validateSemanticGraph(graph), ...validateEventChoreography(graph), ...governance.errors];
   if (errors.length) throw new Error(`Invalid compiled semantic graph:\n- ${errors.join('\n- ')}`);
   return graph;
 }
