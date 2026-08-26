@@ -1,0 +1,37 @@
+version: 1.0
+release: v1.0
+
+coverage:
+  artifact_types:
+    Action: 100
+    Actor: 100
+    Agent: 100
+    Tool: 100
+    Flow: 100
+    Intent: 100
+    Entity: 100
+  governance:
+    Invariant: 100
+    Policy: 100
+    Law: 100
+  graph_edges_percent: 100
+
+mutation:
+  score_percent: 100
+
+selector:
+  confidence_percent: 100
+
+freshness:
+  max_age_hours: 24
+  require_executable: true
+  require_passing: true
+
+governance:
+  require_proves_for_release_critical: true
+  forbid_current_violates: true
+
+mandatory_checks:
+  - SemanticMergeGate
+  - EvidenceFreshness
+  - SemanticReleaseGate
