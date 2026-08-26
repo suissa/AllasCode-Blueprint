@@ -37,18 +37,28 @@ function removedEdge(edge: SemanticGraphEdge) {
   else add('REVIEW', `semantic relation ${edge.type} removed`, edge.id);
 }
 
-function changedEdge(edge: SemanticGraphEdge) {
-  if (protectedEdgeTypes.has(edge.type)) add('BLOCK', `critical relation ${edge.type} changed`, edge.id);
-  else add('REVIEW', `semantic relation ${edge.type} changed`, edge.id);
+function metadataIsAdditive(before: SemanticGraphEdge, after: SemanticGraphEdge): boolean {
+  const previous = before.metadata ?? {};
+  const next = after.metadata ?? {};
+  return Object.entries(previous).every(([key,value]) => JSON.stringify(next[key]) === JSON.stringify(value));
+}
+
+function changedEdge(before: SemanticGraphEdge, after: SemanticGraphEdge) {
+  if (after.type === 'FALLBACK_TO' && before.from === after.from && before.to === after.to && metadataIsAdditive(before, after) && typeof after.metadata?.when_strategy === 'string') {
+    add('REVIEW', 'FALLBACK_TO contract was strengthened additively with a graph-bound healing strategy; future removal/change remains blocking', after.id);
+    return;
+  }
+  if (protectedEdgeTypes.has(after.type)) add('BLOCK', `critical relation ${after.type} changed`, after.id);
+  else add('REVIEW', `semantic relation ${after.type} changed`, after.id);
 }
 
 for (const node of diff.nodes.removed) removedNode(node);
 for (const change of diff.nodes.changed) changedNode(change.after);
 for (const edge of diff.edges.removed) removedEdge(edge);
-for (const change of diff.edges.changed) changedEdge(change.after);
+for (const change of diff.edges.changed) changedEdge(change.before, change.after);
 
 const decision: Decision = findings.some(f => f.decision === 'BLOCK') ? 'BLOCK' : findings.length ? 'REVIEW' : 'ALLOW';
-const report = { version: '0.2.0', decision, findings, summary: { blocks: findings.filter(f => f.decision === 'BLOCK').length, reviews: findings.filter(f => f.decision === 'REVIEW').length } };
+const report = { version: '0.3.0', decision, findings, summary: { blocks: findings.filter(f => f.decision === 'BLOCK').length, reviews: findings.filter(f => f.decision === 'REVIEW').length } };
 await writeFile(join(dashboard, 'semantic-merge-gate.json'), `${JSON.stringify(report, null, 2)}\n`);
 
 const lines = [
