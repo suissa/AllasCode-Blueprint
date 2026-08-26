@@ -1,2 +1,2 @@
-actions: [ResolveSaleProducts]
+actions: [ResolveSaleProducts, AssociateCustomerToSale]
 tools: [SaleTerminalReader, ProductCatalogLookup]
