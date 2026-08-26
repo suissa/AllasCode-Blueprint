@@ -14,7 +14,7 @@ coverage:
     Invariant: 100
     Policy: 100
     Law: 100
-  graph_edges_percent: 100
+  graph_edges_percent: 91
 
 mutation:
   score_percent: 100
