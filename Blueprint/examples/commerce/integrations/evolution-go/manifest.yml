@@ -1,0 +1,14 @@
+id: EvolutionGoWhatsAppProvider
+kind: Integration
+semantic_id: commerce.integration.whatsapp.evolution-go
+provides:
+  - WhatsAppSendText
+  - WhatsAppSendMedia
+  - WhatsAppReceiveWebhook
+  - WhatsAppDeliveryStatus
+consumes:
+  - ApplicationApi
+constraints:
+  - provider transport cannot address Agent, Actor or Action directly
+  - provider retries must be idempotent by provider message id
+  - webhook ingress must authenticate before normalization
