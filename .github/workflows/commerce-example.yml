@@ -37,8 +37,11 @@ jobs:
       - name: Validate
         run: npm run check
 
+      - name: ActionTests
+        run: npm run test:actions
+
       - name: Test
-        run: npm test
+        run: npm run test:core
 
       - name: Demo
         run: npm run demo

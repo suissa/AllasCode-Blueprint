@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, relative } from 'node:path';
 import { parse } from 'yaml';
 
@@ -26,6 +26,7 @@ const metricIds: Record<string,string[]> = {
 };
 
 async function walk(path:string):Promise<string[]> { const out:string[]=[]; for(const e of await readdir(path,{withFileTypes:true})){ if(['node_modules','.git','tests','generated'].includes(e.name)) continue; const p=join(path,e.name); if(e.isDirectory()) out.push(...await walk(p)); else if(e.name==='manifest.yml') out.push(p); } return out; }
+async function writeIfMissing(path:string, content:string):Promise<void> { try { await access(path); } catch { await writeFile(path, content); } }
 function kindOf(m:Record<string,unknown>, path:string):string { return String(m.kind ?? (path.includes('/actions/')?'action':path.includes('/actors/')?'actor':path.includes('/agents/')?'agent':path.includes('/tools/')?'tool':path.includes('/entities/')?'entity':'artifact')); }
 function cfg(type:string):string { const v:Record<string,string>={unit:'isolation: true\nmock_external_boundaries: true',bdd:'syntax: gherkin\nacceptance_source: semantic_behavior',load:'workload:\n  mode: sustained\n  virtual_users: 10\n  duration_seconds: 30',stress:'workload:\n  mode: ramp-until-limit\n  max_virtual_users: 100\n  recovery_required: true',synk:'provider_hint: snyk\nscan:\n  dependencies: true\n  vulnerabilities: true\n  fail_on: high',security:'checks:\n  authorization: true\n  input_abuse: true\n  secret_exposure: true\n  policy_enforcement: true',integration:'boundaries: semantic-contracts\nrequire_event_schema_compatibility: true',e2e:'scope: intent-to-terminal-event\nrequire_terminal_event: true',benchmark:'baseline: required\nwarmup_iterations: 3\nmeasure_iterations: 10'}; return v[type]!; }
 function detailHtml():string { return `<!doctype html><html lang="en" class="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"><title>Semantic Test Result</title></head><body class="bg-slate-950 text-slate-100 min-h-screen p-6"><main id="app" class="max-w-4xl mx-auto"></main><script type="module">const r=await fetch('./result.json').then(x=>x.json());document.querySelector('#app').innerHTML=\`<article class="animate__animated animate__fadeIn rounded-2xl border border-slate-800 bg-slate-900 p-6"><div class="text-cyan-400 text-xs uppercase tracking-widest">\${r.test.type}</div><h1 class="text-2xl font-semibold mt-1">\${r.artifact.id}</h1><p class="text-slate-400 mt-2">Status: <b>\${r.status}</b></p><pre class="mt-6 bg-slate-950 rounded-xl p-4 overflow-auto text-sm">\${JSON.stringify(r,null,2)}</pre></article>\`</script></body></html>`; }
@@ -36,13 +37,13 @@ for(const manifestPath of await walk(root)){
   const manifest=parse(await readFile(manifestPath,'utf8')) as Record<string,unknown>; const kind=kindOf(manifest,artifactDir); const id=String(manifest.name ?? manifest.id ?? basename(artifactDir));
   const types=ALL.filter(t=>!(kind==='action' && ACTION_EXCLUSIONS.has(t))); const artifactPath=relative(root,artifactDir).replaceAll('\\','/');
   for(const type of types){ const base=join(artifactDir,'tests',type); await mkdir(join(base,'implementation'),{recursive:true});
-    await writeFile(join(base,'README.md'),`# ${type.toUpperCase()} Test — ${id}\n\n${intents[type]}\n\nThe result declares its dashboard components and MUST conform to the canonical AllasCode test-result schema.\n`);
-    await writeFile(join(base,'manifest.yml'),`id: ${kind}.${id}.test.${type}\nkind: test\ntest_type: ${type}\nsubject:\n  kind: ${kind}\n  id: ${id}\n  path: ../..\nresult:\n  schema: allascode://schemas/test-result/v1\n  file: ./result.json\npresentation:\n  source: result.json#presentation.components\nimplementation: ./implementation/index.js\n`);
-    await writeFile(join(base,'config.yml'),`enabled: true\ntest_type: ${type}\nsubject: ${id}\n${cfg(type)}\nthresholds:\n  fail_on_error: true\n`);
-    await writeFile(join(base,'implementation','index.js'),`export async function run(context = {}) { return { semanticTest: '${type}', subject: '${id}', context }; }\n`);
-    await writeFile(join(base,'index.html'),detailHtml());
-    await writeFile(join(base,'schema.jsin'),'{"$schema":"https://json-schema.org/draft/2020-12/schema","$ref":"https://allascode.dev/schemas/test-result/v1.json"}\n');
-    await writeFile(join(base,'result.json'),JSON.stringify(result(kind,id,artifactPath,type),null,2)+'\n');
+    await writeIfMissing(join(base,'README.md'),`# ${type.toUpperCase()} Test — ${id}\n\n${intents[type]}\n\nThe result declares its dashboard components and MUST conform to the canonical AllasCode test-result schema.\n`);
+    await writeIfMissing(join(base,'manifest.yml'),`id: ${kind}.${id}.test.${type}\nkind: test\ntest_type: ${type}\nsubject:\n  kind: ${kind}\n  id: ${id}\n  path: ../..\nresult:\n  schema: allascode://schemas/test-result/v1\n  file: ./result.json\npresentation:\n  source: result.json#presentation.components\nimplementation: ./implementation/index.js\n`);
+    await writeIfMissing(join(base,'config.yml'),`enabled: true\ntest_type: ${type}\nsubject: ${id}\n${cfg(type)}\nthresholds:\n  fail_on_error: true\n`);
+    await writeIfMissing(join(base,'implementation','index.js'),`export async function run(context = {}) { return { semanticTest: '${type}', subject: '${id}', context }; }\n`);
+    await writeIfMissing(join(base,'index.html'),detailHtml());
+    await writeIfMissing(join(base,'schema.jsin'),'{"$schema":"https://json-schema.org/draft/2020-12/schema","$ref":"https://allascode.dev/schemas/test-result/v1.json"}\n');
+    await writeIfMissing(join(base,'result.json'),JSON.stringify(result(kind,id,artifactPath,type),null,2)+'\n');
   }
 }
-console.log('Semantic test anatomy materialized.');
+console.log('Semantic test anatomy materialized without overwriting executable results.');
