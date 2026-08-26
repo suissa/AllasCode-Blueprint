@@ -1,0 +1,6 @@
+name: ProcessSaleIntent
+kind: intent
+semantic_id: commerce.intent.process-sale
+source: ../process-sale.yml
+active: true
+flow: process-sale
