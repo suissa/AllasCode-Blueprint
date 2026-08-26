@@ -10,11 +10,11 @@ const diff = JSON.parse(await readFile(join(dashboard, 'semantic-pr-diff.json'),
 type Decision = 'ALLOW' | 'REVIEW' | 'BLOCK';
 type Finding = { decision: Exclude<Decision, 'ALLOW'>; reason: string; semantic_id: string };
 
-const protectedNodeTypes = new Set(['Invariant', 'Law', 'Policy']);
+const protectedNodeTypes = new Set(['Invariant', 'Law', 'Policy', 'HealingStrategy']);
 const protectedEdgeTypes = new Set([
   'EMITS_OK', 'EMITS_ERROR', 'STARTS_WITH', 'SUCCEEDS_WITH',
   'IMPLEMENTS_INTENT', 'ACTION_OWNER', 'OWNS_ACTOR', 'ACCEPTS_ACTION',
-  'ALLOWS_ACTION', 'ENTITY_RELATION',
+  'ALLOWS_ACTION', 'ENTITY_RELATION', 'HEALED_BY', 'FALLBACK_TO',
 ]);
 
 const findings: Finding[] = [];
@@ -48,7 +48,7 @@ for (const edge of diff.edges.removed) removedEdge(edge);
 for (const change of diff.edges.changed) changedEdge(change.after);
 
 const decision: Decision = findings.some(f => f.decision === 'BLOCK') ? 'BLOCK' : findings.length ? 'REVIEW' : 'ALLOW';
-const report = { version: '0.1.0', decision, findings, summary: { blocks: findings.filter(f => f.decision === 'BLOCK').length, reviews: findings.filter(f => f.decision === 'REVIEW').length } };
+const report = { version: '0.2.0', decision, findings, summary: { blocks: findings.filter(f => f.decision === 'BLOCK').length, reviews: findings.filter(f => f.decision === 'REVIEW').length } };
 await writeFile(join(dashboard, 'semantic-merge-gate.json'), `${JSON.stringify(report, null, 2)}\n`);
 
 const lines = [
