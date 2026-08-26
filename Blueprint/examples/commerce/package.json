@@ -16,6 +16,7 @@
     "precheck": "npm run semantic-tests:materialize && npm run semantic-tests:validate && npm run semantic-tests:dashboard",
     "predemo": "npm run graph:build",
     "demo": "tsx runtime/demo.ts",
+    "test:selective": "npm run graph:build && tsx scripts/run-selective-semantic-tests.ts",
     "test:actions": "npm run semantic-tests:materialize && tsx --test actions/*/tests/action.test.ts && npm run semantic-tests:annotate-action-proofs && npm run semantic-tests:validate && npm run semantic-tests:dashboard && npm run graph:build && npm run semantic-tests:validate-action-evidence",
     "test:architecture": "npm run semantic-tests:materialize && npm run graph:build && tsx --test tests/architecture-layers.test.ts tests/semantic-mutation-score.test.ts && npm run semantic-tests:validate && npm run semantic-tests:dashboard && npm run graph:build && npm run semantic-tests:coverage",
     "test:evidence": "npm run semantic-tests:stamp-provenance && npm run semantic-tests:freshness && npm run semantic-tests:validate && npm run graph:build && npm run semantic-tests:validate-action-evidence",
