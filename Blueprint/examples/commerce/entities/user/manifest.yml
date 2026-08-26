@@ -1,0 +1,5 @@
+id: User
+kind: Entity
+semantic_id: commerce.entity.user
+identity: user_id
+properties: ./properties.yml
