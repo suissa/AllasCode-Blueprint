@@ -1,0 +1,7 @@
+name: sale-products
+kind: flow
+semantic_id: commerce.flow.sale-products
+source: ../sale-products.2flow
+active: false
+legacy: true
+intent: SellProductsIntent
