@@ -1,0 +1,5 @@
+accepts:
+  - action: RecordPurchaseExpense
+  - action: CloseSale
+ordering: fifo
+concurrency: 1

@@ -1,0 +1,11 @@
+name: SaleTerminalReader
+kind: tool
+semantic_id: commerce.tool.sale-terminal-reader
+capability: ReadSaleTerminal
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+results:
+  Ok: SaleTerminalRead
+  Error: SaleTerminalReadError

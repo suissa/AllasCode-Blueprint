@@ -1,0 +1,7 @@
+name: PurchaseAgent
+kind: agent
+semantic_id: commerce.agent.purchase
+context: ../contexts/purchase.yml
+actor: ../../actors/purchase-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml

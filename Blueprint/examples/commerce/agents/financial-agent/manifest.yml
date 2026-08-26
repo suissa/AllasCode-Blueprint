@@ -1,0 +1,7 @@
+name: FinancialAgent
+kind: agent
+semantic_id: commerce.agent.financial
+context: ../contexts/financial.yml
+actor: ../../actors/financial-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml

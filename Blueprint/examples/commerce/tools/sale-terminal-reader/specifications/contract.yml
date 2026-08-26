@@ -1,0 +1,4 @@
+invariants:
+  - tool_does_not_close_sale
+  - tool_does_not_mutate_inventory
+  - exactly_one_terminal_result

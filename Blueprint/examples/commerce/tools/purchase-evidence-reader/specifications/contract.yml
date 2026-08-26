@@ -1,0 +1,5 @@
+given: accepted_purchase_evidence
+when: PurchaseEvidenceReader_is_invoked
+then:
+  - emits_exactly_one_of: [Ok, Error]
+  - does_not_mutate_domain_state: true

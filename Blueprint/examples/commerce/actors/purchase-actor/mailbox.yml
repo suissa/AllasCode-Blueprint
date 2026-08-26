@@ -1,0 +1,4 @@
+accepts:
+  - action: RegisterPurchase
+ordering: fifo
+concurrency: 1

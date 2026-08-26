@@ -1,0 +1,7 @@
+name: SalesAgent
+kind: agent
+semantic_id: commerce.agent.sales
+context: ../contexts/sales.yml
+actor: ../../actors/sales-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml

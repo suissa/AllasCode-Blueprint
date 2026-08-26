@@ -1,0 +1,5 @@
+type: object
+required: [purchase]
+properties:
+  purchase:
+    description: Structured purchase candidate.

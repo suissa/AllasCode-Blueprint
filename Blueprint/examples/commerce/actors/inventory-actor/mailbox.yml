@@ -1,0 +1,5 @@
+accepts:
+  - action: IncreaseStock
+  - action: DecreaseStock
+ordering: fifo
+concurrency: 1
