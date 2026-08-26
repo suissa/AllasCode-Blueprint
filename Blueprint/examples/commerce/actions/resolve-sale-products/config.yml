@@ -1,11 +1,6 @@
-runtime:
-  execution: local
-  timeout_ms: 5000
-
-bindings:
-  product_resolver: ResolveProduct
-  quantity_validator: ValidateQuantity
-  currency_validator: ValidateCurrencyAmount
-
-healing:
-  human_escalation: true
+action:
+  idempotency_key: sale_id
+  allow_ambiguous_product_selection: false
+  healing_enabled: true
+  normalization_scope: healing_only
+  unresolved_behavior: Error

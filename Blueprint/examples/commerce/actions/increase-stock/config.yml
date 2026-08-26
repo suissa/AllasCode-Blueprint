@@ -1,6 +1,6 @@
-entity: Inventory
-behavior: Increase
-property: balances
-validation:
-  quantity: positive
-self-healing: enabled
+action:
+  idempotency_key: purchase_id
+  require_positive_quantity: true
+  healing_enabled: true
+  normalization_scope: healing_only
+  unresolved_behavior: Error

@@ -1,4 +1,6 @@
-entity: Financial
-behavior: Create
-entry-type: purchase-expense
-self-healing: enabled
+action:
+  idempotency_key: purchase_id
+  require_valid_currency_amount: true
+  healing_enabled: true
+  normalization_scope: healing_only
+  unresolved_behavior: Error
