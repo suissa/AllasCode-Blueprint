@@ -1,4 +1,5 @@
 accepts:
   - action: ResolveSaleProducts
+  - action: AssociateCustomerToSale
 ordering: fifo
 concurrency: 1
