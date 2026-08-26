@@ -24,6 +24,11 @@ async function dirs(path: string): Promise<string[]> {
   return entries.filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
 }
 
+function ensureEvent(graph: SemanticGraph, event: string): void {
+  const id = `Event:${event}`;
+  if (!graph.nodes.some(node => node.id === id)) graph.nodes.push({ id, type: 'Event', label: event });
+}
+
 function addEdge(graph: SemanticGraph, type: string, from: string, to: string): void {
   if (graph.edges.some(edge => edge.type === type && edge.from === from && edge.to === to)) return;
   graph.edges.push({ id: edgeId(type, from, to), type, from, to });
@@ -34,15 +39,20 @@ export async function compileRuntimeSemanticGraph(root: string): Promise<Semanti
 
   for (const folder of await dirs(join(root, 'actions'))) {
     const manifest = await yaml<ResultManifest>(join(root, 'actions', folder, 'manifest.yml'));
+    ensureEvent(graph, manifest.results.Ok);
+    ensureEvent(graph, manifest.results.Error);
     addEdge(graph, 'EMITS_ERROR', `Action:${manifest.name}`, `Event:${manifest.results.Error}`);
   }
 
   for (const folder of await dirs(join(root, 'tools'))) {
     const manifest = await yaml<ResultManifest>(join(root, 'tools', folder, 'manifest.yml'));
+    ensureEvent(graph, manifest.results.Ok);
+    ensureEvent(graph, manifest.results.Error);
     addEdge(graph, 'TOOL_EMITS_OK', `Tool:${manifest.name}`, `Event:${manifest.results.Ok}`);
     addEdge(graph, 'TOOL_EMITS_ERROR', `Tool:${manifest.name}`, `Event:${manifest.results.Error}`);
   }
 
+  graph.nodes.sort((a, b) => a.id.localeCompare(b.id));
   graph.edges.sort((a, b) => a.id.localeCompare(b.id));
   const errors = validateSemanticGraph(graph);
   if (errors.length) throw new Error(`Invalid runtime semantic graph:\n- ${errors.join('\n- ')}`);
