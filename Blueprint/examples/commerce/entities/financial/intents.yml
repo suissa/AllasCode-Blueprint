@@ -1,0 +1,9 @@
+intents:
+  - id: RecordPurchaseExpense
+    goal: record the financial cost of an accepted purchase exactly once
+  - id: RecordSaleRevenue
+    goal: record revenue for an accepted sale exactly once
+  - id: CloseSale
+    goal: finalize financial evidence required for SaleCompleted
+  - id: QueryFinancialPosition
+    goal: project financial position without mutating the ledger

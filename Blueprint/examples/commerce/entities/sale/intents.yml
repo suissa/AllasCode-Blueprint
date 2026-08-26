@@ -1,0 +1,7 @@
+intents:
+  - id: ProcessSaleIntent
+    goal: convert an identified monetary sale into resolved products, stock decrease and financial closing
+  - id: ResolveSaleProducts
+    goal: determine which products compose a previously identified sale
+  - id: CloseSale
+    goal: complete the sale after required domain effects are proven

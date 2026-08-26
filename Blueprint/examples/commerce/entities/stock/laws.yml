@@ -1,0 +1,6 @@
+laws:
+  NonNegativeQuantity: accepted(DecreaseStock) implies resulting quantity >= 0
+  AdditiveIncrease: increase(q) from x yields x + q for q > 0
+  SubtractiveDecrease: decrease(q) from x succeeds iff q <= x and yields x - q
+  IdempotentMutation: repeating the same correlated effect does not change quantity twice
+  MonotonicVersion: successful mutation implies version_after > version_before

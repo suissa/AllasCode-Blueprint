@@ -1,0 +1,8 @@
+invariants:
+  - ledger_id is immutable
+  - every ledger entry amount >= 0
+  - every entry has a unique semantic entry id
+  - purchase_id produces at most one purchase-expense entry
+  - sale_id produces at most one sale-revenue entry
+  - recorded entries are immutable
+  - balance_projection is derived from entries and is not an independent source of truth

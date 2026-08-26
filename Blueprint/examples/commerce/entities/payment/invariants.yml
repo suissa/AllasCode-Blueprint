@@ -1,0 +1,7 @@
+invariants:
+  - payment_id is immutable
+  - amount >= 0
+  - currency is defined
+  - confirmed payment has exactly one reference_id and reference_type
+  - confirmed payment amount cannot change
+  - rejected payment remains auditable

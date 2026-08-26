@@ -1,0 +1,15 @@
+id: Purchase
+kind: Entity
+semantic_id: commerce.entity.purchase
+identity: purchase_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  supplier: Supplier[1]
+  products: Product[1..*]
+  stock_effect: Stock[*]
+  financial_effect: Financial[1]

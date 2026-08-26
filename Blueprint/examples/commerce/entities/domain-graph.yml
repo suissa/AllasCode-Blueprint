@@ -1,0 +1,22 @@
+nodes:
+  Supplier: commerce.entity.supplier
+  Product: commerce.entity.product
+  Purchase: commerce.entity.purchase
+  Inventory: commerce.entity.inventory
+  Stock: commerce.entity.stock
+  Sale: commerce.entity.sale
+  Payment: commerce.entity.payment
+  Financial: commerce.entity.financial
+edges:
+  - Supplier -> Purchase: supplies
+  - Purchase -> Product: contains
+  - Purchase -> Stock: increases-via-event
+  - Purchase -> Financial: creates-expense-via-event
+  - Inventory -> Stock: governs
+  - Stock -> Product: quantifies
+  - Sale -> Product: contains-after-resolution
+  - Sale -> Stock: decreases-via-event
+  - Sale -> Financial: creates-revenue-via-event
+  - Payment -> Sale: may-settle
+  - Payment -> Purchase: may-evidence
+  - Payment -> Financial: provides-monetary-evidence

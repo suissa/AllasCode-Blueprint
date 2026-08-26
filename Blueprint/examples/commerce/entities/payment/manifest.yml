@@ -1,0 +1,14 @@
+id: Payment
+kind: Entity
+semantic_id: commerce.entity.payment
+identity: payment_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  sale: Sale[0..1]
+  purchase: Purchase[0..1]
+  financial: Financial[1]

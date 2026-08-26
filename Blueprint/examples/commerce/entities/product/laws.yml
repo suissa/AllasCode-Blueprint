@@ -1,0 +1,4 @@
+laws:
+  IdentityPreservation: update(Product) preserves product_id
+  StockSeparation: Product.quantity_on_hand is undefined; authoritative quantity belongs to Stock
+  HistoricalIntegrity: disabling Product preserves Purchase and Sale references

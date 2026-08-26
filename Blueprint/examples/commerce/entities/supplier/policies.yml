@@ -1,0 +1,9 @@
+policies:
+  identity_immutable: true
+  historical_reference_preserved: true
+  inactive_supplier:
+    allow_existing_history: true
+    allow_new_purchase: false
+  duplicate_resolution:
+    prefer: document
+    fallback: normalized-name-and-phone

@@ -1,0 +1,7 @@
+intents:
+  - id: IdentifyPayment
+    goal: capture observed monetary movement
+  - id: ConfirmPayment
+    goal: bind payment evidence to a commercial reference
+  - id: RejectPayment
+    goal: mark evidence as unusable without deleting it

@@ -1,0 +1,10 @@
+payment_id: SemanticId
+reference_id: SemanticId
+reference_type: sale|purchase
+amount: CurrencyAmount
+currency: Currency
+method: pix|card|cash|transfer|other
+external_reference: OptionalString
+evidence: OptionalEvidenceReference
+occurred_at: DateTime
+status: identified|confirmed|rejected

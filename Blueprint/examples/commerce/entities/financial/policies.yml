@@ -1,0 +1,8 @@
+policies:
+  ledger_entries: append-only
+  mutation_of_recorded_entry: forbidden
+  idempotency:
+    purchase_expense_key: purchase_id
+    sale_revenue_key: sale_id
+  foreign_context_access: events-only
+  balance_is_projection: true

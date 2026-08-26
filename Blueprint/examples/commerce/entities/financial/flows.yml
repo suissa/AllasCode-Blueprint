@@ -1,0 +1,9 @@
+participates_in:
+  - flow: PurchaseProductsIntent
+    consumes: StockIncreased
+    action: FinancialAgent.RecordPurchaseExpense
+    emits: PurchaseCompleted
+  - flow: ProcessSaleIntent
+    consumes: StockDecreased
+    action: FinancialAgent.CloseSale
+    emits: SaleCompleted

@@ -1,0 +1,5 @@
+inventory_id: SemanticId
+name: NonEmptyString
+stock_refs: SemanticIdList
+status: active|inactive
+updated_at: DateTime

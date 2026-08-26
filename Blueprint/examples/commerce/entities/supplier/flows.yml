@@ -1,0 +1,5 @@
+participates_in:
+  - flow: PurchaseProductsIntent
+    role: referenced-party
+    enters_as: supplier_id
+    leaves_as: supplier-reference

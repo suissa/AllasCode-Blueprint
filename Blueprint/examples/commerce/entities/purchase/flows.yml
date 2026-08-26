@@ -1,0 +1,11 @@
+owns:
+  - flow: PurchaseProductsIntent
+    definition: ../../flows/purchase-products.2flow
+sequence:
+  - PurchaseProductsRequested
+  - PurchaseAgent.RegisterPurchase
+  - PurchaseRegistered
+  - InventoryAgent.IncreaseStock
+  - StockIncreased
+  - FinancialAgent.RecordPurchaseExpense
+  - PurchaseCompleted

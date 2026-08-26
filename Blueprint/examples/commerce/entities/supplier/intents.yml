@@ -1,0 +1,7 @@
+intents:
+  - id: RegisterSupplier
+    goal: make a supplier identifiable for future purchases
+  - id: UpdateSupplier
+    goal: change descriptive supplier data without changing supplier identity
+  - id: DisableSupplier
+    goal: prevent new purchases while preserving historical references
