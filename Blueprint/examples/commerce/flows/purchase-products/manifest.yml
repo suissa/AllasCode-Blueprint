@@ -1,0 +1,6 @@
+name: purchase-products
+kind: flow
+semantic_id: commerce.flow.purchase-products
+source: ../purchase-products.2flow
+active: true
+intent: PurchaseProductsIntent
