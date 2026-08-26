@@ -1,0 +1,16 @@
+version: v1
+commands:
+  require_authentication: true
+  require_authorization: true
+  require_correlation_id: true
+  require_idempotency_key: true
+queries:
+  default_page_size: 25
+  max_page_size: 100
+errors:
+  expose_internal_details: false
+  preserve_semantic_outcome: true
+adapters:
+  http: enabled
+  whatsapp: enabled
+  ui: enabled
