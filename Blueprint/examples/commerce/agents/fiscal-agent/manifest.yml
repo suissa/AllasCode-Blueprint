@@ -1,0 +1,7 @@
+name: FiscalAgent
+kind: agent
+semantic_id: commerce.agent.fiscal
+context: ../../contexts/fiscal.yml
+actor: ../../actors/fiscal-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml
