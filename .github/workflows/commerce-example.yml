@@ -43,6 +43,9 @@ jobs:
       - name: ArchitectureTests
         run: npm run test:architecture
 
+      - name: EvidenceFreshness
+        run: npm run test:evidence
+
       - name: CoreTests
         run: npm run test:core
 
