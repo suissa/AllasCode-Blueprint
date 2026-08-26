@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { parse } from 'yaml';
 import type { LoadedAction, LoadedActor, LoadedAgent, LoadedTool } from './semantic-loader.js';
 
@@ -13,6 +13,10 @@ interface IntentDefinition {
   'starts-with'?: string;
   success?: string;
   failure?: string;
+}
+
+interface ProjectConfig {
+  flows?: Record<string, string>;
 }
 
 export interface SemanticValidationReport {
@@ -75,10 +79,13 @@ async function loadEvents(root: string): Promise<Set<string>> {
 }
 
 async function loadFlows(root: string): Promise<Array<{ name: string; source: string }>> {
-  const base = join(root, 'flows');
-  const entries = await readdir(base, { withFileTypes: true });
-  const files = entries.filter(entry => entry.isFile() && entry.name.endsWith('.2flow')).map(entry => entry.name).sort();
-  return Promise.all(files.map(async name => ({ name, source: await readFile(join(base, name), 'utf8') })));
+  const config = await yaml<ProjectConfig>(join(root, 'config.yml'));
+  const configured = Object.values(config.flows ?? {});
+  return Promise.all(configured.map(async relativePath => {
+    const normalized = relativePath.replace(/^\.\//, '');
+    const path = join(root, normalized);
+    return { name: basename(path), source: await readFile(path, 'utf8') };
+  }));
 }
 
 export async function validateSemanticArchitecture(
@@ -166,7 +173,7 @@ export async function validateSemanticArchitecture(
     entities: [...entityNames].sort(),
     intents: [...intentNames].sort(),
     events: [...events].sort(),
-    flows: flows.map(flow => flow.name),
+    flows: flows.map(flow => flow.name).sort(),
   };
 }
 
