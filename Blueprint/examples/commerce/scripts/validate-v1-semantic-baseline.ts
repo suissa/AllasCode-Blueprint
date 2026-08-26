@@ -44,6 +44,12 @@ for (const flow of nodes('Flow')) {
 }
 if (!blocking.some(e => e.includes('Intent') || e.includes('Flow:') || e.includes('STARTS_WITH') || e.includes('SUCCEEDS_WITH'))) passed.push('Every configured Flow resolves to one typed active Intent with aligned initial and success events.');
 
+const activeIntentIds = new Set(graph.edges.filter(edge => edge.type === 'IMPLEMENTS_INTENT').map(edge => edge.to));
+for (const intent of nodes('Intent')) {
+  if (!activeIntentIds.has(intent.id)) blocking.push(`${intent.id} is not implemented by a configured Flow; inactive/legacy Intents are forbidden in the frozen v1 graph.`);
+}
+if (!blocking.some(e => e.includes('inactive/legacy Intents'))) passed.push('Every v1 Intent is active and implemented by a configured Flow; legacy contracts are excluded from the executable graph.');
+
 const forbiddenDirect = graph.edges.filter(edge => {
   const from = graph.nodes.find(node => node.id === edge.from);
   const to = graph.nodes.find(node => node.id === edge.to);
@@ -52,9 +58,6 @@ const forbiddenDirect = graph.edges.filter(edge => {
 });
 for (const edge of forbiddenDirect) blocking.push(`Direct cross-boundary relation is forbidden: ${edge.type} ${edge.from} -> ${edge.to}`);
 if (!forbiddenDirect.length) passed.push('No direct Agent→Agent or undeclared Entity→Entity operational coupling exists in the graph.');
-
-const activeIntentIds = new Set(graph.edges.filter(edge => edge.type === 'IMPLEMENTS_INTENT').map(edge => edge.to));
-for (const intent of nodes('Intent')) if (!activeIntentIds.has(intent.id) && edgesFrom(intent.id, 'STARTS_WITH').length === 0) warnings.push(`${intent.id} is legacy/inactive and remains outside the executable v1 baseline.`);
 
 let evidenceRequired = 0;
 let evidenceProved = 0;
