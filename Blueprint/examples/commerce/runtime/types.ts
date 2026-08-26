@@ -60,6 +60,6 @@ export interface ActionManifest {
 export interface ExecutionReport {
   status: 'Ok' | 'Error';
   intent: string;
-  last_event?: string;
+  last_event: string | undefined;
   payload: unknown;
 }
