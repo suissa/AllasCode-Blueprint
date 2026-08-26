@@ -9,9 +9,9 @@ export interface SemanticImpactReport {
   risk_score: number;
 }
 
-const ARCH_TYPES = new Set(['Entity','Intent','Event','Agent','Actor','Action','Tool','Flow','Context','Capability','Policy','Invariant','Law','Constraint','Schema','Property','Artifact','HealingStrategy']);
-const HIGH_TYPES = new Set(['Action','Flow','Policy','Invariant','Law','Constraint','Schema','HealingStrategy']);
-const CRITICAL_TYPES = new Set(['Policy','Invariant','Law','Constraint','HealingStrategy']);
+const ARCH_TYPES = new Set(['Entity','Intent','Event','Agent','Actor','Action','Tool','Flow','Context','Capability','RuntimeCapability','Policy','Invariant','Law','Constraint','Schema','Property','Artifact','HealingStrategy']);
+const HIGH_TYPES = new Set(['Action','Flow','Policy','Invariant','Law','Constraint','Schema','RuntimeCapability','HealingStrategy']);
+const CRITICAL_TYPES = new Set(['Policy','Invariant','Law','Constraint','RuntimeCapability','HealingStrategy']);
 
 function kebab(value: string): string {
   return value.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/_/g, '-').toLowerCase();
@@ -32,6 +32,8 @@ export function mapChangedFilesToSeeds(graph: SemanticGraph, changedFiles: strin
       const folders: Record<string,string> = { Action:'actions',Actor:'actors',Agent:'agents',Tool:'tools',Flow:'flows',Intent:'intents',Entity:'entities' };
       const folder = folders[node.type];
       if (folder && normalized.includes(`/${folder}/${slug}`)) seeds.add(node.id);
+      if (node.type === 'RuntimeCapability' && normalized.includes('/healing/')) seeds.add(node.id);
+      if (node.type === 'HealingStrategy' && normalized.includes('/healing/')) seeds.add(node.id);
       if (node.type === 'Entity' && normalized.endsWith(`/entities/${slug}.yml`)) seeds.add(node.id);
       if (node.type === 'Flow' && normalized.endsWith(`/flows/${slug}.2flow`)) seeds.add(node.id);
       if (node.type === 'Intent' && normalized.endsWith(`/intents/${slug}.yml`)) seeds.add(node.id);
