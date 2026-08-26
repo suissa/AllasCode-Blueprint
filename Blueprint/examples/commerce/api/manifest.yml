@@ -1,0 +1,12 @@
+id: ApplicationApi
+kind: Interface
+semantic_id: commerce.interface.application-api
+version: v1
+purpose: expose semantic runtime capabilities to transport adapters without granting domain authority
+rules:
+  - transport adapters never invoke Actions directly
+  - commands address Intents
+  - queries read projections only
+  - correlation_id propagates to runtime
+  - idempotency_key is mandatory for commands
+  - semantic Ok/Error outcomes are preserved at the boundary
