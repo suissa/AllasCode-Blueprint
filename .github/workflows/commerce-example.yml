@@ -15,6 +15,11 @@ on:
       - '.github/workflows/commerce-example.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   semantic-ci:
     runs-on: ubuntu-latest
@@ -44,6 +49,28 @@ jobs:
 
       - name: SelectorConfidence
         run: npm run selector-confidence
+
+      - name: SemanticPrDiff
+        run: npm run semantic-pr-diff
+
+      - name: PublishSemanticPrDiff
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'Blueprint/examples/commerce/tests/dashboard/semantic-pr-diff.md';
+            const marker = '<!-- allascode-semantic-pr-diff -->';
+            const body = fs.readFileSync(path, 'utf8');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const previous = comments.find(comment => comment.user?.type === 'Bot' && comment.body?.includes(marker));
+            if (previous) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
 
       - name: SelectiveSemanticTests
         run: npm run test:selective
