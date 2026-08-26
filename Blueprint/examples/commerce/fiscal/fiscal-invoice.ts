@@ -10,10 +10,10 @@ export class FiscalInvoiceService{
   const existingId=this.keys.get(input.idempotency_key); if(existingId)return{outcome:'Ok' as const,document:{...this.docs.get(existingId)!},duplicate:true as const};
   if(!Number.isFinite(input.amount)||input.amount<=0)return{outcome:'Error' as const,code:'InvalidAmount' as const};
   if(!this.policy.canIssue(input))return{outcome:'Error' as const,code:'NotEligible' as const};
-  const base:FiscalDocument={...input,status:'pending'}; this.docs.set(input.document_id,base); this.keys.set(input.idempotency_key,input.document_id);
+  const base:FiscalDocument={document_id:input.document_id,source_type:input.source_type,source_id:input.source_id,amount:input.amount,currency:input.currency,jurisdiction:input.jurisdiction,status:'pending',correlation_id:input.correlation_id,idempotency_key:input.idempotency_key,updated_at:input.now}; this.docs.set(input.document_id,base); this.keys.set(input.idempotency_key,input.document_id);
   const result=await this.provider.issue(input);
-  if(result.outcome==='Ok'){const doc:FiscalDocument={...base,status:'authorized',external_id:result.external_id,provider:result.provider};this.docs.set(input.document_id,doc);return{outcome:'Ok' as const,document:{...doc}};}
-  const doc:FiscalDocument={...base,status:result.code, ...(result.provider?{provider:result.provider}:{})};this.docs.set(input.document_id,doc);return{outcome:'Error' as const,code:result.code,healing_required:true as const,document:{...doc}};
+  if(result.outcome==='Ok'){const doc:FiscalDocument={...base,status:'authorized',external_id:result.external_id,provider:result.provider,updated_at:input.now};this.docs.set(input.document_id,doc);return{outcome:'Ok' as const,document:{...doc}};}
+  const doc:FiscalDocument={...base,status:result.code,updated_at:input.now,...(result.provider?{provider:result.provider}:{})};this.docs.set(input.document_id,doc);return{outcome:'Error' as const,code:result.code,healing_required:true as const,document:{...doc}};
  }
  get(id:string){const d=this.docs.get(id);return d?{...d}:undefined;}
  list(){return[...this.docs.values()].map(d=>({...d}));}
