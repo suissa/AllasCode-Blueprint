@@ -60,8 +60,8 @@ export function diagnoseHealing(graph: SemanticGraph, context: HealingContext): 
 
   const retry = strategies.find(node => node.metadata?.kind === 'retry');
   if (retry) {
-    const maxAttempts = numberMeta(retry, 'max_attempts', 1);
-    if (context.attempt < maxAttempts) {
+    const maxAttempts = Math.max(1, numberMeta(retry, 'max_attempts', 1));
+    if (context.attempt + 1 < maxAttempts) {
       return {
         kind: 'Retry',
         reason: `Graph strategy ${retry.label} matched the failure and preserves the same semantic request.`,
@@ -113,8 +113,8 @@ export async function executeWithSemanticHealing(
   if (result.status === 'Ok') return { result, healed: false, decision: { kind: 'Terminal', reason: 'No healing required.' }, attempts };
 
   let decision = diagnoseHealing(graph, { agent, action, error: result, attempt: 0 });
-  while (decision.kind === 'Retry' && attempts <= decision.max_attempts) {
-    store?.audit({ kind:'retry', agent, action, detail:`${decision.strategy} attempt ${attempts}/${decision.max_attempts}` });
+  while (decision.kind === 'Retry' && attempts < decision.max_attempts) {
+    store?.audit({ kind:'retry', agent, action, detail:`${decision.strategy} attempt ${attempts + 1}/${decision.max_attempts}` });
     await backoff(decision.backoff_ms);
     attempts += 1;
     result = await executeBounded(execute, decision.timeout_ms);
