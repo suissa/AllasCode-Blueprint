@@ -1,0 +1,5 @@
+id: Invoice
+kind: Entity
+semantic_id: commerce.entity.invoice
+identity: invoice_id
+properties: ./properties.yml
