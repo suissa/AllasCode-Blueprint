@@ -1,0 +1,31 @@
+graph:
+  required:
+    - version
+    - nodes
+    - edges
+  node:
+    required: [id, type, label]
+    fields:
+      id: string
+      type: [Entity, Intent, Event, Agent, Actor, Action, Tool, Flow]
+      label: string
+      semantic_id: string?
+      metadata: object?
+  edge:
+    required: [id, type, from, to]
+    fields:
+      id: string
+      type: string
+      from: node-id
+      to: node-id
+      metadata: object?
+invariants:
+  - every edge endpoint references an existing node
+  - node ids are unique
+  - edge ids are unique
+  - every Action has exactly one Agent owner
+  - every Actor has exactly one Agent owner
+  - every configured Flow references exactly one Intent
+  - every configured Flow Action call resolves to Agent.Action
+  - every Flow expected success event equals the Action manifest Ok event
+  - compilation order does not affect graph identity

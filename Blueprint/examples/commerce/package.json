@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "demo": "tsx runtime/demo.ts",
-    "test": "tsx --test tests/commerce.test.ts",
-    "check": "tsc --noEmit"
+    "test": "tsx --test tests/commerce.test.ts tests/semantic-graph.test.ts",
+    "check": "tsc --noEmit && npm run graph:validate",
+    "graph:validate": "tsx scripts/build-semantic-graph.ts --validate",
+    "graph:build": "tsx scripts/build-semantic-graph.ts"
   },
   "dependencies": {
     "yaml": "^2.8.1"

@@ -1,0 +1,23 @@
+id: CommerceSemanticGraph
+kind: SemanticGraph
+semantic_id: commerce.graph.runtime
+version: 0.1.0
+source_of_truth: semantic-definitions
+active_composition: ../config.yml#flows
+compiler: ../runtime/semantic-graph.ts
+schema: ./schema.yml
+output: ../generated/semantic-graph.json
+node_types:
+  - Entity
+  - Intent
+  - Event
+  - Agent
+  - Actor
+  - Action
+  - Tool
+  - Flow
+properties:
+  directed: true
+  typed: true
+  deterministic: true
+  executable_scope: configured-flows-only
