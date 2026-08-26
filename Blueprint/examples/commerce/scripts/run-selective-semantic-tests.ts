@@ -13,13 +13,15 @@ if (plan.unmapped_tests.length) throw new Error(`Selective runner has unmapped t
 
 const actionNames = new Set<string>();
 const architectureNames = new Set<string>();
+const runtimeCapabilityNames = new Set<string>();
 for (const testId of plan.action_tests) {
   const testedBy = graph.edges.find(e=>e.type==='TESTED_BY'&&e.to===testId)!;
   actionNames.add(testedBy.from.split(':').slice(1).join(':'));
 }
 for (const testId of plan.architecture_tests) {
   const testedBy = graph.edges.find(e=>e.type==='TESTED_BY'&&e.to===testId)!;
-  architectureNames.add(testedBy.from);
+  if (testedBy.from.startsWith('RuntimeCapability:')) runtimeCapabilityNames.add(testedBy.from);
+  else architectureNames.add(testedBy.from);
 }
 
 if (actionNames.size) {
@@ -30,4 +32,8 @@ if (architectureNames.size) {
   const pattern=[...architectureNames].sort().map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
   execFileSync('npx',['tsx','--test','--test-name-pattern',pattern,'tests/architecture-layers.test.ts'],{cwd:root,stdio:'inherit'});
 }
-console.log(`Selective semantic tests executed: ${plan.required_tests.length} required, ${actionNames.size} Action artifacts, ${architectureNames.size} architecture artifacts.`);
+if (runtimeCapabilityNames.size) {
+  const pattern=[...runtimeCapabilityNames].sort().map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+  execFileSync('npx',['tsx','--test','--test-name-pattern',pattern,'tests/healing-capability.test.ts'],{cwd:root,stdio:'inherit'});
+}
+console.log(`Selective semantic tests executed: ${plan.required_tests.length} required, ${actionNames.size} Action artifacts, ${architectureNames.size} architecture artifacts, ${runtimeCapabilityNames.size} RuntimeCapability artifacts.`);
