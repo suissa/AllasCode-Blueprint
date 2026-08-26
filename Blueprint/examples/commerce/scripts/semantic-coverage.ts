@@ -1,0 +1,37 @@
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { SemanticGraph } from '../runtime/semantic-graph.js';
+
+const root=join(import.meta.dirname,'..');
+const graph=JSON.parse(await readFile(join(root,'generated','semantic-graph.json'),'utf8')) as SemanticGraph;
+const kinds=['Action','Actor','Agent','Tool','Flow','Intent','Entity'] as const;
+const resultByTest=new Map<string,string>();
+for(const edge of graph.edges.filter(e=>e.type==='PRODUCES')) resultByTest.set(edge.from,edge.to);
+function passed(resultId:string|undefined):boolean { const n=graph.nodes.find(x=>x.id===resultId); return n?.type==='TestResult'&&n.metadata?.status==='passed'; }
+const coverage:Record<string,{total:number;covered:number;percent:number}>={};
+for(const kind of kinds){
+  const nodes=graph.nodes.filter(n=>n.type===kind); let covered=0;
+  for(const node of nodes){ const tests=graph.edges.filter(e=>e.type==='TESTED_BY'&&e.from===node.id).map(e=>e.to); if(tests.some(t=>passed(resultByTest.get(t)))) covered++; }
+  coverage[kind]={total:nodes.length,covered,percent:nodes.length?covered/nodes.length*100:100};
+}
+const obligations=['Invariant','Policy','Law'] as const;
+for(const kind of obligations){
+  const nodes=graph.nodes.filter(n=>n.type===kind); let covered=0;
+  for(const node of nodes){ const proofs=graph.edges.filter(e=>e.type==='PROVES'&&e.to===node.id); if(proofs.some(e=>passed(e.from))) covered++; }
+  coverage[kind]={total:nodes.length,covered,percent:nodes.length?covered/nodes.length*100:100};
+}
+const edgeTypes=['LISTENS','DISPATCHES','EMITS_OK','EMITS_ERROR','OWNS_ACTOR','ACCEPTS_ACTION','IMPLEMENTS_INTENT','PRESERVES','GOVERNED_BY'];
+const edges=graph.edges.filter(e=>edgeTypes.includes(e.type));
+const exercised=edges.filter(e=>{
+  const source=graph.nodes.find(n=>n.id===e.from); if(!source) return false;
+  const tests=graph.edges.filter(x=>x.type==='TESTED_BY'&&x.from===source.id).map(x=>x.to);
+  return tests.some(t=>passed(resultByTest.get(t)));
+}).length;
+const report={generated_at:new Date().toISOString(),coverage,graph_edges:{total:edges.length,exercised,percent:edges.length?exercised/edges.length*100:100}};
+await writeFile(join(root,'tests','dashboard','semantic-coverage.json'),JSON.stringify(report,null,2)+'\n');
+const required=['Action','Actor','Agent','Tool','Flow','Intent','Entity'];
+const failures=required.filter(k=>coverage[k]!.percent<100);
+if(failures.length) throw new Error(`Semantic coverage incomplete: ${failures.map(k=>`${k}=${coverage[k]!.percent.toFixed(1)}%`).join(', ')}`);
+console.log('Semantic coverage:',Object.fromEntries(required.map(k=>[k,`${coverage[k]!.covered}/${coverage[k]!.total}`])));
+console.log(`Governance proofs: Invariant ${coverage.Invariant!.covered}/${coverage.Invariant!.total}, Policy ${coverage.Policy!.covered}/${coverage.Policy!.total}, Law ${coverage.Law!.covered}/${coverage.Law!.total}`);
+console.log(`Graph edge exercise: ${exercised}/${edges.length} (${report.graph_edges.percent.toFixed(1)}%)`);

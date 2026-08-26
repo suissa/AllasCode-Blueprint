@@ -40,7 +40,10 @@ jobs:
       - name: ActionTests
         run: npm run test:actions
 
-      - name: Test
+      - name: ArchitectureTests
+        run: npm run test:architecture
+
+      - name: CoreTests
         run: npm run test:core
 
       - name: Demo
