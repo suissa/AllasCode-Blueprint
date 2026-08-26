@@ -1,0 +1,28 @@
+unit:
+  intent: prove one semantic unit in isolation
+  default_components: [summary-card, table, donut]
+bdd:
+  intent: prove behavior scenarios against human-readable acceptance semantics
+  default_components: [summary-card, table, timeline]
+load:
+  intent: prove behavior under expected sustained workload
+  default_components: [summary-card, line, histogram]
+stress:
+  intent: discover breaking point and recovery behavior beyond expected capacity
+  default_components: [summary-card, line, gauge]
+synk:
+  intent: dependency and vulnerability synchronization/scan contract
+  provider_hint: snyk
+  default_components: [summary-card, table, status]
+security:
+  intent: prove security properties, boundaries, misuse resistance and policy enforcement
+  default_components: [summary-card, table, donut]
+integration:
+  intent: prove contracts between two or more artifacts
+  default_components: [summary-card, timeline, table]
+e2e:
+  intent: prove an intent from external trigger to terminal semantic outcome
+  default_components: [summary-card, timeline, status]
+benchmark:
+  intent: measure and compare a stable performance baseline
+  default_components: [summary-card, bar, line]

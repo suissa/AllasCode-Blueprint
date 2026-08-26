@@ -1,0 +1,9 @@
+id: allascode.semantic-tests
+kind: testing-standard
+version: 1.0.0
+types: [unit, bdd, load, stress, synk, security, integration, e2e, benchmark]
+action_exclusions: [bdd, e2e]
+result_schema: ./result.schema.json
+result_contract:
+  terminal_status: [passed, failed, error, skipped, not-run]
+  presentation_is_declared_by_result: true
