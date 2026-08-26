@@ -1,0 +1,7 @@
+name: SellProductsIntent
+kind: intent
+semantic_id: commerce.intent.sell-products
+source: ../sell-products.yml
+active: false
+legacy: true
+flow: sale-products
