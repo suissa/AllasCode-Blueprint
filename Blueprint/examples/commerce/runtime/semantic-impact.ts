@@ -1,4 +1,4 @@
-import type { SemanticGraph, SemanticGraphNode } from './semantic-graph.js';
+import type { SemanticGraph } from './semantic-graph.js';
 
 export interface SemanticImpactReport {
   changed_files: string[];
@@ -22,7 +22,7 @@ export function mapChangedFilesToSeeds(graph: SemanticGraph, changedFiles: strin
   const architectureNodes = graph.nodes.filter(node => ARCH_TYPES.has(node.type));
   for (const file of changedFiles) {
     const normalized = file.replaceAll('\\','/');
-    const global = /\/governance\/|\/graph\/|\/config\.yml$|\/runtime\/semantic-(graph|governor)\.ts$/.test(normalized);
+    const global = /\/governance\/|\/graph\/|\/config\.yml$|\/package\.json$|\/runtime\/semantic-(graph|governor|impact)\.ts$|\/scripts\/semantic-impact\.ts$|\.github\/workflows\/commerce-example\.yml$/.test(normalized);
     if (global) {
       architectureNodes.forEach(node => seeds.add(node.id));
       continue;
@@ -70,7 +70,7 @@ export function analyzeSemanticImpact(graph: SemanticGraph, changedFiles: string
     if (!node) continue;
     score += CRITICAL_TYPES.has(node.type) ? 8 : HIGH_TYPES.has(node.type) ? 5 : 2;
   }
-  if (changedFiles.some(file => /governance|config\.yml|semantic-governor/.test(file))) score += 20;
+  if (changedFiles.some(file => /governance|config\.yml|semantic-governor|semantic-impact|package\.json|commerce-example\.yml/.test(file))) score += 20;
   const risk = score >= 80 ? 'CRITICAL' : score >= 40 ? 'HIGH' : score >= 15 ? 'MEDIUM' : 'LOW';
   return { changed_files:[...changedFiles].sort(), seed_nodes:seeds, impacted_nodes:[...impacted].sort(), required_tests:[...requiredTests].sort(), risk, risk_score:score };
 }
