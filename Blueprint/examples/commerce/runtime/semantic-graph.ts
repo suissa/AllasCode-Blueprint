@@ -161,10 +161,20 @@ export async function compileSemanticGraph(root: string): Promise<SemanticGraph>
   };
 
   for (const entity of entities) {
-    addNode({ id: nodeId('Entity', entity.id), type: 'Entity', label: entity.id, semantic_id: entity.semantic_id });
+    addNode({
+      id: nodeId('Entity', entity.id),
+      type: 'Entity',
+      label: entity.id,
+      ...(entity.semantic_id ? { semantic_id: entity.semantic_id } : {}),
+    });
   }
   for (const intent of intents) {
-    addNode({ id: nodeId('Intent', intent.id), type: 'Intent', label: intent.id, semantic_id: intent.semantic_id });
+    addNode({
+      id: nodeId('Intent', intent.id),
+      type: 'Intent',
+      label: intent.id,
+      ...(intent.semantic_id ? { semantic_id: intent.semantic_id } : {}),
+    });
   }
   for (const event of events) addNode({ id: nodeId('Event', event), type: 'Event', label: event });
   for (const agent of architecture.agents) addNode({ id: nodeId('Agent', agent.name), type: 'Agent', label: agent.name });
@@ -177,7 +187,14 @@ export async function compileSemanticGraph(root: string): Promise<SemanticGraph>
     let ordinal = 0;
     for (const [relation, raw] of Object.entries(entity.relations ?? {}).sort(([a], [b]) => a.localeCompare(b))) {
       const target = relationTarget(raw);
-      addEdge('ENTITY_RELATION', nodeId('Entity', entity.id), nodeId('Entity', target), { relation, cardinality: raw.slice(target.length) || undefined }, ordinal++);
+      const cardinality = raw.slice(target.length);
+      addEdge(
+        'ENTITY_RELATION',
+        nodeId('Entity', entity.id),
+        nodeId('Entity', target),
+        { relation, ...(cardinality ? { cardinality } : {}) },
+        ordinal++,
+      );
     }
   }
 
