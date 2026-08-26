@@ -57,10 +57,7 @@ export async function loadCompiledSemanticGraph(root: string): Promise<SemanticG
 }
 
 function kebab(label: string): string {
-  return label
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-    .toLowerCase();
+  return label.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/([A-Z])([A-Z][a-z])/g, '$1-$2').toLowerCase();
 }
 
 function nodes(graph: SemanticGraph, type: SemanticGraphNode['type']): SemanticGraphNode[] {
@@ -84,9 +81,7 @@ function label(id: string): string {
 
 async function executableExport<T extends { execute: unknown }>(path: string): Promise<T> {
   const module = await import(pathToFileURL(path).href) as Record<string, unknown>;
-  const candidate = Object.values(module).find(value =>
-    typeof value === 'object' && value !== null && 'execute' in value && typeof (value as { execute?: unknown }).execute === 'function'
-  );
+  const candidate = Object.values(module).find(value => typeof value === 'object' && value !== null && 'execute' in value && typeof (value as { execute?: unknown }).execute === 'function');
   if (!candidate) throw new Error(`No executable export found in ${path}`);
   return candidate as T;
 }
@@ -134,7 +129,7 @@ export async function projectRuntimeFromGraph(root: string, graph: SemanticGraph
     const path = join(root, 'actions', kebab(node.label), 'implementation', 'implementation.js');
     actions.push({
       agent: owner,
-      manifest: { name: node.label, results: { Ok: ok, Error: error } },
+      manifest: { name: node.label, semantic_id: node.semantic_id ?? node.id, results: { Ok: ok, Error: error } },
       implementation: await executableExport<ActionImplementation>(path),
     });
   }
