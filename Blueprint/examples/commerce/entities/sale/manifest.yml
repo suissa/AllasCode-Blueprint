@@ -11,5 +11,9 @@ laws: ./laws.yml
 relations:
   products: Product[1..*]
   payment: Payment[0..1]
+  customer: Customer[0..1]
+  invoice: Invoice[0..1]
+  accounting_effect: AccountingEntry[0..1]
+  operator: User[0..1]
   stock_effect: Stock[*]
   financial_effect: Financial[1]
