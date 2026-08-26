@@ -1,0 +1,4 @@
+accepts:
+  - action: IssueSaleInvoice
+ordering: fifo
+concurrency: 1
