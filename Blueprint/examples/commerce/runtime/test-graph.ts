@@ -4,9 +4,9 @@ import type { SemanticGraph, SemanticGraphNode } from './semantic-graph.js';
 
 interface MetricResult { id: string; label?: string; value: number; unit?: string; }
 interface TestResultDocument {
-  artifact: { id: string; type: string; path?: string };
+  artifact: { id: string; kind: string; path?: string };
   test: { type: string; id?: string };
-  status: 'passed' | 'failed' | 'warning' | 'skipped' | 'unknown';
+  status: 'passed' | 'failed' | 'warning' | 'skipped' | 'unknown' | 'not-run';
   metrics?: MetricResult[];
   proves?: string[];
   violates?: string[];
@@ -28,17 +28,15 @@ function ensureNode(graph: SemanticGraph, node: SemanticGraphNode): void {
 
 function addEdge(graph: SemanticGraph, type: string, from: string, to: string, metadata?: Record<string, unknown>): void {
   const id = `${type}:${from}->${to}`;
-  if (!graph.edges.some(edge => edge.type === type && edge.from === from && edge.to === to)) {
-    graph.edges.push({ id, type, from, to, ...(metadata ? { metadata } : {}) });
-  }
+  if (!graph.edges.some(edge => edge.type === type && edge.from === from && edge.to === to)) graph.edges.push({ id, type, from, to, ...(metadata ? { metadata } : {}) });
 }
 
 function validateResult(result: TestResultDocument, file: string): string[] {
   const errors: string[] = [];
   if (!result?.artifact?.id) errors.push(`${file}: artifact.id is required`);
-  if (!result?.artifact?.type) errors.push(`${file}: artifact.type is required`);
+  if (!result?.artifact?.kind) errors.push(`${file}: artifact.kind is required`);
   if (!result?.test?.type) errors.push(`${file}: test.type is required`);
-  if (!['passed','failed','warning','skipped','unknown'].includes(result?.status)) errors.push(`${file}: invalid status`);
+  if (!['passed','failed','warning','skipped','unknown','not-run'].includes(result?.status)) errors.push(`${file}: invalid status`);
   for (const metric of result.metrics ?? []) {
     if (!metric.id) errors.push(`${file}: metric.id is required`);
     if (typeof metric.value !== 'number' || Number.isNaN(metric.value)) errors.push(`${file}: metric ${metric.id} value must be numeric`);
@@ -46,8 +44,12 @@ function validateResult(result: TestResultDocument, file: string): string[] {
   return errors;
 }
 
+function titleKind(kind: string): string {
+  return ({ action:'Action', actor:'Actor', agent:'Agent', tool:'Tool', entity:'Entity', flow:'Flow', intent:'Intent', event:'Event' } as Record<string,string>)[kind] ?? kind;
+}
+
 function artifactNode(graph: SemanticGraph, result: TestResultDocument): string | undefined {
-  const typed = `${result.artifact.type}:${result.artifact.id}`;
+  const typed = `${titleKind(result.artifact.kind)}:${result.artifact.id}`;
   if (graph.nodes.some(node => node.id === typed)) return typed;
   return graph.nodes.find(node => node.label === result.artifact.id)?.id;
 }
@@ -59,15 +61,15 @@ function governanceNode(graph: SemanticGraph, raw: string): string | undefined {
 export async function compileSemanticTests(root: string, graph: SemanticGraph): Promise<string[]> {
   const errors: string[] = [];
   for (const file of await walk(root)) {
-    if (file.includes(`${join('tests','dashboard')}`)) continue;
+    if (file.includes(join('tests','dashboard'))) continue;
     let result: TestResultDocument;
     try { result = JSON.parse(await readFile(file, 'utf8')) as TestResultDocument; }
     catch { errors.push(`${file}: invalid JSON`); continue; }
     errors.push(...validateResult(result, file));
     const artifact = artifactNode(graph, result);
-    if (!artifact) { errors.push(`${file}: artifact ${result.artifact.type}:${result.artifact.id} not found in Semantic Graph`); continue; }
+    if (!artifact) { errors.push(`${file}: artifact ${result.artifact.kind}:${result.artifact.id} not found in Semantic Graph`); continue; }
 
-    const key = `${result.artifact.type}:${result.artifact.id}:${result.test.type}`;
+    const key = `${result.artifact.kind}:${result.artifact.id}:${result.test.type}`;
     const testId = `Test:${key}`;
     const resultId = `TestResult:${key}`;
     ensureNode(graph, { id: testId, type: 'Test', label: `${result.artifact.id}.${result.test.type}`, metadata: { testType: result.test.type, path: relative(root, dirname(file)) } });
