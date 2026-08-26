@@ -1,0 +1,3 @@
+listeners:
+  - event: SaleIdentified
+    dispatch: ResolveSaleProducts

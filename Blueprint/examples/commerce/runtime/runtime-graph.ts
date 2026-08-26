@@ -11,8 +11,12 @@ interface ResultManifest {
   results: { Ok: string; Error: string };
 }
 
-function edgeId(type: string, from: string, to: string): string {
-  return `${type}:${from}->${to}`;
+interface ListenerDefinition {
+  listeners?: Array<{ event: string; dispatch: string }>;
+}
+
+function edgeId(type: string, from: string, to: string, ordinal = 0): string {
+  return `${type}:${from}->${to}${ordinal ? `#${ordinal}` : ''}`;
 }
 
 async function yaml<T>(path: string): Promise<T> {
@@ -29,9 +33,57 @@ function ensureEvent(graph: SemanticGraph, event: string): void {
   if (!graph.nodes.some(node => node.id === id)) graph.nodes.push({ id, type: 'Event', label: event });
 }
 
-function addEdge(graph: SemanticGraph, type: string, from: string, to: string): void {
-  if (graph.edges.some(edge => edge.type === type && edge.from === from && edge.to === to)) return;
-  graph.edges.push({ id: edgeId(type, from, to), type, from, to });
+function addEdge(graph: SemanticGraph, type: string, from: string, to: string, metadata?: Record<string, unknown>, ordinal = 0): void {
+  if (graph.edges.some(edge => edge.type === type && edge.from === from && edge.to === to && JSON.stringify(edge.metadata ?? {}) === JSON.stringify(metadata ?? {}))) return;
+  graph.edges.push({ id: edgeId(type, from, to, ordinal), type, from, to, ...(metadata ? { metadata } : {}) });
+}
+
+function label(id: string): string {
+  const separator = id.indexOf(':');
+  return separator >= 0 ? id.slice(separator + 1) : id;
+}
+
+function order(edge: SemanticGraphEdge): number {
+  return Number(edge.metadata?.order ?? 0);
+}
+
+function validateEventChoreography(graph: SemanticGraph): string[] {
+  const errors: string[] = [];
+  const agentIds = new Set(graph.nodes.filter(node => node.type === 'Agent').map(node => node.id));
+  const actionIds = new Set(graph.nodes.filter(node => node.type === 'Action').map(node => node.id));
+
+  for (const edge of graph.edges.filter(edge => edge.type === 'LISTENS')) {
+    if (!agentIds.has(edge.from)) errors.push(`${edge.id} source must be an Agent`);
+    const dispatches = graph.edges.filter(candidate => candidate.type === 'DISPATCHES' && candidate.from === edge.to && candidate.metadata?.agent === label(edge.from));
+    if (dispatches.length === 0) errors.push(`${label(edge.from)} listens to ${label(edge.to)} but dispatches no Action`);
+    for (const dispatch of dispatches) {
+      if (!actionIds.has(dispatch.to)) errors.push(`${dispatch.id} targets unknown Action ${dispatch.to}`);
+      const allowed = graph.edges.some(candidate => candidate.type === 'ALLOWS_ACTION' && candidate.from === edge.from && candidate.to === dispatch.to);
+      if (!allowed) errors.push(`${label(edge.from)} dispatches ${label(dispatch.to)} without ALLOWS_ACTION`);
+      const owner = graph.edges.some(candidate => candidate.type === 'ACTION_OWNER' && candidate.from === dispatch.to && candidate.to === edge.from);
+      if (!owner) errors.push(`${label(edge.from)} dispatches Action ${label(dispatch.to)} owned by another Agent`);
+    }
+  }
+
+  for (const flow of graph.nodes.filter(node => node.type === 'Flow')) {
+    const emitted = graph.edges.filter(edge => edge.from === flow.id && edge.type === 'FLOW_EMITS_EVENT').sort((a, b) => order(a) - order(b));
+    const expected = graph.edges.filter(edge => edge.from === flow.id && edge.type === 'FLOW_EXPECTS_EVENT').sort((a, b) => order(a) - order(b));
+    const terminal = expected.at(-1)?.to;
+    const initial = emitted.at(0)?.to;
+    if (!initial) errors.push(`${flow.id} has no initial emitted Event`);
+    else if (!graph.edges.some(edge => edge.type === 'LISTENS' && edge.to === initial)) errors.push(`${flow.id} starts with ${initial}, but no Agent listens to it`);
+
+    const calledActions = graph.edges.filter(edge => edge.from === flow.id && edge.type === 'FLOW_CALLS_ACTION').map(edge => edge.to);
+    for (const actionId of calledActions) {
+      const ok = graph.edges.find(edge => edge.type === 'EMITS_OK' && edge.from === actionId)?.to;
+      if (!ok) continue;
+      if (ok !== terminal && !graph.edges.some(edge => edge.type === 'LISTENS' && edge.to === ok)) {
+        errors.push(`${actionId} emits ${ok} inside ${flow.id}, but no downstream Agent listens to it`);
+      }
+    }
+  }
+
+  return errors;
 }
 
 export async function compileRuntimeSemanticGraph(root: string): Promise<SemanticGraph> {
@@ -52,16 +104,26 @@ export async function compileRuntimeSemanticGraph(root: string): Promise<Semanti
     addEdge(graph, 'TOOL_EMITS_ERROR', `Tool:${manifest.name}`, `Event:${manifest.results.Error}`);
   }
 
+  for (const folder of await dirs(join(root, 'agents'))) {
+    const manifest = await yaml<{ name: string }>(join(root, 'agents', folder, 'manifest.yml'));
+    const listeners = await yaml<ListenerDefinition>(join(root, 'agents', folder, 'listeners.yml'));
+    for (const [ordinal, listener] of (listeners.listeners ?? []).entries()) {
+      ensureEvent(graph, listener.event);
+      addEdge(graph, 'LISTENS', `Agent:${manifest.name}`, `Event:${listener.event}`, undefined, ordinal);
+      addEdge(graph, 'DISPATCHES', `Event:${listener.event}`, `Action:${listener.dispatch}`, { agent: manifest.name }, ordinal);
+    }
+  }
+
   graph.nodes.sort((a, b) => a.id.localeCompare(b.id));
   graph.edges.sort((a, b) => a.id.localeCompare(b.id));
-  const errors = validateSemanticGraph(graph);
+  const errors = [...validateSemanticGraph(graph), ...validateEventChoreography(graph)];
   if (errors.length) throw new Error(`Invalid runtime semantic graph:\n- ${errors.join('\n- ')}`);
   return graph;
 }
 
 export async function loadCompiledSemanticGraph(root: string): Promise<SemanticGraph> {
   const graph = JSON.parse(await readFile(join(root, 'generated', 'semantic-graph.json'), 'utf8')) as SemanticGraph;
-  const errors = validateSemanticGraph(graph);
+  const errors = [...validateSemanticGraph(graph), ...validateEventChoreography(graph)];
   if (errors.length) throw new Error(`Invalid compiled semantic graph:\n- ${errors.join('\n- ')}`);
   return graph;
 }
@@ -82,11 +144,6 @@ function edgeTo(graph: SemanticGraph, from: string, type: string): SemanticGraph
   const matches = edgesFrom(graph, from, type);
   if (matches.length !== 1) throw new Error(`${from} must have exactly one ${type} edge, found ${matches.length}`);
   return matches[0]!;
-}
-
-function label(id: string): string {
-  const separator = id.indexOf(':');
-  return separator >= 0 ? id.slice(separator + 1) : id;
 }
 
 async function executableExport<T extends { execute: unknown }>(path: string): Promise<T> {
