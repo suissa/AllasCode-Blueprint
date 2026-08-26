@@ -1,0 +1,11 @@
+import assert from'node:assert/strict';import test from'node:test';import{AccountingProjection,type AccountingEvent}from'../accounting/accounting-projection.js';
+const events:AccountingEvent[]=[
+ {event_id:'p1',kind:'purchase',occurred_at:'2026-08-01T10:00:00Z',amount:100,inventory_value_delta:100,correlation_id:'c1'},
+ {event_id:'s1',kind:'sale',occurred_at:'2026-08-02T10:00:00Z',amount:180,cost_of_goods:70,inventory_value_delta:-70,correlation_id:'c2'},
+ {event_id:'pay1',kind:'payment',occurred_at:'2026-08-02T10:01:00Z',amount:180,direction:'in',status:'confirmed',correlation_id:'c2'},
+ {event_id:'f1',kind:'fiscal',occurred_at:'2026-08-02T10:02:00Z',source_id:'s1',status:'authorized',correlation_id:'c2'}];
+test('projects commercial events into read-only accounting entries',()=>{const p=new AccountingProjection();for(const e of events)p.apply(e);assert.deepEqual(p.period(),{revenue:180,expenses:100,cogs:70,gross_margin:110,inventory_valuation:30,cash:180,entry_count:7});});
+test('rebuild is deterministic regardless of event input order',()=>{const a=new AccountingProjection().rebuild(events);const b=new AccountingProjection().rebuild([...events].reverse());assert.deepEqual(a,b);});
+test('duplicate events do not duplicate accounting effects',()=>{const p=new AccountingProjection();assert.deepEqual(p.apply(events[0]!),{outcome:'Ok'});assert.deepEqual(p.apply(events[0]!),{outcome:'Ok',duplicate:true});assert.equal(p.snapshot().length,2);});
+test('reconciliation detects projection drift',()=>{const p=new AccountingProjection();p.rebuild(events);assert.equal(p.reconcile(events).matched,true);const partial=new AccountingProjection();partial.apply(events[0]!);assert.equal(partial.reconcile(events).matched,false);});
+test('failed payment has no cash projection and fiscal status remains metadata only',()=>{const p=new AccountingProjection();p.apply({event_id:'pay-failed',kind:'payment',occurred_at:'2026-08-03T00:00:00Z',amount:10,direction:'in',status:'failed',correlation_id:'x'});p.apply({event_id:'f2',kind:'fiscal',occurred_at:'2026-08-03T00:00:01Z',source_id:'s2',status:'rejected',correlation_id:'x'});assert.equal(p.period().cash,0);assert.equal(p.snapshot()[0]?.account,'fiscal');});
