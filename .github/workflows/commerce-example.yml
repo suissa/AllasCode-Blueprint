@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: SourceCheckout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: EnvironmentSetup
         uses: actions/setup-node@v4
@@ -36,6 +38,9 @@ jobs:
 
       - name: Validate
         run: npm run check
+
+      - name: SemanticImpact
+        run: npm run semantic-impact
 
       - name: ActionTests
         run: npm run test:actions
