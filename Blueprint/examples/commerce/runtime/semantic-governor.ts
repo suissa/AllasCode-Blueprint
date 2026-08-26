@@ -25,6 +25,49 @@ function validateAlternative(graph: SemanticGraph, source: string, target: strin
   return errors;
 }
 
+function validateHealing(graph: SemanticGraph): string[] {
+  const errors: string[] = [];
+  const requiredHumanContext = ['original-event','original-payload','action-error','action-governance','correlation-id'];
+
+  for (const strategy of nodesOf(graph, 'HealingStrategy')) {
+    const kind = String(strategy.metadata?.kind ?? '');
+    if (!['retry','human'].includes(kind)) errors.push(`${strategy.id} has unsupported healing kind ${kind}`);
+    if (incoming(graph, strategy.id, 'HEALED_BY').length === 0) errors.push(`${strategy.id} heals no Action`);
+    if (outgoing(graph, strategy.id, 'IMPLEMENTS_HEALING').length !== 1) errors.push(`${strategy.id} must IMPLEMENTS_HEALING exactly one RuntimeCapability`);
+    const regex = String(strategy.metadata?.message_regex ?? '');
+    if (!regex) errors.push(`${strategy.id} has no message_regex`);
+    else { try { new RegExp(regex); } catch { errors.push(`${strategy.id} has invalid message_regex`); } }
+
+    if (kind === 'retry') {
+      const maxAttempts = Number(strategy.metadata?.max_attempts ?? 0);
+      const timeout = Number(strategy.metadata?.timeout_ms ?? 0);
+      const backoff = Number(strategy.metadata?.backoff_ms ?? -1);
+      if (!Number.isInteger(maxAttempts) || maxAttempts < 1) errors.push(`${strategy.id} max_attempts must be an integer >= 1`);
+      if (!Number.isFinite(timeout) || timeout <= 0) errors.push(`${strategy.id} timeout_ms must be > 0`);
+      if (!Number.isFinite(backoff) || backoff < 0) errors.push(`${strategy.id} backoff_ms must be >= 0`);
+    }
+    if (kind === 'human') {
+      const ttl = Number(strategy.metadata?.resume_ttl_ms ?? 0);
+      if (!Number.isFinite(ttl) || ttl <= 0) errors.push(`${strategy.id} resume_ttl_ms must be > 0`);
+      const required = Array.isArray(strategy.metadata?.required_context) ? strategy.metadata.required_context.map(String) : [];
+      for (const item of requiredHumanContext) if (!required.includes(item)) errors.push(`${strategy.id} missing required human context ${item}`);
+    }
+  }
+
+  for (const edge of graph.edges.filter(edge => edge.type === 'HEALED_BY')) {
+    const source = graph.nodes.find(node => node.id === edge.from);
+    const target = graph.nodes.find(node => node.id === edge.to);
+    if (source?.type !== 'Action') errors.push(`${edge.id} source must be Action`);
+    if (target?.type !== 'HealingStrategy') errors.push(`${edge.id} target must be HealingStrategy`);
+  }
+
+  for (const capability of nodesOf(graph, 'RuntimeCapability').filter(node => node.label === 'SemanticHealing')) {
+    if (incoming(graph, capability.id, 'IMPLEMENTS_HEALING').length === 0) errors.push(`${capability.id} has no HealingStrategy implementation`);
+    if (capability.metadata?.normalization && (capability.metadata.normalization as Record<string,unknown>).reversible_required !== true) errors.push(`${capability.id} must require reversible normalization`);
+  }
+  return errors;
+}
+
 function validateTestEvidence(graph: SemanticGraph): string[] {
   const errors: string[] = [];
   const governanceTypes = new Set(['Invariant','Policy','Law']);
@@ -85,6 +128,7 @@ export function governSemanticGraph(graph: SemanticGraph): GovernorDecision {
     if (!graph.edges.some(candidate => candidate.type === 'SEMANTICALLY_EQUIVALENT_TO' && candidate.from === edge.from && candidate.to === edge.to)) errors.push(`${edge.id} requires explicit SEMANTICALLY_EQUIVALENT_TO`);
   }
 
+  errors.push(...validateHealing(graph));
   errors.push(...validateTestEvidence(graph));
   return { allowed: errors.length === 0, errors };
 }
