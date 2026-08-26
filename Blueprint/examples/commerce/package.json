@@ -1,0 +1,21 @@
+{
+  "name": "@allascode/example-commerce",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "tsx runtime/demo.ts",
+    "test": "tsx --test tests/commerce.test.ts",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

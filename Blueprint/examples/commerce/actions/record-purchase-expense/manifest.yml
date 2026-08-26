@@ -12,5 +12,5 @@ contract:
   healing: ./healing/pipeline.yml
   formalization: ./formalization/README.md
 results:
-  Ok: PurchaseExpenseRecorded
+  Ok: PurchaseCompleted
   Error: PurchaseExpenseRecordingError
