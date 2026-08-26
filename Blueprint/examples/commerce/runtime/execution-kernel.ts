@@ -4,9 +4,12 @@ import { ToolRegistry } from './tool-registry.js';
 import { ActionRegistry } from './action-registry.js';
 import { commerceRoot } from './bootstrap.js';
 import { loadSemanticArchitecture } from './semantic-loader.js';
+import { assertSemanticArchitecture, validateSemanticArchitecture } from './semantic-validator.js';
 
 export async function createExecutionKernel() {
   const definitions = await loadSemanticArchitecture(commerceRoot);
+  const validation = await validateSemanticArchitecture(commerceRoot, definitions);
+  assertSemanticArchitecture(validation);
 
   const actions = new ActionRegistry();
   for (const definition of definitions.actions) {
@@ -35,5 +38,5 @@ export async function createExecutionKernel() {
     agents.register(definition);
   }
 
-  return { actions, tools, actors, agents, definitions };
+  return { actions, tools, actors, agents, definitions, validation };
 }
