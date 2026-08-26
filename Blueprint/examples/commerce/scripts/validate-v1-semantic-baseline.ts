@@ -5,6 +5,7 @@ import { compileSemanticTests } from '../runtime/test-graph.js';
 import { governSemanticGraph } from '../runtime/semantic-governor.js';
 
 const root = join(import.meta.dirname, '..');
+const strictEvidence = process.argv.includes('--strict-evidence');
 const graph = await compileRuntimeSemanticGraph(root);
 const testErrors = await compileSemanticTests(root, graph);
 const governance = governSemanticGraph(graph);
@@ -12,7 +13,6 @@ const governance = governSemanticGraph(graph);
 const blocking: string[] = [...testErrors, ...governance.errors];
 const warnings: string[] = [];
 const passed: string[] = [];
-
 const nodes = (type: string) => graph.nodes.filter(node => node.type === type);
 const edgesFrom = (from: string, type: string) => graph.edges.filter(edge => edge.from === from && edge.type === type);
 const incoming = (to: string, type: string) => graph.edges.filter(edge => edge.to === to && edge.type === type);
@@ -24,10 +24,7 @@ for (const action of nodes('Action')) {
   if (owner.length !== 1) blocking.push(`${action.id} must have exactly one ACTION_OWNER, found ${owner.length}`);
   if (ok.length !== 1) blocking.push(`${action.id} must have exactly one EMITS_OK, found ${ok.length}`);
   if (error.length !== 1) blocking.push(`${action.id} must have exactly one EMITS_ERROR, found ${error.length}`);
-  for (const resultEdge of [...ok, ...error]) {
-    const schema = edgesFrom(resultEdge.to, 'VALIDATED_BY');
-    if (schema.length < 1) blocking.push(`${resultEdge.to} emitted by ${action.id} has no VALIDATED_BY schema`);
-  }
+  for (const resultEdge of [...ok, ...error]) if (edgesFrom(resultEdge.to, 'VALIDATED_BY').length < 1) blocking.push(`${resultEdge.to} emitted by ${action.id} has no VALIDATED_BY schema`);
 }
 if (!blocking.some(e => e.includes('EMITS_') || e.includes('ACTION_OWNER') || e.includes('VALIDATED_BY'))) passed.push('Every active Action has one owner and explicit Ok/Error schema-validated terminal events.');
 
@@ -51,27 +48,31 @@ const forbiddenDirect = graph.edges.filter(edge => {
   const from = graph.nodes.find(node => node.id === edge.from);
   const to = graph.nodes.find(node => node.id === edge.to);
   if (!from || !to) return false;
-  if (from.type === 'Agent' && to.type === 'Agent') return true;
-  if (from.type === 'Entity' && to.type === 'Entity' && edge.type !== 'ENTITY_RELATION') return true;
-  return false;
+  return (from.type === 'Agent' && to.type === 'Agent') || (from.type === 'Entity' && to.type === 'Entity' && edge.type !== 'ENTITY_RELATION');
 });
 for (const edge of forbiddenDirect) blocking.push(`Direct cross-boundary relation is forbidden: ${edge.type} ${edge.from} -> ${edge.to}`);
 if (!forbiddenDirect.length) passed.push('No direct Agent→Agent or undeclared Entity→Entity operational coupling exists in the graph.');
 
 const activeIntentIds = new Set(graph.edges.filter(edge => edge.type === 'IMPLEMENTS_INTENT').map(edge => edge.to));
-for (const intent of nodes('Intent')) {
-  if (!activeIntentIds.has(intent.id) && edgesFrom(intent.id, 'STARTS_WITH').length === 0) warnings.push(`${intent.id} is legacy/inactive and remains outside the executable v1 baseline.`);
-}
+for (const intent of nodes('Intent')) if (!activeIntentIds.has(intent.id) && edgesFrom(intent.id, 'STARTS_WITH').length === 0) warnings.push(`${intent.id} is legacy/inactive and remains outside the executable v1 baseline.`);
 
+let evidenceRequired = 0;
+let evidenceProved = 0;
 for (const governed of nodes('Invariant').concat(nodes('Policy'), nodes('Law'))) {
   const required = incoming(governed.id, 'PRESERVES').length + incoming(governed.id, 'GOVERNED_BY').length + incoming(governed.id, 'PRESERVES_LAW').length > 0;
   if (!required) continue;
+  evidenceRequired++;
   const proofs = incoming(governed.id, 'PROVES').filter(edge => {
     const result = graph.nodes.find(node => node.id === edge.from);
     return result?.type === 'TestResult' && result.metadata?.status === 'passed';
   });
-  if (!proofs.length) warnings.push(`${governed.id} is release-relevant but currently has no passing PROVES evidence in this baseline run.`);
+  if (proofs.length) evidenceProved++;
+  else {
+    const message = `${governed.id} is release-relevant but currently has no passing PROVES evidence in this baseline run.`;
+    (strictEvidence ? blocking : warnings).push(message);
+  }
 }
+if (strictEvidence && evidenceRequired > 0 && evidenceProved === evidenceRequired) passed.push(`All release-relevant governance nodes have passing evidence (${evidenceProved}/${evidenceRequired}).`);
 
 const planned = ['Product','Inventory','Purchase','Sale','Payment','Financial','Customer','Supplier','Invoice','AccountingEntry','User'];
 const existingEntities = new Set(nodes('Entity').map(node => node.label));
@@ -80,13 +81,12 @@ if (missingPlanned.length) warnings.push(`Planned v1 domain responsibilities not
 
 const report = {
   version: '1.0-candidate',
+  mode: strictEvidence ? 'strict-evidence' : 'structural',
   status: blocking.length ? 'FAILED' : 'CANDIDATE_VALID',
-  summary: { nodes: graph.nodes.length, edges: graph.edges.length, actions: nodes('Action').length, flows: nodes('Flow').length, intents: nodes('Intent').length, blocking: blocking.length, warnings: warnings.length },
-  passed,
-  blocking,
-  warnings,
+  summary: { nodes: graph.nodes.length, edges: graph.edges.length, actions: nodes('Action').length, flows: nodes('Flow').length, intents: nodes('Intent').length, governance_evidence: `${evidenceProved}/${evidenceRequired}`, blocking: blocking.length, warnings: warnings.length },
+  passed, blocking, warnings,
 };
 await mkdir(join(root,'tests','dashboard'),{recursive:true});
-await writeFile(join(root,'tests','dashboard','v1-semantic-baseline.json'),`${JSON.stringify(report,null,2)}\n`,'utf8');
+await writeFile(join(root,'tests','dashboard',strictEvidence?'v1-semantic-baseline-strict.json':'v1-semantic-baseline.json'),`${JSON.stringify(report,null,2)}\n`,'utf8');
 console.log(JSON.stringify(report,null,2));
 if (blocking.length) process.exitCode = 1;
