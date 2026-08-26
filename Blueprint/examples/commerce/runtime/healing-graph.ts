@@ -20,11 +20,12 @@ interface HealingStrategyDefinition {
   resume_ttl_ms?: number;
   required_context?: string[];
 }
+interface HealingFallbackDefinition { source:string; target:string; when_strategy:string; }
 
 export async function enrichHealingGraph(root: string, graph: SemanticGraph): Promise<SemanticGraph> {
   const [config, document] = await Promise.all([
     readFile(join(root, 'healing', 'config.yml'), 'utf8').then(value => parse(value) as HealingConfig),
-    readFile(join(root, 'healing', 'strategies.yml'), 'utf8').then(value => parse(value) as { strategies?: HealingStrategyDefinition[] }),
+    readFile(join(root, 'healing', 'strategies.yml'), 'utf8').then(value => parse(value) as { strategies?: HealingStrategyDefinition[]; fallbacks?: HealingFallbackDefinition[] }),
   ]);
   if (config.normalization?.reversible_required !== true) throw new Error('Healing normalization must require reversibility');
   const allowed = new Set(config.normalization?.allowed_in ?? []);
@@ -58,6 +59,18 @@ export async function enrichHealingGraph(root: string, graph: SemanticGraph): Pr
       if (!graph.edges.some(edge => edge.type === 'HEALED_BY' && edge.from === actionId && edge.to === strategyId)) graph.edges.push({ id: `HEALED_BY:${actionId}->${strategyId}`, type: 'HEALED_BY', from: actionId, to: strategyId });
     }
   }
+
+  for (const fallback of document.fallbacks ?? []) {
+    const sourceId = `Action:${fallback.source}`;
+    const targetId = `Action:${fallback.target}`;
+    const strategyId = `HealingStrategy:${fallback.when_strategy}`;
+    const edge = graph.edges.find(candidate => candidate.type === 'FALLBACK_TO' && candidate.from === sourceId && candidate.to === targetId);
+    if (!edge) throw new Error(`Healing fallback ${fallback.source} -> ${fallback.target} has no governed FALLBACK_TO relation`);
+    if (!graph.nodes.some(node => node.id === strategyId && node.type === 'HealingStrategy')) throw new Error(`Healing fallback references unknown ${strategyId}`);
+    if (!graph.edges.some(candidate => candidate.type === 'HEALED_BY' && candidate.from === sourceId && candidate.to === strategyId)) throw new Error(`${sourceId} is not HEALED_BY ${strategyId}`);
+    edge.metadata = { ...(edge.metadata ?? {}), when_strategy: fallback.when_strategy };
+  }
+
   graph.nodes.sort((a,b)=>a.id.localeCompare(b.id));
   graph.edges.sort((a,b)=>a.id.localeCompare(b.id));
   return graph;
