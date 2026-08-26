@@ -1,0 +1,3 @@
+deny_direct_context_access: [Purchase, Inventory, Financial, Sales, Identity, Fiscal]
+allow_actor: AccountingActor
+allow_tools: []
