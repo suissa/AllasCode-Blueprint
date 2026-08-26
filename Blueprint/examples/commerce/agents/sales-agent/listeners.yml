@@ -1,3 +1,5 @@
 listeners:
   - event: SaleIdentified
     dispatch: ResolveSaleProducts
+  - event: CustomerAssociationRequested
+    dispatch: AssociateCustomerToSale
