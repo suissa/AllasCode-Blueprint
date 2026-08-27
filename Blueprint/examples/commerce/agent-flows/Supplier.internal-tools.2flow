@@ -1,0 +1,17 @@
+module Supplier
+manager SupplierManagerAgent
+
+-> SupplierIntent
+SupplierManagerAgent ->> SupplierIdentityAgent
+SupplierIdentityAgent ->> SupplierIdentityTool
+SupplierIdentityTool <- Ok | Error
+SupplierIdentityAgent <- Ok | Error
+SupplierManagerAgent ->> SupplierProfileAgent
+SupplierProfileAgent ->> SupplierRepositoryTool
+SupplierRepositoryTool <- Ok | Error
+SupplierProfileAgent <- Ok | Error
+SupplierManagerAgent ->> SupplierHistoryAgent
+SupplierHistoryAgent ->> PurchaseHistoryReadTool
+PurchaseHistoryReadTool <- Ok | Error
+SupplierHistoryAgent <- Ok | Error
+SupplierManagerAgent <- Supplier.Ok | Supplier.Error

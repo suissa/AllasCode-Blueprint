@@ -1,0 +1,17 @@
+module Inventory
+manager InventoryManagerAgent
+
+-> InventoryIntent
+InventoryManagerAgent ->> StockMutationAgent
+StockMutationAgent ->> InventoryRepositoryTool
+InventoryRepositoryTool <- Ok | Error
+StockMutationAgent ->> InventoryLedgerTool
+InventoryLedgerTool <- Ok | Error
+StockMutationAgent <- Ok | Error
+InventoryManagerAgent ->> ReconciliationAgent
+ReconciliationAgent ->> InventoryReadTool
+InventoryReadTool <- Ok | Error
+ReconciliationAgent <- Ok | Error
+InventoryManagerAgent ->> InventoryPolicyTool
+InventoryPolicyTool <- Ok | Error
+InventoryManagerAgent <- Inventory.Ok | Inventory.Error

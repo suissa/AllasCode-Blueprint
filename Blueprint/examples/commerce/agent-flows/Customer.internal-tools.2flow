@@ -1,0 +1,15 @@
+module Customer
+manager CustomerManagerAgent
+
+-> CustomerIntent
+CustomerManagerAgent ->> CustomerIdentityAgent
+CustomerIdentityAgent ->> CustomerIdentityTool
+CustomerIdentityTool <- Ok | Error
+CustomerIdentityAgent <- Ok | Error
+CustomerManagerAgent ->> CustomerProfileAgent
+CustomerProfileAgent ->> CustomerRepositoryTool
+CustomerRepositoryTool <- Ok | Error
+CustomerProfileAgent <- Ok | Error
+CustomerManagerAgent ->> CustomerPrivacyTool
+CustomerPrivacyTool <- Ok | Error
+CustomerManagerAgent <- Customer.Ok | Customer.Error
