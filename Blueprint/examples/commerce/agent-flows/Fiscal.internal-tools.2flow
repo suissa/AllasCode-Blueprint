@@ -1,0 +1,17 @@
+module Fiscal
+manager FiscalManagerAgent
+
+-> FiscalIntent
+FiscalManagerAgent ->> FiscalEligibilityAgent
+FiscalEligibilityAgent ->> FiscalEligibilityPolicyTool
+FiscalEligibilityPolicyTool <- Ok | Error
+FiscalEligibilityAgent <- Ok | Error
+FiscalManagerAgent ->> InvoiceEmissionAgent
+InvoiceEmissionAgent ->> FiscalProviderTool
+FiscalProviderTool <- Ok | Error
+InvoiceEmissionAgent ->> FiscalRepositoryTool
+FiscalRepositoryTool <- Ok | Error
+InvoiceEmissionAgent <- Ok | Error
+FiscalManagerAgent ->> FiscalHealingTool
+FiscalHealingTool <- Ok | Error
+FiscalManagerAgent <- Fiscal.Ok | Fiscal.Error
