@@ -1,0 +1,23 @@
+module Marketing
+manager MarketingManagerAgent
+
+-> MarketingIntent
+MarketingManagerAgent ->> ProfileProjectionAgent
+ProfileProjectionAgent ->> CustomerEventReadTool
+CustomerEventReadTool <- Ok | Error
+ProfileProjectionAgent <- Ok | Error
+MarketingManagerAgent ->> OfferScoringAgent
+OfferScoringAgent ->> AffinityScoringTool
+AffinityScoringTool <- Ok | Error
+OfferScoringAgent ->> InventoryReadTool
+InventoryReadTool <- Ok | Error
+OfferScoringAgent <- Ok | Error
+MarketingManagerAgent ->> CampaignAgent
+CampaignAgent ->> ConsentPolicyTool
+ConsentPolicyTool <- Ok | Error
+CampaignAgent ->> FrequencyCapTool
+FrequencyCapTool <- Ok | Error
+CampaignAgent ->> CommunicationIntentTool
+CommunicationIntentTool <- Ok | Error
+CampaignAgent <- Ok | Error
+MarketingManagerAgent <- Marketing.Ok | Marketing.Error

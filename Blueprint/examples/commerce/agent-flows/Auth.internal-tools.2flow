@@ -1,0 +1,19 @@
+module Auth
+manager AuthManagerAgent
+
+-> AuthorizationIntent
+AuthManagerAgent ->> SessionAgent
+SessionAgent ->> SessionRepositoryTool
+SessionRepositoryTool <- Ok | Error
+SessionAgent <- Ok | Error
+AuthManagerAgent ->> AuthorizationAgent
+AuthorizationAgent ->> CapabilityPolicyTool
+CapabilityPolicyTool <- Ok | Error
+AuthorizationAgent ->> ContextIsolationTool
+ContextIsolationTool <- Ok | Error
+AuthorizationAgent <- Ok | Error
+AuthManagerAgent ->> StepUpAgent
+StepUpAgent ->> StrongAuthTool
+StrongAuthTool <- Ok | Error
+StepUpAgent <- Ok | Error
+AuthManagerAgent <- Auth.Ok | Auth.Error
