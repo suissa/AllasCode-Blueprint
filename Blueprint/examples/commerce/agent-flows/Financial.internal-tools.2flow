@@ -1,0 +1,19 @@
+module Financial
+manager FinancialManagerAgent
+
+-> FinancialIntent
+FinancialManagerAgent ->> LedgerAgent
+LedgerAgent ->> FinancialLedgerTool
+FinancialLedgerTool <- Ok | Error
+LedgerAgent <- Ok | Error
+FinancialManagerAgent ->> PaymentReconciliationAgent
+PaymentReconciliationAgent ->> PaymentProviderTool
+PaymentProviderTool <- Ok | Error
+PaymentReconciliationAgent ->> FinancialRepositoryTool
+FinancialRepositoryTool <- Ok | Error
+PaymentReconciliationAgent <- Ok | Error
+FinancialManagerAgent ->> FinancialProjectionAgent
+FinancialProjectionAgent ->> FinancialReadTool
+FinancialReadTool <- Ok | Error
+FinancialProjectionAgent <- Ok | Error
+FinancialManagerAgent <- Financial.Ok | Financial.Error
