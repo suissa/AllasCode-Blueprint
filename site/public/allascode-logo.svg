@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 380" role="img" aria-labelledby="title desc">
+  <title id="title">AllasCode</title><desc id="desc">Marca AC com circuitos e símbolo de código.</desc>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#20e6ff"/><stop offset=".45" stop-color="#087bff"/><stop offset=".75" stop-color="#6f3cff"/><stop offset="1" stop-color="#ba22ff"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#00bfff"/><stop offset="1" stop-color="#16ef91"/></linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round">
+    <path d="M18 145h52l22 22h78"/><path d="M4 205h82l24-24h58"/><path d="M28 250h85l27-28h35"/><path d="M58 295h45l30-33h34"/>
+    <circle cx="18" cy="205" r="10"/><circle cx="58" cy="295" r="10"/>
+  </g>
+  <path fill="url(#g)" d="M188 322 282 38h74l84 284h-76l-17-61H281l-19 61h-74Zm111-126h30l-28-107-2 107Z"/>
+  <path fill="none" stroke="url(#g2)" stroke-width="58" d="M424 109a113 113 0 1 0 0 198"/>
+  <path fill="#050811" d="M357 177h104v82H357z"/>
+  <g fill="none" stroke="#19c8ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="m377 206-24 16 24 16"/><path d="m440 206 24 16-24 16"/><path d="m417 196-18 52"/></g>
+</svg>

@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; font-family: Inter, sans-serif; background: #02050b; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #02050b; color: #fff; }
+* { box-sizing: border-box; }
+::selection { background: rgba(34, 211, 238, .28); }
+
+@layer components {
+  .site-shell { @apply mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12; }
+  .section-pad { @apply py-20 md:py-28; }
+  .eyebrow { @apply font-mono text-[11px] font-semibold uppercase tracking-[.22em] text-cyan-300; }
+  .glass { @apply border border-white/10 bg-white/[.035] backdrop-blur-xl; }
+  .gradient-text { @apply bg-gradient-to-r from-white via-cyan-300 to-violet-500 bg-clip-text text-transparent; }
+}
+
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -2;
+  background: radial-gradient(circle at 75% 15%, rgba(0, 194, 255, .10), transparent 28%), radial-gradient(circle at 22% 55%, rgba(105, 51, 255, .09), transparent 26%), #02050b;
+}
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: .22; background-size: 56px 56px;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+}
