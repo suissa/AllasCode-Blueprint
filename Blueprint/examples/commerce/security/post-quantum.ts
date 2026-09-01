@@ -168,7 +168,13 @@ export class PostQuantumSecurityService {
     const ctx = input.context_id ? Buffer.from(input.context_id, 'utf8') : undefined;
     const signature = ctx ? ml_dsa65.sign(messageBytes(input.message), record.dsa_secret_key, { context: ctx }) : ml_dsa65.sign(messageBytes(input.message), record.dsa_secret_key);
     const result: PqDetachedSignature = { key_id: record.key_id, key_version: record.version, algorithm: 'ML-DSA-65', signature: b64(signature), ...(input.context_id ? { context_digest: contextDigest(input.context_id) } : {}) };
-    this.audit.push({ event: 'PQ.Sign.Ok', at: input.now, key_id: record.key_id, key_version: record.version, context_digest: result.context_digest });
+    this.audit.push({
+      event: 'PQ.Sign.Ok',
+      at: input.now,
+      key_id: record.key_id,
+      key_version: record.version,
+      ...(result.context_digest !== undefined ? { context_digest: result.context_digest } : {}),
+    });
     return { outcome: 'Ok', value: result };
   }
 
@@ -183,10 +189,23 @@ export class PostQuantumSecurityService {
         ? ml_dsa65.verify(bytes(input.signature.signature), messageBytes(input.message), record.dsa_public_key, { context: ctx })
         : ml_dsa65.verify(bytes(input.signature.signature), messageBytes(input.message), record.dsa_public_key);
       if (!valid) throw new Error('InvalidSignature');
-      this.audit.push({ event: 'PQ.Verify.Ok', at: input.now, key_id: record.key_id, key_version: record.version, context_digest: expectedDigest });
+      this.audit.push({
+        event: 'PQ.Verify.Ok',
+        at: input.now,
+        key_id: record.key_id,
+        key_version: record.version,
+        ...(expectedDigest !== undefined ? { context_digest: expectedDigest } : {}),
+      });
       return { outcome: 'Ok', value: { valid: true } };
     } catch {
-      this.audit.push({ event: 'PQ.Verify.Error', at: input.now, key_id: record.key_id, key_version: record.version, context_digest: expectedDigest, reason: 'PqSignatureInvalid' });
+      this.audit.push({
+        event: 'PQ.Verify.Error',
+        at: input.now,
+        key_id: record.key_id,
+        key_version: record.version,
+        reason: 'PqSignatureInvalid',
+        ...(expectedDigest !== undefined ? { context_digest: expectedDigest } : {}),
+      });
       return { outcome: 'Error', code: 'PqSignatureInvalid' };
     }
   }
