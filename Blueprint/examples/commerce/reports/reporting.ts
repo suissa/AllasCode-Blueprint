@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 
 export type ReportResult<T,E extends string=string>={outcome:'Ok';value:T}|{outcome:'Error';error:E};
-export type ReportWidgetKind='metric'|'line'|'area'|'bar'|'stacked-bar'|'pie'|'donut'|'scatter'|'bubble'|'radar'|'gauge'|'funnel'|'heatmap'|'candlestick'|'treemap'|'sunburst'|'sankey'|'graph'|'parallel'|'boxplot'|'bar3d'|'scatter3d'|'line3d'|'surface3d'|'globe';
+export type ReportWidgetKind='metric'|'line'|'area'|'bar'|'stacked-bar'|'pie'|'donut'|'scatter'|'bubble'|'effect-scatter'|'radar'|'gauge'|'funnel'|'heatmap'|'candlestick'|'tree'|'treemap'|'sunburst'|'sankey'|'graph'|'parallel'|'boxplot'|'pictorial-bar'|'theme-river'|'bar3d'|'scatter3d'|'line3d'|'surface3d'|'globe';
 
 export interface ReportWidget{widget_id:string;kind:ReportWidgetKind;title:string;order:number;projection:string;data:unknown;animation?:'fade'|'rise'|'scale'|'orbit'}
 export interface ReportDocument{report_id:string;owner_context_id:string;title:string;correlation_id:string;generated_at:string;widgets:ReportWidget[]}
