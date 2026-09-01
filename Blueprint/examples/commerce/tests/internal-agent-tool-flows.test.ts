@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root=join(dirname(fileURLToPath(import.meta.url)),'..','agent-flows');
-const modules=['Purchase','Sales','Inventory','Financial','Customer','Supplier','Fiscal','Accounting','Communication','Marketing','Auth','AgentHarness'];
+const modules=['Purchase','Sales','Inventory','Financial','Customer','Supplier','Fiscal','Accounting','Communication','Marketing','Auth','AgentHarness','Reports'];
 
 test('every functional module has exactly one ManagerAgent and explicit Ok/Error tool branches',async()=>{
  const files=(await readdir(root)).filter(f=>f.endsWith('.2flow'));

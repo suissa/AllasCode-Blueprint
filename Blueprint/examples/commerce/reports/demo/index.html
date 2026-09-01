@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AllasCode Reports Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar glass">
+    <div><strong>AllasCode Reports</strong><span>Conversational • Glass • 3D</span></div>
+    <div class="actions"><button id="revealAll">Revelar tudo</button><button id="previewPng">Gerar PNG</button><button id="shareLink">Link único</button></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <span class="eyebrow">REPORT INTENT / LIVE PROJECTION</span>
+      <h1>Converse com os dados.<br><em>O relatório nasce atrás do chat.</em></h1>
+      <p>Todos os elementos são exemplos com dados ilustrativos. O módulo real recebe projeções prontas do backend e não recompõe totais financeiros na interface.</p>
+    </section>
+    <section id="chartGrid" class="chart-grid" aria-label="Galeria de visualizações"></section>
+  </main>
+
+  <aside class="chat glass" aria-label="Chat de relatórios">
+    <div class="chat-head"><div class="pulse"></div><div><strong>ReportsManagerAgent</strong><span>projection-backed • live</span></div></div>
+    <div id="messages" class="messages">
+      <div class="msg agent">Peça qualquer leitura: vendas, margem, estoque, clientes, fornecedores ou comparações. Conforme conversamos, vou revelando os componentes do relatório atrás deste painel.</div>
+      <div class="chips"><button data-prompt="Mostre o resumo executivo">Resumo executivo</button><button data-prompt="Quero ver tendências e composição">Tendências</button><button data-prompt="Agora mostre os 3D">3D / WebGL</button></div>
+    </div>
+    <form id="chatForm"><input id="chatInput" autocomplete="off" placeholder="Ex.: mostre vendas, margem e estoque..."/><button>Enviar</button></form>
+  </aside>
+
+  <div id="shareToast" class="toast glass" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+  <script src="./demo.js"></script>
+</body>
+</html>
