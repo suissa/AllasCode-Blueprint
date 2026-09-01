@@ -12,7 +12,7 @@ export interface ReportPreviewRendererPort{renderPng(report:ReportDocument,share
 export class ConversationalReportSession{
  private revealed=new Set<string>();
  constructor(readonly report:ReportDocument){}
- revealNext(count=1):ReportResult<ReportWidget[]> {
+ revealNext(count=1):ReportResult<ReportWidget[],'InvalidRevealCount'> {
   if(count<1)return{outcome:'Error',error:'InvalidRevealCount'};
   const next=this.report.widgets.slice().sort((a,b)=>a.order-b.order).filter(w=>!this.revealed.has(w.widget_id)).slice(0,count);
   for(const widget of next)this.revealed.add(widget.widget_id);
@@ -24,7 +24,7 @@ export class ConversationalReportSession{
 
 export class ReportShareService{
  private readonly shares=new Map<string,ReportShare>();
- constructor(private readonly publicBaseUrl:string,private readonly now:()=>Date=new Date.bind(Date)){}
+ constructor(private readonly publicBaseUrl:string,private readonly now:()=>Date=()=>new Date()){}
  create(report:ReportDocument,ttlMs=1000*60*60*24):ReportResult<{share:ReportShare;url:string},'InvalidTtl'> {
   if(ttlMs<=0)return{outcome:'Error',error:'InvalidTtl'};
   const token=randomBytes(24).toString('base64url');
