@@ -6,17 +6,29 @@ import { PostQuantumSecurityService, type PqEncryptedEnvelope } from '../securit
 const now = '2026-09-01T18:00:00.000Z';
 const url = 'https://api.example.test/v1/sales?expand=items#ignored';
 
+function expectOk<T>(result: { outcome: 'Ok'; value: T } | { outcome: 'Error'; code: string }): T {
+  if (result.outcome === 'Error') throw new Error(result.code);
+  return result.value;
+}
+
 function dpopFixture() {
   const key = generateDpopClientKeyPair();
   const service = new DpopSecurityService();
-  const issued = service.issueBoundAccessToken({ public_jwk: key.public_jwk, principal_id: 'operator-1', context_id: 'store-a', capabilities: ['sales.read'], ttl_ms: 60_000, now });
-  assert.equal(issued.outcome, 'Ok');
-  if (issued.outcome !== 'Ok') throw new Error(issued.code);
-  return { key, service, token: issued.value.access_token };
+  const issued = expectOk(service.issueBoundAccessToken({ public_jwk: key.public_jwk, principal_id: 'operator-1', context_id: 'store-a', capabilities: ['sales.read'], ttl_ms: 60_000, now }));
+  return { key, service, token: issued.access_token };
 }
 
 function proofFor(fixture: ReturnType<typeof dpopFixture>, overrides: Partial<{ method: string; url: string; now: string; access_token: string; nonce: string; jti: string }> = {}) {
-  return createDpopProof({ private_key: fixture.key.private_key, public_jwk: fixture.key.public_jwk, method: overrides.method ?? 'GET', url: overrides.url ?? url, now: overrides.now ?? now, access_token: overrides.access_token ?? fixture.token, nonce: overrides.nonce, jti: overrides.jti });
+  return createDpopProof({
+    private_key: fixture.key.private_key,
+    public_jwk: fixture.key.public_jwk,
+    method: overrides.method ?? 'GET',
+    url: overrides.url ?? url,
+    now: overrides.now ?? now,
+    access_token: overrides.access_token ?? fixture.token,
+    ...(overrides.nonce !== undefined ? { nonce: overrides.nonce } : {}),
+    ...(overrides.jti !== undefined ? { jti: overrides.jti } : {}),
+  });
 }
 
 test('DPoP binds access token to proof key, request target, context and capability', () => {
@@ -24,8 +36,8 @@ test('DPoP binds access token to proof key, request target, context and capabili
   const proof = proofFor(f);
   const result = f.service.verifyProtectedRequest({ access_token: f.token, proof, method: 'GET', url, context_id: 'store-a', capability: 'sales.read', now });
   assert.equal(result.outcome, 'Ok');
-  assert.equal(f.service.verifyProtectedRequest({ access_token: f.token, proof, method: 'GET', url, context_id: 'store-a', capability: 'sales.read', now }).outcome, 'Error');
-  assert.equal((f.service.verifyProtectedRequest({ access_token: f.token, proof, method: 'GET', url, context_id: 'store-a', capability: 'sales.read', now }) as { outcome: 'Error'; code: string }).code, 'DpopReplayDetected');
+  const replay = f.service.verifyProtectedRequest({ access_token: f.token, proof, method: 'GET', url, context_id: 'store-a', capability: 'sales.read', now });
+  assert.deepEqual(replay, { outcome: 'Error', code: 'DpopReplayDetected' });
 });
 
 test('DPoP rejects method, URI, age and ath mismatches', () => {
@@ -64,55 +76,42 @@ test('DPoP audit never stores raw access token or proof JWT', () => {
 
 test('ML-KEM-768 + HKDF + AES-256-GCM round trips with context binding', () => {
   const pq = new PostQuantumSecurityService();
-  const created = pq.createKeySet({ now, key_id: 'commerce-root' });
-  assert.equal(created.outcome, 'Ok');
-  const encrypted = pq.encrypt({ key_id: 'commerce-root', context_id: 'store-a', plaintext: 'sensitive commercial payload', now });
-  assert.equal(encrypted.outcome, 'Ok');
-  if (encrypted.outcome !== 'Ok') throw new Error(encrypted.code);
-  const decrypted = pq.decrypt({ envelope: encrypted.value, context_id: 'store-a', now });
-  assert.equal(decrypted.outcome, 'Ok');
-  if (decrypted.outcome !== 'Ok') throw new Error(decrypted.code);
-  assert.equal(Buffer.from(decrypted.value).toString('utf8'), 'sensitive commercial payload');
-  assert.deepEqual(pq.decrypt({ envelope: encrypted.value, context_id: 'store-b', now }), { outcome: 'Error', code: 'ContextBindingMismatch' });
+  expectOk(pq.createKeySet({ now, key_id: 'commerce-root' }));
+  const encrypted = expectOk(pq.encrypt({ key_id: 'commerce-root', context_id: 'store-a', plaintext: 'sensitive commercial payload', now }));
+  const decrypted = expectOk(pq.decrypt({ envelope: encrypted, context_id: 'store-a', now }));
+  assert.equal(Buffer.from(decrypted).toString('utf8'), 'sensitive commercial payload');
+  assert.deepEqual(pq.decrypt({ envelope: encrypted, context_id: 'store-b', now }), { outcome: 'Error', code: 'ContextBindingMismatch' });
 });
 
 test('tampered PQ envelope is rejected by authenticated decryption', () => {
   const pq = new PostQuantumSecurityService();
-  pq.createKeySet({ now, key_id: 'commerce-root' });
-  const encrypted = pq.encrypt({ key_id: 'commerce-root', context_id: 'store-a', plaintext: 'payload', now });
-  assert.equal(encrypted.outcome, 'Ok');
-  if (encrypted.outcome !== 'Ok') throw new Error(encrypted.code);
-  const raw = Buffer.from(encrypted.value.ciphertext, 'base64url');
-  raw[0] ^= 1;
-  const tampered: PqEncryptedEnvelope = { ...encrypted.value, ciphertext: raw.toString('base64url') };
+  expectOk(pq.createKeySet({ now, key_id: 'commerce-root' }));
+  const encrypted = expectOk(pq.encrypt({ key_id: 'commerce-root', context_id: 'store-a', plaintext: 'payload', now }));
+  const raw = Buffer.from(encrypted.ciphertext, 'base64url');
+  raw[0] = (raw[0] ?? 0) ^ 1;
+  const tampered: PqEncryptedEnvelope = { ...encrypted, ciphertext: raw.toString('base64url') };
   assert.deepEqual(pq.decrypt({ envelope: tampered, context_id: 'store-a', now }), { outcome: 'Error', code: 'PqDecapsulationFailed' });
 });
 
 test('ML-DSA-65 signs, verifies and rejects tampering', () => {
   const pq = new PostQuantumSecurityService();
-  pq.createKeySet({ now, key_id: 'signing-root' });
-  const signed = pq.sign({ key_id: 'signing-root', message: 'sale:123', context_id: 'store-a', now });
-  assert.equal(signed.outcome, 'Ok');
-  if (signed.outcome !== 'Ok') throw new Error(signed.code);
-  assert.deepEqual(pq.verify({ signature: signed.value, message: 'sale:123', context_id: 'store-a', now }), { outcome: 'Ok', value: { valid: true } });
-  assert.deepEqual(pq.verify({ signature: signed.value, message: 'sale:124', context_id: 'store-a', now }), { outcome: 'Error', code: 'PqSignatureInvalid' });
+  expectOk(pq.createKeySet({ now, key_id: 'signing-root' }));
+  const signed = expectOk(pq.sign({ key_id: 'signing-root', message: 'sale:123', context_id: 'store-a', now }));
+  assert.deepEqual(pq.verify({ signature: signed, message: 'sale:123', context_id: 'store-a', now }), { outcome: 'Ok', value: { valid: true } });
+  assert.deepEqual(pq.verify({ signature: signed, message: 'sale:124', context_id: 'store-a', now }), { outcome: 'Error', code: 'PqSignatureInvalid' });
 });
 
 test('PQ key rotation keeps old envelopes decryptable until explicit retirement and exposes no private material', () => {
   const pq = new PostQuantumSecurityService();
-  const created = pq.createKeySet({ now, key_id: 'rotating' });
-  assert.equal(created.outcome, 'Ok');
-  const oldEnvelope = pq.encrypt({ key_id: 'rotating', context_id: 'store-a', plaintext: 'before-rotation', now });
-  assert.equal(oldEnvelope.outcome, 'Ok');
-  const rotated = pq.rotate({ key_id: 'rotating', now: '2026-09-01T18:01:00.000Z' });
-  assert.equal(rotated.outcome, 'Ok');
-  if (rotated.outcome !== 'Ok' || oldEnvelope.outcome !== 'Ok') throw new Error('rotation failed');
-  assert.equal(rotated.value.version, 2);
+  const created = expectOk(pq.createKeySet({ now, key_id: 'rotating' }));
+  const oldEnvelope = expectOk(pq.encrypt({ key_id: 'rotating', context_id: 'store-a', plaintext: 'before-rotation', now }));
+  const rotated = expectOk(pq.rotate({ key_id: 'rotating', now: '2026-09-01T18:01:00.000Z' }));
+  assert.equal(rotated.version, 2);
   assert.equal(pq.describeKey('rotating', 1).outcome, 'Ok');
-  assert.equal(pq.decrypt({ envelope: oldEnvelope.value, context_id: 'store-a', now }).outcome, 'Ok');
+  assert.equal(pq.decrypt({ envelope: oldEnvelope, context_id: 'store-a', now }).outcome, 'Ok');
   const publicView = JSON.stringify([created, rotated, pq.audit]);
   assert.equal(publicView.includes('secret_key'), false);
   assert.equal(publicView.includes('private'), false);
   assert.equal(pq.retire({ key_id: 'rotating', version: 1, now: '2026-09-01T18:02:00.000Z' }).outcome, 'Ok');
-  assert.deepEqual(pq.decrypt({ envelope: oldEnvelope.value, context_id: 'store-a', now }), { outcome: 'Error', code: 'PqKeyUnavailable' });
+  assert.deepEqual(pq.decrypt({ envelope: oldEnvelope, context_id: 'store-a', now }), { outcome: 'Error', code: 'PqKeyUnavailable' });
 });
