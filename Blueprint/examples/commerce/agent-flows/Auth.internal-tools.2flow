@@ -16,4 +16,20 @@ AuthManagerAgent ->> StepUpAgent
 StepUpAgent ->> StrongAuthTool
 StrongAuthTool <- Ok | Error
 StepUpAgent <- Ok | Error
+AuthManagerAgent ->> DpopAgent
+DpopAgent ->> DpopProofTool
+DpopProofTool <- Ok | Error
+DpopAgent ->> DpopTokenBindingTool
+DpopTokenBindingTool <- Ok | Error
+DpopAgent ->> DpopReplayTool
+DpopReplayTool <- Ok | Error
+DpopAgent <- Ok | Error
+AuthManagerAgent ->> PostQuantumAgent
+PostQuantumAgent ->> PqEnvelopeTool
+PqEnvelopeTool <- Ok | Error
+PostQuantumAgent ->> PqSignatureTool
+PqSignatureTool <- Ok | Error
+PostQuantumAgent ->> KeyRotationTool
+KeyRotationTool <- Ok | Error
+PostQuantumAgent <- Ok | Error
 AuthManagerAgent <- Auth.Ok | Auth.Error
