@@ -138,7 +138,9 @@ export class DpopVerifier {
     try {
       const segments = input.proof.split('.');
       if (segments.length !== 3) return { outcome: 'Error', code: 'InvalidDpopProof' };
-      const [protectedSegment, payloadSegment, signatureSegment] = segments;
+      const protectedSegment = segments[0]!;
+      const payloadSegment = segments[1]!;
+      const signatureSegment = segments[2]!;
       const header = decodeJson(protectedSegment);
       const payload = decodeJson(payloadSegment);
       if (header.typ !== 'dpop+jwt') return { outcome: 'Error', code: 'InvalidDpopProof' };
@@ -252,14 +254,31 @@ export class DpopSecurityService {
     if (!record || new Date(input.now).getTime() >= new Date(record.expires_at).getTime()) return this.deny(input, tokenDigest, record, 'AccessTokenInactive');
     if (record.context_id !== input.context_id) return this.deny(input, tokenDigest, record, 'CrossContextDenied');
     if (!(record.capabilities.includes('*') || record.capabilities.includes(input.capability))) return this.deny(input, tokenDigest, record, 'CapabilityDenied');
-    const proofResult = this.verifier.verify({ proof: input.proof, method: input.method, url: input.url, now: input.now, access_token: input.access_token, expected_jkt: record.jkt, expected_nonce: input.expected_nonce });
+    const proofResult = this.verifier.verify({
+      proof: input.proof,
+      method: input.method,
+      url: input.url,
+      now: input.now,
+      access_token: input.access_token,
+      expected_jkt: record.jkt,
+      ...(input.expected_nonce !== undefined ? { expected_nonce: input.expected_nonce } : {}),
+    });
     if (proofResult.outcome === 'Error') return this.deny(input, tokenDigest, record, proofResult.code);
     this.audit.push({ event: 'DPoP.Authorization.Ok', at: input.now, token_digest: record.token_digest, principal_id: record.principal_id, context_id: record.context_id, capability: input.capability, jkt: proofResult.value.jkt, proof_jti: proofResult.value.jti });
     return { outcome: 'Ok', value: { principal_id: record.principal_id, context_id: record.context_id, capability: input.capability, jkt: proofResult.value.jkt, proof_jti: proofResult.value.jti } };
   }
 
   private deny(input: { capability: string; context_id: string; now: string }, tokenDigest: string, record: BoundTokenRecord | undefined, code: DpopErrorCode): DpopResult<never> {
-    this.audit.push({ event: 'DPoP.Authorization.Error', at: input.now, token_digest: tokenDigest, principal_id: record?.principal_id ?? 'unknown', context_id: input.context_id, capability: input.capability, jkt: record?.jkt, reason: code });
+    this.audit.push({
+      event: 'DPoP.Authorization.Error',
+      at: input.now,
+      token_digest: tokenDigest,
+      principal_id: record?.principal_id ?? 'unknown',
+      context_id: input.context_id,
+      capability: input.capability,
+      reason: code,
+      ...(record ? { jkt: record.jkt } : {}),
+    });
     return { outcome: 'Error', code };
   }
 }
