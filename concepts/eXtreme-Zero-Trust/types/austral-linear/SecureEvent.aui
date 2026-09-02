@@ -1,0 +1,10 @@
+-- Architectural sketch: validate syntax against the selected Austral release.
+module SecureEvent is
+  type LinearEvent: Linear;
+  type ClaimedMessage: Linear;
+  type LocalAppendReceipt: Linear;
+  type Acked: Free;
+
+  function claim(event: LinearEvent): ClaimedMessage;
+  function acknowledge(message: ClaimedMessage, receipt: LocalAppendReceipt): Acked;
+end module.

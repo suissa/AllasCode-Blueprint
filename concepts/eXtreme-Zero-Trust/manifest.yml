@@ -1,0 +1,34 @@
+name: extreme-zero-trust-ledsa
+canonical_label: AllasCode.Concepts.eXtremeZeroTrust.LEDSA
+version: 0.1.0
+status: experimental
+kind: architecture-concept
+
+paradigms:
+  - linear-event-driven-secure-architecture
+  - extreme-zero-trust
+  - intent-driven-development
+  - semantic-as-code
+  - actor-model
+  - event-sourcing
+  - crdt
+
+exposes:
+  protocol: AON-ATCP
+  event_semantics: linear-capability
+  transport_semantics: at-least-once
+  logical_effect_target: exactly-once
+  security:
+    identity: WebAuthn/FIDO2
+    proof_of_possession: DPoP
+    transport: mTLS
+    post_quantum: crypto-agile-hybrid-provider
+  languages:
+    crypto: Rust
+    linear: Austral
+    effects: Koka
+    actors: Gleam/BEAM
+    semantic_types: Haskell
+
+invariants: ./invariants.yml
+configuration: ./config.yml

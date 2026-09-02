@@ -1,0 +1,48 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$title: AON-ATCP Message Envelope
+type: object
+additionalProperties: false
+required:
+  - version
+  - message_id
+  - issuer
+  - audience
+  - session_id
+  - nonce
+  - payload
+  - payload_hash
+  - issued_at_ms
+properties:
+  version:
+    type: integer
+    const: 1
+  message_id:
+    type: string
+    minLength: 1
+  issuer:
+    type: string
+    minLength: 1
+  audience:
+    type: string
+    minLength: 1
+  session_id:
+    type: string
+    minLength: 1
+  nonce:
+    type: string
+    minLength: 16
+  intent:
+    type: string
+  payload:
+    type: object
+  payload_hash:
+    type: string
+    pattern: '^[A-Fa-f0-9]{64}$'
+  issued_at_ms:
+    type: integer
+    minimum: 0
+  vector_clock:
+    type: object
+    additionalProperties:
+      type: integer
+      minimum: 0

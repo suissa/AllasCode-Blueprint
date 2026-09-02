@@ -1,0 +1,4 @@
+packages:
+  - core/linear
+  - crypto/wasm-bindings
+  - sdk/ts-sdk
