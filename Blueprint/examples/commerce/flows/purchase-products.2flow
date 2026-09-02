@@ -1,6 +1,16 @@
 flow PurchaseProducts
 
-ProcurementAgent
+# Level 1 — 2flow topology
+# Describes causal orchestration between semantic nodes.
+
+ProcurementAgent.RegisterPurchase
+  :--: StockAgent.IncreaseStock
+  :--: FinancialAgent.RegisterFinancialEntry
+
+# Level 2 — execution protocol
+# Describes how events enter/leave an Agent and how owned functions are invoked.
+
+execution ProcurementAgent.RegisterPurchase
   -> PurchaseEvidenceReceived
   ->> RegisterPurchase
   <<- RegisterPurchase
@@ -11,7 +21,7 @@ ProcurementAgent
   Error<PurchaseRegistrationError>
     <- Error<PurchaseRegistrationError>
 
-StockAgent
+execution StockAgent.IncreaseStock
   -> Ok<PurchaseRegistered>
   ->> IncreaseStock
   <<- IncreaseStock
@@ -22,7 +32,7 @@ StockAgent
   Error<StockEntryError>
     <- Error<StockEntryError>
 
-FinancialAgent
+execution FinancialAgent.RegisterFinancialEntry
   -> Ok<StockEntryCommitted>
   ->> RegisterFinancialEntry
   <<- RegisterFinancialEntry
