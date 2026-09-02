@@ -10,4 +10,4 @@ invariants: ./invariants.yml
 laws: ./laws.yml
 relations:
   stocks: Stock[*]
-  products: Product[*]
+  products: Product[1]
