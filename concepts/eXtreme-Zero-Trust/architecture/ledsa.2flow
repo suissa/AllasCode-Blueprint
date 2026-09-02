@@ -1,0 +1,40 @@
+# LEDSA high-level choreography
+
+Human.WebAuthnAssertion
+  -> IdentityAgent
+  <- Identity.Authenticated
+
+Identity.Authenticated
+  -> ClientSidecar
+  ->> CryptoPlane.bindSession
+  <- Session.Bound
+
+Session.Bound
+  -> ClientSidecar
+  ->> CryptoPlane.issueDpop
+  <- Message.SignedCapability
+
+Message.SignedCapability
+  -> NatsLinearTransport
+  <- Delivery.Claimed
+
+Delivery.Claimed
+  -> ServerSidecar
+  ->> CryptoPlane.verifyDpop
+  ->> IntentEngine.authorize
+  <- Message.Released
+
+Message.Released
+  -> SecureAgent
+  ->> LocalEventStore.append
+  <- LocalAppend.Receipt
+
+LocalAppend.Receipt
+  -> SecureAgent
+  ->> CRDT.merge
+  ->> NatsLinearTransport.ack
+  <- Delivery.Acknowledged
+
+Delivery.Acknowledged
+  -> AgentsDataCenter
+  <- Propagation.Confirmed

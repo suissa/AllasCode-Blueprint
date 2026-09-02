@@ -1,0 +1,43 @@
+protocol:
+  name: AON-ATCP
+  version: 1
+  alpn: aon-atcp/1
+
+security:
+  webauthn:
+    required: true
+  dpop:
+    required: true
+    max_age_ms: 30000
+    replay_cache: durable-or-bounded
+  mtls:
+    required: true
+  pqc:
+    mode: hybrid
+    provider: pluggable
+    kem_target: ML-KEM-768
+    signature_target: ML-DSA
+
+messaging:
+  provider: nats-jetstream
+  delivery: at-least-once
+  logical_effect: exactly-once
+  message_id_header: Nats-Msg-Id
+  ack_policy: append-before-ack
+
+state:
+  canonical_write_source: relational-database
+  change_source: CDC
+  local_recovery: append-only-eventstore
+  convergence: revisioned-register
+
+actors:
+  runtime: BEAM
+  language: Gleam
+  supervisor_per_actor: true
+
+planes:
+  crypto: Rust
+  effects: Koka
+  linear_resources: Austral
+  semantic_types: Haskell
