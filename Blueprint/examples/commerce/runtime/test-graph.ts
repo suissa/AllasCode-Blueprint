@@ -6,7 +6,7 @@ interface MetricResult { id: string; label?: string; value: number; unit?: strin
 interface TestResultDocument {
   artifact: { id: string; kind: string; path?: string };
   test: { type: string; id?: string };
-  status: 'passed' | 'failed' | 'warning' | 'skipped' | 'unknown' | 'not-run';
+  status: 'passed' | 'failed' | 'warning' | 'skipped' | 'unknown' | 'not-run' | 'not-applicable';
   metrics?: MetricResult[];
   proves?: string[];
   violates?: string[];
@@ -36,7 +36,7 @@ function validateResult(result: TestResultDocument, file: string): string[] {
   if (!result?.artifact?.id) errors.push(`${file}: artifact.id is required`);
   if (!result?.artifact?.kind) errors.push(`${file}: artifact.kind is required`);
   if (!result?.test?.type) errors.push(`${file}: test.type is required`);
-  if (!['passed','failed','warning','skipped','unknown','not-run'].includes(result?.status)) errors.push(`${file}: invalid status`);
+  if (!['passed','failed','warning','skipped','unknown','not-run','not-applicable'].includes(result?.status)) errors.push(`${file}: invalid status`);
   for (const metric of result.metrics ?? []) {
     if (!metric.id) errors.push(`${file}: metric.id is required`);
     if (typeof metric.value !== 'number' || Number.isNaN(metric.value)) errors.push(`${file}: metric ${metric.id} value must be numeric`);
