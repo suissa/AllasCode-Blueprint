@@ -33,7 +33,7 @@ export async function compileSemanticGraph(root:string):Promise<SemanticGraph>{
  for(const event of events)addNode({id:nodeId('Event',event),type:'Event',label:event});
  for(const agent of architecture.agents)addNode({id:nodeId('Agent',agent.name),type:'Agent',label:agent.name});
  for(const actor of architecture.actors)addNode({id:nodeId('Actor',actor.name),type:'Actor',label:actor.name,metadata:{mailboxCapacity:actor.mailboxCapacity}});
- for(const action of architecture.actions)addNode({id:nodeId('Action',action.manifest.name),type:'Action',label:action.manifest.name});
+ for(const action of architecture.actions)addNode({id:nodeId('Action',action.manifest.name),type:'Action',label:action.manifest.name,...(action.manifest.semantic_id?{semantic_id:action.manifest.semantic_id}:{})});
  for(const tool of architecture.tools)addNode({id:nodeId('Tool',tool.name),type:'Tool',label:tool.name});
  for(const flow of flows)addNode({id:nodeId('Flow',flow.name),type:'Flow',label:flow.name,metadata:{file:basename(flow.path)}});
  for(const entity of entities){let ordinal=0;for(const[relation,raw]of Object.entries(entity.relations??{}).sort(([a],[b])=>a.localeCompare(b))){const target=relationTarget(raw);const cardinality=raw.slice(target.length);addEdge('ENTITY_RELATION',nodeId('Entity',entity.id),nodeId('Entity',target),{relation,...(cardinality?{cardinality}:{})},ordinal++);}}
