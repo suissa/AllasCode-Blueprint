@@ -4,17 +4,20 @@ import type { SemanticGraph, SemanticGraphNode } from './semantic-graph.js';
 
 interface MetricResult { id: string; label?: string; value: number; unit?: string; }
 interface TestResultDocument {
-  artifact: { id: string; kind: string; path?: string };
-  test: { type: string; id?: string };
+  artifact?: { id: string; kind: string; path?: string };
+  test?: { type: string; id?: string };
   status: 'passed' | 'failed' | 'warning' | 'skipped' | 'unknown' | 'not-run' | 'not-applicable';
   metrics?: MetricResult[];
   proves?: string[];
   violates?: string[];
 }
 
+const NON_SEMANTIC_DIRS = new Set(['node_modules', '.git', '.runtime', '.facop', 'generated']);
+
 async function walk(path: string): Promise<string[]> {
   const result: string[] = [];
   for (const entry of await readdir(path, { withFileTypes: true })) {
+    if (entry.isDirectory() && NON_SEMANTIC_DIRS.has(entry.name)) continue;
     const current = join(path, entry.name);
     if (entry.isDirectory()) result.push(...await walk(current));
     else if (entry.isFile() && entry.name === 'result.json') result.push(current);
@@ -48,19 +51,20 @@ function titleKind(kind: string): string {
   return ({ action:'Action', actor:'Actor', agent:'Agent', tool:'Tool', entity:'Entity', flow:'Flow', intent:'Intent', event:'Event' } as Record<string,string>)[kind] ?? kind;
 }
 
-function artifactNode(graph: SemanticGraph, result: TestResultDocument): string {
-  const typed = `${titleKind(result.artifact.kind)}:${result.artifact.id}`;
+function artifactNode(graph: SemanticGraph, result: Required<Pick<TestResultDocument, 'artifact'>> & TestResultDocument): string {
+  const artifact = result.artifact;
+  const typed = `${titleKind(artifact.kind)}:${artifact.id}`;
   if (graph.nodes.some(node => node.id === typed)) return typed;
-  const byLabel = graph.nodes.find(node => node.label === result.artifact.id)?.id;
+  const byLabel = graph.nodes.find(node => node.label === artifact.id)?.id;
   if (byLabel) return byLabel;
-  const artifactId = `Artifact:${result.artifact.kind}:${result.artifact.id}`;
+  const artifactId = `Artifact:${artifact.kind}:${artifact.id}`;
   ensureNode(graph, {
     id: artifactId,
     type: 'Artifact',
-    label: result.artifact.id,
+    label: artifact.id,
     metadata: {
-      kind: result.artifact.kind,
-      ...(result.artifact.path ? { path: result.artifact.path } : {}),
+      kind: artifact.kind,
+      ...(artifact.path ? { path: artifact.path } : {}),
     },
   });
   return artifactId;
@@ -77,28 +81,31 @@ export async function compileSemanticTests(root: string, graph: SemanticGraph): 
     let result: TestResultDocument;
     try { result = JSON.parse(await readFile(file, 'utf8')) as TestResultDocument; }
     catch { errors.push(`${file}: invalid JSON`); continue; }
-    errors.push(...validateResult(result, file));
-    const artifact = artifactNode(graph, result);
+    const validation = validateResult(result, file);
+    errors.push(...validation);
+    if (!result.artifact?.id || !result.artifact.kind || !result.test?.type) continue;
+    const semanticResult = result as Required<Pick<TestResultDocument, 'artifact' | 'test'>> & TestResultDocument;
+    const artifact = artifactNode(graph, semanticResult);
 
-    const key = `${result.artifact.kind}:${result.artifact.id}:${result.test.type}`;
+    const key = `${semanticResult.artifact.kind}:${semanticResult.artifact.id}:${semanticResult.test.type}`;
     const testId = `Test:${key}`;
     const resultId = `TestResult:${key}`;
-    ensureNode(graph, { id: testId, type: 'Test', label: `${result.artifact.id}.${result.test.type}`, metadata: { testType: result.test.type, path: relative(root, dirname(file)) } });
-    ensureNode(graph, { id: resultId, type: 'TestResult', label: `${result.artifact.id}.${result.test.type}.result`, metadata: { status: result.status, file: relative(root, file) } });
+    ensureNode(graph, { id: testId, type: 'Test', label: `${semanticResult.artifact.id}.${semanticResult.test.type}`, metadata: { testType: semanticResult.test.type, path: relative(root, dirname(file)) } });
+    ensureNode(graph, { id: resultId, type: 'TestResult', label: `${semanticResult.artifact.id}.${semanticResult.test.type}.result`, metadata: { status: semanticResult.status, file: relative(root, file) } });
     addEdge(graph, 'TESTED_BY', artifact, testId);
     addEdge(graph, 'PRODUCES', testId, resultId);
 
-    for (const metric of result.metrics ?? []) {
+    for (const metric of semanticResult.metrics ?? []) {
       const metricId = `Metric:${key}:${metric.id}`;
       ensureNode(graph, { id: metricId, type: 'Metric', label: metric.label ?? metric.id, metadata: { value: metric.value, ...(metric.unit ? { unit: metric.unit } : {}) } });
       addEdge(graph, 'MEASURES', resultId, metricId);
     }
-    for (const proof of result.proves ?? []) {
+    for (const proof of semanticResult.proves ?? []) {
       const target = governanceNode(graph, proof);
       if (!target) errors.push(`${file}: PROVES target ${proof} is not an Invariant, Policy or Law`);
       else addEdge(graph, 'PROVES', resultId, target);
     }
-    for (const violation of result.violates ?? []) {
+    for (const violation of semanticResult.violates ?? []) {
       const target = governanceNode(graph, violation);
       if (!target) errors.push(`${file}: VIOLATES target ${violation} is not an Invariant, Policy or Law`);
       else addEdge(graph, 'VIOLATES', resultId, target);

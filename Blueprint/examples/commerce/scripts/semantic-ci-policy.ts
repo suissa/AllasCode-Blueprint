@@ -7,7 +7,7 @@ const impact = JSON.parse(await readFile(join(root,'tests','dashboard','semantic
 const confidence = JSON.parse(await readFile(join(root,'tests','dashboard','selector-confidence.json'),'utf8')) as { confidence_percent:number; missed_tests:number };
 const plan = JSON.parse(await readFile(join(root,'tests','dashboard','selective-test-plan.json'),'utf8')) as { unmapped_tests:string[] };
 
-const globalImpact = impact.changed_files.some(file => /\/governance\/|\/graph\/|\/config\.yml$|\/facop\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|ci-policy)|facop)\.ts$|\/scripts\/(semantic-impact|semantic-ci-policy|selector-confidence|run-selective-semantic-tests|facop-plan|facop-qualify|run-facop-qualification|run-facop-stage|run-action-test-category)\.ts$|\.github\/workflows\/commerce-(example|facop-dev|facop-stage|facop-qualification)\.yml$/.test(file.replaceAll('\\','/')));
+const globalImpact = impact.changed_files.some(file => /\/governance\/|\/graph\/|\/config\.yml$|\/facop\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|ci-policy)|test-graph|facop)\.ts$|\/scripts\/(semantic-impact|semantic-ci-policy|selector-confidence|run-selective-semantic-tests|facop-plan|facop-qualify|run-facop-qualification|run-facop-stage|run-action-test-category)\.ts$|\.github\/workflows\/commerce-(example|facop-dev|facop-stage|facop-qualification)\.yml$/.test(file.replaceAll('\\','/')));
 const decision = decideSemanticCiPolicy({
   risk: impact.risk,
   confidence_percent: confidence.confidence_percent,
