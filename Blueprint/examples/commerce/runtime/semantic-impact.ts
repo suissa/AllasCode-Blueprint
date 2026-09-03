@@ -18,7 +18,7 @@ function kebab(value: string): string {
 }
 
 function isGlobalSemanticInput(normalized: string): boolean {
-  return /\/governance\/|\/healing\/|\/graph\/|\/archive\/legacy\/|\/entities\/domain-graph\.yml$|\/config\.yml$|\/facop\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|healing)|healing-(graph|store)|facop)\.ts$|\/scripts\/(semantic-impact|validate-v1-semantic-baseline|facop-plan|facop-qualify|run-facop-qualification|run-facop-stage|run-action-test-category|materialize-semantic-tests|validate-semantic-tests)\.ts$|\/tests\/(architecture-layers|healing|action-harness|facop-evidence)\.test\.ts$|\/tests\/action-harness\.ts$|\.github\/workflows\/commerce-(example|facop-dev|facop-stage|facop-qualification)\.yml$/.test(normalized);
+  return /\/governance\/|\/healing\/|\/graph\/|\/archive\/legacy\/|\/entities\/domain-graph\.yml$|\/config\.yml$|\/facop\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|healing)|test-graph|healing-(graph|store)|facop)\.ts$|\/scripts\/(semantic-impact|validate-v1-semantic-baseline|facop-plan|facop-qualify|run-facop-qualification|run-facop-stage|run-action-test-category|materialize-semantic-tests|validate-semantic-tests)\.ts$|\/tests\/(architecture-layers|healing|action-harness|facop-evidence)\.test\.ts$|\/tests\/action-harness\.ts$|\.github\/workflows\/commerce-(example|facop-dev|facop-stage|facop-qualification)\.yml$/.test(normalized);
 }
 
 export function mapChangedFilesToSeeds(graph: SemanticGraph, changedFiles: string[]): string[] {
