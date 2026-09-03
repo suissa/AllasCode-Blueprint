@@ -1,0 +1,48 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://allascode.dev/schemas/results/test-result.schema.yml
+title: AllasCode Test Result
+allOf:
+  - $ref: ./semantic-result.schema.yml
+  - type: object
+    required:
+      - test
+    properties:
+      semantic_result:
+        type: object
+        properties:
+          kind:
+            const: test
+      test:
+        type: object
+        required:
+          - id
+          - type
+        properties:
+          id:
+            type: string
+            minLength: 1
+          type:
+            type: string
+            enum:
+              - unit
+              - integration
+              - e2e
+              - security
+              - regression
+              - contract
+              - property
+              - mutation
+              - synk
+              - load
+              - stress
+              - chaos
+          framework:
+            type: string
+          fixture:
+            type: string
+          target:
+            type: string
+          source:
+            type: string
+        additionalProperties: false
+    unevaluatedProperties: false
