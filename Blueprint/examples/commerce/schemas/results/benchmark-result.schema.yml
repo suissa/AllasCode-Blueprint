@@ -1,0 +1,78 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://allascode.dev/schemas/results/benchmark-result.schema.yml
+title: AllasCode Benchmark Result
+allOf:
+  - $ref: ./semantic-result.schema.yml
+  - type: object
+    required:
+      - benchmark
+      - metrics
+    properties:
+      semantic_result:
+        type: object
+        properties:
+          kind:
+            const: benchmark
+      benchmark:
+        type: object
+        required:
+          - id
+          - iterations
+          - warmup_iterations
+        properties:
+          id:
+            type: string
+            minLength: 1
+          suite:
+            type: string
+          iterations:
+            type: integer
+            minimum: 1
+          warmup_iterations:
+            type: integer
+            minimum: 0
+          concurrency:
+            type: integer
+            minimum: 1
+          duration_ms:
+            type: number
+            minimum: 0
+          workload:
+            type: string
+          baseline:
+            type: object
+            properties:
+              profile_id:
+                type: string
+              sample_count:
+                type: integer
+                minimum: 1
+              source:
+                type: string
+              generated_at:
+                type: string
+                format: date-time
+            additionalProperties: false
+          comparison:
+            type: object
+            properties:
+              metric_id:
+                type: string
+              local_value:
+                type: number
+              baseline_mean:
+                type: number
+              baseline_median:
+                type: number
+              delta_percent:
+                type: number
+              percentile_rank:
+                type: number
+                minimum: 0
+                maximum: 100
+              classification:
+                type: string
+                enum: [regression, within-baseline, improvement, outlier-improvement]
+            additionalProperties: false
+        additionalProperties: false
+    unevaluatedProperties: false
