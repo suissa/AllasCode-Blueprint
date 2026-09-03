@@ -12,7 +12,15 @@ evidence:
   shared_inputs:
     - ./config.yml
     - ./facop.yml
+    - ./ci-cd.2flow
     - ./package.json
+    - ./schemas/results/semantic-result.schema.yml
+    - ./schemas/results/test-result.schema.yml
+    - ./schemas/results/acceptance-result.schema.yml
+    - ./schemas/results/benchmark-result.schema.yml
+    - ./schemas/results/security-result.schema.yml
+    - ./schemas/results/qualification-result.schema.yml
+    - ./schemas/results/operational-result.schema.yml
     - ./runtime/types.ts
     - ./runtime/semantic-graph.ts
     - ./runtime/semantic-impact.ts
@@ -55,8 +63,10 @@ profiles:
     purpose: Run project-owned unit, integration, E2E and security acceptance.
     commands: [npm run facop:stage]
   qualification:
-    trust: upstream
-    purpose: Prove complete evidence closure and emit an Evidence Passport.
+    trust: contributor
+    purpose: Execute on the measured target server, prove complete evidence closure, compare against the same public server cohort and emit an Evidence Passport plus technical dashboard.
+    execution_locality: target-machine
+    hosted_ci: forbidden
     commands: [npm run facop:qualification]
   upstream:
     trust: upstream
