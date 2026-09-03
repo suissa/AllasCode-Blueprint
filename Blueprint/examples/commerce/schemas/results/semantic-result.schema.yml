@@ -1,0 +1,242 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://allascode.dev/schemas/results/semantic-result.schema.yml
+title: AllasCode Semantic Result
+description: >-
+  Canonical envelope for every machine-readable result produced by AllasCode
+  validation, characterization, qualification and operational execution.
+  Specialized result schemas compose this envelope and narrow semantic_result.kind.
+type: object
+required:
+  - semantic_result
+  - subject
+  - execution
+properties:
+  semantic_result:
+    type: object
+    required:
+      - id
+      - kind
+      - schema_version
+    properties:
+      id:
+        type: string
+        minLength: 1
+        description: Globally stable semantic identity of this result.
+      kind:
+        type: string
+        enum:
+          - test
+          - acceptance
+          - benchmark
+          - security
+          - qualification
+          - operational
+      schema_version:
+        type: string
+        const: 1.0.0
+      generated_at:
+        type: string
+        format: date-time
+    additionalProperties: false
+  subject:
+    type: object
+    required:
+      - id
+      - kind
+    properties:
+      id:
+        type: string
+        minLength: 1
+        description: Canonical semantic identity of the artifact being evaluated.
+      kind:
+        type: string
+        enum:
+          - action
+          - actor
+          - agent
+          - tool
+          - entity
+          - flow
+          - intent
+          - event
+          - dependency
+          - service
+          - system
+          - runtime
+          - infrastructure
+          - policy
+          - invariant
+          - law
+          - artifact
+      path:
+        type: string
+      version:
+        type: string
+      semantic_hash:
+        type: string
+      content_hash:
+        type: string
+    additionalProperties: false
+  execution:
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        $ref: '#/$defs/status'
+      started_at:
+        type: string
+        format: date-time
+      finished_at:
+        type: string
+        format: date-time
+      duration_ms:
+        type: number
+        minimum: 0
+      attempt:
+        type: integer
+        minimum: 1
+      environment:
+        $ref: '#/$defs/environment'
+      executor:
+        type: object
+        properties:
+          id:
+            type: string
+          kind:
+            type: string
+            enum: [human, agent, ci, local-runtime, self-hosted-runner, tool]
+          version:
+            type: string
+        additionalProperties: false
+    additionalProperties: false
+  evidence:
+    type: object
+    properties:
+      proves:
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+      violates:
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+      assertions:
+        type: array
+        items:
+          type: object
+          required: [id, status]
+          properties:
+            id:
+              type: string
+            status:
+              $ref: '#/$defs/status'
+            message:
+              type: string
+            evidence_ref:
+              type: string
+          additionalProperties: false
+    additionalProperties: false
+  metrics:
+    type: array
+    items:
+      $ref: '#/$defs/metric'
+  provenance:
+    type: object
+    properties:
+      commit_sha:
+        type: string
+      tree_sha:
+        type: string
+      evidence_key:
+        type: string
+      run_id:
+        type: string
+      producer:
+        type: string
+      source_ref:
+        type: string
+      parent_result_ids:
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+    additionalProperties: false
+  annotations:
+    type: object
+    additionalProperties: true
+$defs:
+  status:
+    type: string
+    enum:
+      - passed
+      - failed
+      - warning
+      - skipped
+      - unknown
+      - not-run
+      - not-applicable
+  metric:
+    type: object
+    required:
+      - id
+      - value
+    properties:
+      id:
+        type: string
+        minLength: 1
+      label:
+        type: string
+      value:
+        type: number
+      unit:
+        type: string
+      aggregation:
+        type: string
+        enum: [value, min, max, mean, median, p50, p90, p95, p99, rate, count]
+      lower_is_better:
+        type: boolean
+      sample_count:
+        type: integer
+        minimum: 0
+    additionalProperties: false
+  environment:
+    type: object
+    properties:
+      profile_id:
+        type: string
+      os:
+        type: string
+      kernel:
+        type: string
+      arch:
+        type: string
+      cpu_model:
+        type: string
+      cpu_cores:
+        type: integer
+        minimum: 1
+      memory_bytes:
+        type: integer
+        minimum: 0
+      runtime:
+        type: string
+      runtime_version:
+        type: string
+      container_runtime:
+        type: string
+      virtualization:
+        type: string
+      compiler:
+        type: string
+      compiler_version:
+        type: string
+      flags:
+        type: array
+        items:
+          type: string
+      environment_hash:
+        type: string
+    additionalProperties: false
