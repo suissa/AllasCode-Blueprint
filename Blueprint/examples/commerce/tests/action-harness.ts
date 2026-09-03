@@ -6,7 +6,7 @@ import { performance } from 'node:perf_hooks';
 import type { ActionImplementation, ActionManifest, CommerceState } from '../runtime/types.js';
 import { ActionRegistry } from '../runtime/action-registry.js';
 
-export type ActionTestType = 'unit' | 'load' | 'stress' | 'synk' | 'security' | 'integration' | 'benchmark';
+export type ActionTestType = 'unit' | 'load' | 'stress' | 'chaos' | 'synk' | 'security' | 'integration' | 'benchmark';
 
 export interface ActionFixture<T = unknown> {
   name: string;
@@ -17,6 +17,8 @@ export interface ActionFixture<T = unknown> {
   invalid(): unknown;
   setup?(state: CommerceState, payload: T): void;
   assertEffect?(state: CommerceState, payload: T): void;
+  chaos?(state: CommerceState, payload: T): Promise<void> | void;
+  chaosNotApplicableReason?: string;
 }
 
 export function createState(): CommerceState {
@@ -53,7 +55,14 @@ function percentile(values: number[], p: number): number {
   return sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] ?? 0;
 }
 
-async function persistResult(fixture: ActionFixture, type: ActionTestType, status: 'passed' | 'failed', metrics: Array<{ id: string; label: string; value: number; unit: string; status: string }>, error?: unknown): Promise<void> {
+async function persistResult(
+  fixture: ActionFixture,
+  type: ActionTestType,
+  status: 'passed' | 'failed' | 'not-applicable',
+  metrics: Array<{ id: string; label: string; value: number; unit: string; status: string }>,
+  error?: unknown,
+  extraMetadata: Record<string, unknown> = {},
+): Promise<void> {
   const path = join(fixture.actionDir, 'tests', type, 'result.json');
   const current = JSON.parse(await readFile(path, 'utf8')) as Record<string, unknown>;
   const now = new Date().toISOString();
@@ -65,7 +74,7 @@ async function persistResult(fixture: ActionFixture, type: ActionTestType, statu
     metrics,
     evidence: [{ kind: 'executable-test', reference: `actions/${fixture.actionDir.split('/').at(-1)}/tests/action.test.ts` }],
     errors: error ? [{ message: error instanceof Error ? error.message : String(error) }] : [],
-    metadata: { generated: false, executable: true, runner: 'node:test', action: fixture.name },
+    metadata: { generated: false, executable: true, runner: 'node:test', action: fixture.name, ...extraMetadata },
   };
   await writeFile(path, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
 }
@@ -180,6 +189,27 @@ export function defineActionTests<T>(fixture: ActionFixture<T>): void {
       { id: 'recovery_ms', label: 'Recovery Probe', value: recoveryMs + totalMs * 0, unit: 'ms', status: 'passed' },
     ];
   }));
+
+  test(`${fixture.name} / chaos`, async () => {
+    if (!fixture.chaos) {
+      const reason = fixture.chaosNotApplicableReason ?? 'No external or stateful failure-injection surface is declared by this Action fixture.';
+      await persistResult(fixture, 'chaos', 'not-applicable', [
+        { id: 'faults_injected', label: 'Faults Injected', value: 0, unit: 'count', status: 'not-applicable' },
+        { id: 'invariants_preserved', label: 'Invariants Preserved', value: 0, unit: 'count', status: 'not-applicable' },
+      ], undefined, { not_applicable_reason: reason });
+      return;
+    }
+    await category(fixture, 'chaos', async () => {
+      const state = createState();
+      const payload = fixture.valid(0);
+      fixture.setup?.(state, payload);
+      await fixture.chaos?.(state, payload);
+      return [
+        { id: 'faults_injected', label: 'Faults Injected', value: 1, unit: 'count', status: 'passed' },
+        { id: 'invariants_preserved', label: 'Invariants Preserved', value: 1, unit: 'count', status: 'passed' },
+      ];
+    });
+  });
 
   test(`${fixture.name} / benchmark`, async () => category(fixture, 'benchmark', async () => {
     const iterations = 1000;

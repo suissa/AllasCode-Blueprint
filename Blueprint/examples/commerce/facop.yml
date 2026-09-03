@@ -1,0 +1,64 @@
+version: 0.1.0
+protocol: FACoP
+source_contract: FullAgenticCollab/docs/spec/ALLASCODE-INTEGRATION.md
+
+subjects:
+  actions_root: ./actions
+  identity: semantic_id
+
+evidence:
+  algorithm: sha256
+  expiration_days: 30
+  shared_inputs:
+    - ./config.yml
+    - ./facop.yml
+    - ./package.json
+    - ./runtime/types.ts
+    - ./runtime/semantic-graph.ts
+    - ./runtime/semantic-impact.ts
+    - ./runtime/test-graph.ts
+    - ./runtime/facop.ts
+    - ./tests/action-harness.ts
+    - ./scripts/materialize-semantic-tests.ts
+    - ./scripts/validate-semantic-tests.ts
+    - ./scripts/facop-plan.ts
+    - ./scripts/run-facop-qualification.ts
+    - ./scripts/facop-qualify.ts
+
+validation:
+  action:
+    unit: required
+    integration: characterize
+    security: required
+    synk: required
+    load: characterize
+    stress: characterize
+    chaos: characterize
+    benchmark: characterize
+  system:
+    unit: required
+    integration: required
+    e2e: required
+    security: required
+
+profiles:
+  local:
+    trust: contributor
+    purpose: Characterize locally changed Actions before publishing a branch.
+    commands: [npm run facop:dev]
+  dev:
+    trust: contributor
+    purpose: Execute only semantically impacted contributor-visible evidence.
+    commands: [npm run facop:dev]
+  stage:
+    trust: upstream
+    purpose: Run project-owned unit, integration, E2E and security acceptance.
+    commands: [npm run facop:stage]
+  qualification:
+    trust: upstream
+    purpose: Prove complete evidence closure and emit an Evidence Passport.
+    commands: [npm run facop:qualification]
+  upstream:
+    trust: upstream
+    purpose: Propose the qualified tree for review and observe the maintainer decision.
+    commands: [npm run facop:stage]

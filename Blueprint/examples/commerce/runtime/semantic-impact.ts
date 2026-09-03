@@ -17,13 +17,16 @@ function kebab(value: string): string {
   return value.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/_/g, '-').toLowerCase();
 }
 
+function isGlobalSemanticInput(normalized: string): boolean {
+  return /\/governance\/|\/healing\/|\/graph\/|\/archive\/legacy\/|\/entities\/domain-graph\.yml$|\/config\.yml$|\/facop\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|healing)|healing-(graph|store)|facop)\.ts$|\/scripts\/(semantic-impact|validate-v1-semantic-baseline|facop-plan|facop-qualify|run-facop-qualification|run-facop-stage|run-action-test-category|materialize-semantic-tests|validate-semantic-tests)\.ts$|\/tests\/(architecture-layers|healing|action-harness|facop-evidence)\.test\.ts$|\/tests\/action-harness\.ts$|\.github\/workflows\/commerce-(example|facop-dev|facop-stage|facop-qualification)\.yml$/.test(normalized);
+}
+
 export function mapChangedFilesToSeeds(graph: SemanticGraph, changedFiles: string[]): string[] {
   const seeds = new Set<string>();
   const architectureNodes = graph.nodes.filter(node => ARCH_TYPES.has(node.type));
   for (const file of changedFiles) {
     const normalized = file.replaceAll('\\','/');
-    const global = /\/governance\/|\/healing\/|\/graph\/|\/archive\/legacy\/|\/entities\/domain-graph\.yml$|\/config\.yml$|\/package\.json$|\/runtime\/(semantic-(graph|governor|impact|healing)|healing-(graph|store))\.ts$|\/scripts\/(semantic-impact|validate-v1-semantic-baseline)\.ts$|\/tests\/(architecture-layers|healing)\.test\.ts$|\.github\/workflows\/commerce-example\.yml$/.test(normalized);
-    if (global) {
+    if (isGlobalSemanticInput(normalized)) {
       architectureNodes.forEach(node => seeds.add(node.id));
       continue;
     }
@@ -73,7 +76,7 @@ export function analyzeSemanticImpact(graph: SemanticGraph, changedFiles: string
     if (!node) continue;
     score += CRITICAL_TYPES.has(node.type) ? 8 : HIGH_TYPES.has(node.type) ? 5 : 2;
   }
-  if (changedFiles.some(file => /governance|healing|archive\/legacy|domain-graph\.yml|config\.yml|semantic-governor|semantic-impact|validate-v1-semantic-baseline|architecture-layers\.test|package\.json|commerce-example\.yml/.test(file))) score += 20;
+  if (changedFiles.some(file => isGlobalSemanticInput(file.replaceAll('\\','/')))) score += 20;
   const risk = score >= 80 ? 'CRITICAL' : score >= 40 ? 'HIGH' : score >= 15 ? 'MEDIUM' : 'LOW';
   return { changed_files:[...changedFiles].sort(), seed_nodes:seeds, impacted_nodes:[...impacted].sort(), required_tests:[...requiredTests].sort(), risk, risk_score:score };
 }

@@ -24,6 +24,12 @@ policies:
     allowed-in: [validation, self-healing]
   terminal-events: [Ok, Error]
 
+facop:
+  protocol: FACoP
+  config: ./facop.yml
+  evidence-subject: action.semantic_id
+  pipeline: semantic-graph -> semantic-impact -> evidence-plan -> evidence-passport
+
 ci:
   source: AllasCode-infra
   platform: github-actions
