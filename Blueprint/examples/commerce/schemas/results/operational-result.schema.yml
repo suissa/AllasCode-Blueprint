@@ -1,0 +1,62 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://allascode.dev/schemas/results/operational-result.schema.yml
+title: AllasCode Operational Result
+allOf:
+  - $ref: ./semantic-result.schema.yml
+  - type: object
+    required:
+      - operational
+    properties:
+      semantic_result:
+        type: object
+        properties:
+          kind:
+            const: operational
+      operational:
+        type: object
+        required:
+          - id
+          - operation
+        properties:
+          id:
+            type: string
+            minLength: 1
+          operation:
+            type: string
+            enum:
+              - deploy
+              - start
+              - stop
+              - restart
+              - healthcheck
+              - readiness
+              - liveness
+              - migration
+              - rollback
+              - backup
+              - restore
+              - failover
+              - scaling
+              - observation
+              - profiling
+          target:
+            type: string
+          environment:
+            type: string
+          previous_state:
+            type: string
+          resulting_state:
+            type: string
+          rollback_available:
+            type: boolean
+          incident_refs:
+            type: array
+            items:
+              type: string
+            uniqueItems: true
+          logs:
+            type: array
+            items:
+              type: string
+        additionalProperties: false
+    unevaluatedProperties: false
