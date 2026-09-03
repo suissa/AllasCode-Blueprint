@@ -9,6 +9,7 @@ function run(command: string, args: string[]): void {
 }
 
 run('npm', ['run', 'semantic-tests:materialize']);
+run('npm', ['run', 'graph:build']);
 run('npx', ['tsx', 'scripts/run-action-test-category.ts', 'unit']);
 run('npx', ['tsx', '--test',
   'tests/commerce.test.ts',
@@ -28,6 +29,7 @@ const report = {
   generated_at: new Date().toISOString(),
   ownership: 'upstream',
   evidence: [
+    'Compiled semantic graph',
     'Action unit contracts',
     'Project-owned integration tests',
     'Project-owned E2E product acceptance',
