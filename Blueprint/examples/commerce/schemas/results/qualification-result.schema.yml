@@ -1,0 +1,79 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://allascode.dev/schemas/results/qualification-result.schema.yml
+title: AllasCode Qualification Result
+allOf:
+  - $ref: ./semantic-result.schema.yml
+  - type: object
+    required:
+      - qualification
+    properties:
+      semantic_result:
+        type: object
+        properties:
+          kind:
+            const: qualification
+      qualification:
+        type: object
+        required:
+          - id
+          - profile
+          - decision
+          - closure
+        properties:
+          id:
+            type: string
+            minLength: 1
+          profile:
+            type: string
+            enum: [local, dev, stage, qualification, upstream, tests]
+          decision:
+            type: string
+            enum: [qualified, rejected, incomplete, pending]
+          passport_id:
+            type: string
+          closure:
+            type: object
+            required:
+              - required
+              - executed
+              - reused
+              - missing
+              - invalid
+            properties:
+              required:
+                type: integer
+                minimum: 0
+              executed:
+                type: integer
+                minimum: 0
+              reused:
+                type: integer
+                minimum: 0
+              missing:
+                type: integer
+                minimum: 0
+              invalid:
+                type: integer
+                minimum: 0
+            additionalProperties: false
+          required_subjects:
+            type: array
+            items:
+              type: string
+            uniqueItems: true
+          executed_subjects:
+            type: array
+            items:
+              type: string
+            uniqueItems: true
+          reused_subjects:
+            type: array
+            items:
+              type: string
+            uniqueItems: true
+          rejected_reasons:
+            type: array
+            items:
+              type: string
+        additionalProperties: false
+    unevaluatedProperties: false
