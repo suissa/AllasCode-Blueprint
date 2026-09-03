@@ -1,0 +1,108 @@
+(* Extended AllasCode 2flow grammar *)
+
+source              = ws, flow_decl, { nl, declaration }, ws ;
+
+flow_decl           = "flow", sp, identifier, nl, topology ;
+
+declaration         = execution_decl | comment | empty_line ;
+
+topology            = topology_expr, { nl, topology_continuation } ;
+topology_continuation = indent, sequence_op, sp, topology_expr ;
+
+topology_expr       = topology_term, [ sp, failure_op, sp, topology_term ] ;
+topology_term       = qualified_name
+                    | parallel_group
+                    | human_gate ;
+
+parallel_group      = "[", ws_inline, topology_expr,
+                      { ws_inline, ",", ws_inline, topology_expr },
+                      ws_inline, "]" ;
+
+human_gate          = "[?", ws_inline, topology_expr, ws_inline, "]" ;
+
+sequence_op         = ":--:" ;
+failure_op          = "!->" ;
+
+execution_decl      = "execution", sp, qualified_name, nl,
+                      execution_body ;
+
+execution_body      = { execution_stmt | result_block | comment | empty_line } ;
+
+execution_stmt      = indent, ( ingress_stmt
+                              | egress_stmt
+                              | invoke_stmt
+                              | receive_invoke_stmt ), nl ;
+
+ingress_stmt        = ingress_op, sp, value_ref ;
+egress_stmt         = egress_op, sp, result_ref ;
+invoke_stmt         = invoke_op, sp, callable_ref ;
+receive_invoke_stmt = receive_invoke_op, sp, callable_ref ;
+
+ingress_op          = "->" ;
+egress_op           = "<-" ;
+invoke_op           = "->>" ;
+receive_invoke_op   = "<<-" ;
+
+result_block        = indent, result_ref, nl,
+                      { nested_execution_stmt } ;
+
+nested_execution_stmt = indent, indent,
+                        ( egress_stmt
+                        | invoke_stmt
+                        | receive_invoke_stmt
+                        | ingress_stmt ), nl ;
+
+result_ref          = ok_result | error_result ;
+ok_result           = "Ok", "<", type_ref, ">" ;
+error_result        = "Error", "<", type_ref, ">" ;
+
+value_ref           = result_ref | type_ref | qualified_name ;
+callable_ref        = identifier | qualified_name ;
+type_ref            = identifier | qualified_name ;
+qualified_name      = identifier, { ".", identifier } ;
+
+identifier          = ident_start, { ident_continue } ;
+ident_start         = letter | "_" ;
+ident_continue      = letter | digit | "_" | "-" ;
+
+comment             = ws_inline, "#", { any_char_except_nl }, nl ;
+empty_line          = ws_inline, nl ;
+
+indent              = ( "  " | "\t" ), { "  " | "\t" } ;
+sp                  = " ", { " " | "\t" } ;
+ws_inline           = { " " | "\t" } ;
+ws                  = { " " | "\t" | nl } ;
+nl                  = "\n" | "\r\n" ;
+
+letter              = "A".."Z" | "a".."z" ;
+digit               = "0".."9" ;
+any_char_except_nl  = ? any Unicode scalar value except CR and LF ? ;
+
+(*
+Semantic constraints intentionally outside the grammar:
+
+S1. A topology node referenced by an execution declaration MUST resolve to the
+    same semantic identity after canonical name resolution.
+
+S2. :--: is enabled only by a successful causal result.
+
+S3. !-> is a topology edge. It is not a third result family.
+
+S4. Every executable function MUST resolve to exactly one of the two result
+    families Ok<T> or Error<E>.
+
+S5. -> and <- cross an event/knowledge boundary.
+
+S6. ->> and <<- are the two perspectives of one ownership-scoped invocation.
+
+S7. An owner MUST NOT invoke a callable owned by a foreign Agent/Context.
+
+S8. [...] declares fork/join semantics without prescribing a physical
+    concurrency mechanism.
+
+S9. [? ...] declares a human-evidence gate without introducing another
+    computational result family.
+
+S10. Normalization MUST NOT be represented as an ordinary domain execution
+     stage. It is valid only inside validate or self-healing semantics.
+*)
