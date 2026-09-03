@@ -17,6 +17,7 @@ flows:
   associate-customer-to-sale: ./flows/associate-customer-to-sale.2flow
   issue-sale-invoice: ./flows/issue-sale-invoice.2flow
   record-accounting-effect: ./flows/record-accounting-effect.2flow
+  ci-cd: ./ci-cd.2flow
 
 policies:
   self-healing: enabled
@@ -27,11 +28,13 @@ policies:
 facop:
   protocol: FACoP
   config: ./facop.yml
+  ci-cd: ./ci-cd.2flow
   evidence-subject: action.semantic_id
   pipeline: semantic-graph -> semantic-impact -> evidence-plan -> evidence-passport
 
 ci:
-  source: AllasCode-infra
+  semantic-source: ./ci-cd.2flow
+  adapter-source: AllasCode-infra
   platform: github-actions
   language: typescript
   project-directory: Blueprint/examples/commerce
@@ -46,9 +49,5 @@ ci:
       paths: [Blueprint/examples/commerce/**, .github/workflows/commerce-example.yml]
     manual: true
   pipeline:
-    - capability: DependencyInstall
-    - capability: Validate
-      command: npm run check
-    - capability: Test
-    - capability: Demo
-      command: npm run demo
+    generated-from: ./ci-cd.2flow
+    note: Legacy adapter projection. The 2flow graph is the semantic authority.
