@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://allascode.dev/schemas/benchmark-protocol/0.1/benchmark-scenario.schema.json",
+  "title": "AllasCode BenchmarkScenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocolVersion",
+    "scenarioId",
+    "behavior",
+    "implementations",
+    "input",
+    "correctness",
+    "measurement",
+    "metrics",
+    "environments"
+  ],
+  "properties": {
+    "protocolVersion": { "const": "0.1" },
+    "scenarioId": { "type": "string", "minLength": 1 },
+    "behavior": { "type": "string", "minLength": 1 },
+    "implementations": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "runtime", "artifact"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "runtime": { "type": "string", "minLength": 1 },
+          "artifact": { "type": "string", "minLength": 1 },
+          "artifactDigest": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "input": {},
+    "correctness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle"],
+      "properties": {
+        "oracle": { "const": "deterministic-equality" },
+        "observable": { "type": "string", "default": "return-value" }
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["warmupIterations", "samples", "operationsPerSample"],
+      "properties": {
+        "warmupIterations": { "type": "integer", "minimum": 0 },
+        "samples": { "type": "integer", "minimum": 1 },
+        "operationsPerSample": { "type": "integer", "minimum": 1 },
+        "boundaryIterations": { "type": "integer", "minimum": 0, "default": 0 }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "execution_time",
+          "throughput",
+          "cold_load",
+          "compile_time",
+          "instantiate_time",
+          "boundary_cost",
+          "variance",
+          "js_heap",
+          "wasm_linear_memory",
+          "transferred_bytes"
+        ]
+      }
+    },
+    "environments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "cpuThrottlingRate": { "type": "number", "minimum": 1 },
+          "networkConditions": {
+            "type": ["string", "null"],
+            "enum": [null, "Offline", "Slow 3G", "Fast 3G", "Slow 4G", "Fast 4G"]
+          },
+          "cacheMode": { "enum": ["cold", "warm", "controlled"] },
+          "viewport": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
