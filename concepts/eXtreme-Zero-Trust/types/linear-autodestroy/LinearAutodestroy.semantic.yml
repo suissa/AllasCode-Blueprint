@@ -1,0 +1,44 @@
+name: LinearAutodestroy
+kind: SemanticAtomicBehaviorType
+canonical_label: AllasCode.Types.LinearAutodestroy
+status: experimental
+
+contract:
+  description: Consume once, destroy immediately after successful consumption, and reject every second consumption attempt.
+  invariant: "Consume(capability) -> Destroy(capability) && !ConsumeAgain(capability)"
+
+capabilities:
+  - MagicLink
+  - PasskeyChallenge
+  - DpopToken
+  - LinearEventCapability
+  - ClaimedMessage
+  - LocalAppendReceipt
+
+transitions:
+  - from: MagicLink
+    to: PasskeyChallenge
+    action: open_once
+    after: destroy_source
+  - from: PasskeyChallenge
+    to: PresenceConfirmed
+    action: sign_once
+    after: destroy_source
+  - from: LinearEventCapability
+    to: ClaimedMessage
+    action: claim_once
+    after: destroy_source
+  - from: ClaimedMessage
+    to: Acked
+    requires: LocalAppendReceipt
+    action: acknowledge_once
+    after: destroy_source
+
+runtime_target:
+  language: Zig
+  enforcement:
+    - opaque handles
+    - capability table
+    - consumed flag
+    - replay guard
+    - first-writer claim
