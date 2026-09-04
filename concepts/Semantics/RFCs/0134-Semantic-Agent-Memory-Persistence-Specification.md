@@ -6,15 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Memory Architecture** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Memory Persistence** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Memory Architecture**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Memory Persistence**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
-## Escopo semântico\n\nDefine persistência e recuperação da memória, distinta da arquitetura de memória de RFC-0146.
+## Escopo semântico
+
+Define a arquitetura de persistência e recuperação da memória, distinta da memória conceitual de RFC-0121.
 
 ## Objetivos
 
@@ -39,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Memory Architecture
+Memory Persistence
   ↓
 Typed Result
   ↓
@@ -148,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0135 — Semantic Agent Knowledge Graph Specification**
+**RFC-0135 — Semantic Agent Knowledge Relation Specification**

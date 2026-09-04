@@ -6,15 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Knowledge Graph** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Knowledge Relation** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Knowledge Graph**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Knowledge Relation**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
-## Escopo semântico\n\nDefine relações semânticas entre unidades de conhecimento, distinta do knowledge graph de RFC-0147.
+## Escopo semântico
+
+Define a representação relacional de conhecimento, distinta do conhecimento conceitual de RFC-0122.
 
 ## Objetivos
 
@@ -39,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Knowledge Graph
+Knowledge Relation
   ↓
 Typed Result
   ↓

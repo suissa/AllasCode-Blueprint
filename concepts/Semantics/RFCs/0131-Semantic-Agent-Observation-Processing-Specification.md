@@ -6,15 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Observation Stream** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Observation Processing** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Observation Stream**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Observation Processing**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
-## Escopo semântico\n\nDefine o processamento operacional de observações, distinto do fluxo de observação de RFC-0141.
+## Escopo semântico
+
+Define o fluxo contínuo de observações produzidas durante a execução.
 
 ## Objetivos
 
@@ -39,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Observation Stream
+Observation Processing
   ↓
 Typed Result
   ↓
