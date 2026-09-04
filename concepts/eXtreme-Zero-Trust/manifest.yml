@@ -23,12 +23,45 @@ exposes:
     proof_of_possession: DPoP
     transport: mTLS
     post_quantum: crypto-agile-hybrid-provider
-  languages:
+  runtime:
     crypto: Rust
-    linear: Austral
-    effects: Koka
-    actors: Gleam/BEAM
+    effects: Zig runtime transparent default effects
+    actors: ZigActores
+    semantic_atomicbehavior_type: LinearAutodestroy
     semantic_types: Haskell
+  ubiq:
+    protocols:
+      default:
+        - quic
+        - nats
+      optional:
+        - grpc
+        - websocket
+    guarantees:
+      delivery: at-least-once
+      logical_effect_target: exactly-once
+      primitives:
+        - ACK
+        - first-writer
+        - dedupe
+        - replay-guard
+        - retry-window
+        - outbox-aggregation
+    security:
+      mtls: required
+      dpop: optional-configurable
+      zerotrust: required
+    consumption:
+      default:
+        - LinearConsumeOnce
+        - ZeroTrust
+      variants:
+        - LinearConsumeAll
+        - LinearConsumeAllZeroTrust
+    retry: 1 minute
+    outbox_aggregation: 1 minute per entity_id
+    tgc: 20-30 seconds
+    direct_delivery: known Agent/subscriber address may bypass broker routing
 
 invariants: ./invariants.yml
 configuration: ./config.yml
