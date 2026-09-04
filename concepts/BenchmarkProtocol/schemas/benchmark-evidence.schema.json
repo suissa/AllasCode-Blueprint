@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://allascode.dev/schemas/benchmark-protocol/0.1/benchmark-evidence.schema.json",
+  "title": "AllasCode BenchmarkEvidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocolVersion",
+    "evidenceId",
+    "scenarioId",
+    "runs",
+    "equivalence",
+    "comparisons"
+  ],
+  "properties": {
+    "protocolVersion": { "const": "0.1" },
+    "evidenceId": { "type": "string", "minLength": 1 },
+    "scenarioId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": ["string", "null"], "format": "date-time" },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "./benchmark-run.schema.json" }
+    },
+    "equivalence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle", "groups", "invalidComparisons"],
+      "properties": {
+        "oracle": { "type": "string" },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          }
+        },
+        "invalidComparisons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["left", "right", "reason"],
+            "properties": {
+              "left": { "type": "string" },
+              "right": { "type": "string" },
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "comparisons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["left", "right", "metric", "operation", "value", "unit"],
+        "properties": {
+          "left": { "type": "string" },
+          "right": { "type": "string" },
+          "metric": { "type": "string" },
+          "operation": { "enum": ["ratio", "delta", "percent_delta"] },
+          "value": { "type": "number" },
+          "unit": { "type": "string" }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "ref"],
+        "properties": {
+          "type": { "enum": ["performance-trace", "heap-snapshot", "network-capture", "console-log", "other"] },
+          "implementationId": { "type": ["string", "null"] },
+          "ref": { "type": "string" },
+          "digest": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "evidenceDigest": { "type": ["string", "null"] }
+  }
+}
