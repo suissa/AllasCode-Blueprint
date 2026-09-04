@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify generated RFCs are synchronized
+        run: python scripts/generate-semantic-rfcs.py --check
       - run: python scripts/generate-semantic-rfcs.py
       - name: Commit generated RFCs
         run: |
