@@ -7,7 +7,8 @@ security:
   webauthn:
     required: true
   dpop:
-    required: true
+    required: false
+    mode: optional-configurable
     max_age_ms: 30000
     replay_cache: durable-or-bounded
   mtls:
@@ -19,11 +20,41 @@ security:
     signature_target: ML-DSA
 
 messaging:
-  provider: nats-jetstream
+  provider: ubiq
+  protocols:
+    default:
+      - quic
+      - nats
+    optional:
+      - grpc
+      - websocket
   delivery: at-least-once
   logical_effect: exactly-once
-  message_id_header: Nats-Msg-Id
+  primitives:
+    - ACK
+    - first-writer
+    - dedupe
+    - replay-guard
+  consumption:
+    default:
+      - LinearConsumeOnce
+      - ZeroTrust
+    variants:
+      - LinearConsumeAll
+      - LinearConsumeAllZeroTrust
+  retry_window: 1 minute
+  outbox_aggregation: 1 minute per entity_id
+  tgc: 20-30 seconds
   ack_policy: append-before-ack
+  direct_delivery:
+    enabled: true
+    condition: known_agent_or_subscriber_address
+    fast_path: QUIC + eBPF/XDP
+  broker_role:
+    - discovery
+    - routing
+    - fallback
+    - audit
 
 state:
   canonical_write_source: relational-database
@@ -32,12 +63,39 @@ state:
   convergence: revisioned-register
 
 actors:
-  runtime: BEAM
-  language: Gleam
+  runtime: ZigActores
+  implementation: BEAM-like
+  language: Zig
   supervisor_per_actor: true
+  distributed_process: true
+  stateful_actor_by_construction: true
+  choreography: UbiQ + 2flow
+
+runtime:
+  language: Zig
+  effects: transparent-default-effects
+  effect_boundaries:
+    - crypto
+    - network
+    - state
+    - intent
+  capability_scoped_io: true
+  deterministic_execution_boundaries: true
+
+semantic_atomicbehavior_types:
+  linear_autodestroy:
+    enabled: true
+    contract: "Consume(capability) -> Destroy(capability) && !ConsumeAgain(capability)"
+    targets:
+      - magic-link
+      - passkey-challenge
+      - dpop-token
+      - event-capability
+      - credential
 
 planes:
   crypto: Rust
-  effects: Koka
-  linear_resources: Austral
+  runtime: Zig
+  actors: ZigActores
+  semantic_atomicbehavior_type: LinearAutodestroy
   semantic_types: Haskell
