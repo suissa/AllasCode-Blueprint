@@ -1,0 +1,44 @@
+name: Benchmark Protocol Reference
+
+on:
+  push:
+    paths:
+      - "concepts/BenchmarkProtocol/**"
+      - ".github/workflows/benchmark-protocol-reference.yml"
+  pull_request:
+    paths:
+      - "concepts/BenchmarkProtocol/**"
+      - ".github/workflows/benchmark-protocol-reference.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-js-wasm-equivalence:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Zig 0.16.0
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      - name: Show tool versions
+        run: |
+          zig version
+          node --version
+
+      - name: Build reference WebAssembly
+        working-directory: concepts/BenchmarkProtocol/examples/js-wasm
+        run: make wasm
+
+      - name: Verify JS/WASM behavioral equivalence
+        working-directory: concepts/BenchmarkProtocol/examples/js-wasm
+        run: node verify.mjs
+
+      - name: Assert WASM artifact exists
+        working-directory: concepts/BenchmarkProtocol/examples/js-wasm
+        run: test -s wasm/kernel.wasm
