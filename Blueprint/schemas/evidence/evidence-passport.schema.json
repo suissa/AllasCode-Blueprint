@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://allascode.dev/schemas/evidence-passport/v1.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "passport_id",
+    "artifact",
+    "subject_revision",
+    "qualification_profile",
+    "generated_at",
+    "closure",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": { "const": "allascode.evidence-passport/v1" },
+    "generated_at": { "type": "string", "format": "date-time" }
+  }
+}
