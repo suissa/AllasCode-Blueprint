@@ -15,7 +15,7 @@ Session.Bound
   <- Message.SignedCapability
 
 Message.SignedCapability
-  -> NatsLinearTransport
+  -> UbiQTransport
   <- Delivery.Claimed
 
 Delivery.Claimed
@@ -25,14 +25,15 @@ Delivery.Claimed
   <- Message.Released
 
 Message.Released
-  -> SecureAgent
+  -> ZigActor
+  ->> LinearAutodestroy.consume
   ->> LocalEventStore.append
   <- LocalAppend.Receipt
 
 LocalAppend.Receipt
-  -> SecureAgent
+  -> ZigActor
   ->> CRDT.merge
-  ->> NatsLinearTransport.ack
+  ->> UbiQTransport.ack
   <- Delivery.Acknowledged
 
 Delivery.Acknowledged
