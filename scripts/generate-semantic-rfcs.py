@@ -2,6 +2,8 @@ from pathlib import Path
 import re
 import sys
 
+# The committed RFC collection is checked against this deterministic source.
+
 OUT = Path('concepts/Semantics/RFCs')
 OUT.mkdir(parents=True, exist_ok=True)
 
