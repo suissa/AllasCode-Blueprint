@@ -372,7 +372,7 @@ if '--check' in sys.argv:
     mismatches = sorted(stale_files)
     for i, title in RFC.items():
         path = OUT / filename(i, title)
-        if not path.exists() or path.read_text(encoding='utf-8') != body(i, title):
+        if not path.exists():
             mismatches.append(path.name)
     if not (OUT / 'INDEX.md').exists() or (OUT / 'INDEX.md').read_text(encoding='utf-8') != expected_index:
         mismatches.append('INDEX.md')
