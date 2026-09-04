@@ -16,3 +16,9 @@ export fn kernel(seed: u32, iterations: u32) u32 {
 export fn identity(value: u32) u32 {
     return value;
 }
+
+// ABP keeps WebAssembly linear memory separate from JavaScript heap evidence.
+// Each WebAssembly page is 64 KiB.
+export fn linear_memory_bytes() u32 {
+    return @intCast(@wasmMemorySize(0) * 65536);
+}
