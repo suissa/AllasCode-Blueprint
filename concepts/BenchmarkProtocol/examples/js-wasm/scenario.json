@@ -1,0 +1,50 @@
+{
+  "protocolVersion": "0.1",
+  "scenarioId": "reference.js-vs-wasm.uint32-kernel",
+  "behavior": "Benchmark.referenceKernel",
+  "implementations": [
+    {
+      "id": "javascript",
+      "runtime": "javascript",
+      "artifact": "./javascript/kernel.js"
+    },
+    {
+      "id": "wasm-zig",
+      "runtime": "webassembly",
+      "artifact": "./wasm/kernel.wasm"
+    }
+  ],
+  "input": {
+    "seed": 305419896,
+    "iterations": 250000
+  },
+  "correctness": {
+    "oracle": "deterministic-equality",
+    "observable": "return-value"
+  },
+  "measurement": {
+    "warmupIterations": 50,
+    "samples": 30,
+    "operationsPerSample": 10,
+    "boundaryIterations": 100000
+  },
+  "metrics": [
+    "execution_time",
+    "throughput",
+    "cold_load",
+    "compile_time",
+    "instantiate_time",
+    "boundary_cost",
+    "variance",
+    "wasm_linear_memory"
+  ],
+  "environments": [
+    {
+      "id": "browser-native",
+      "cpuThrottlingRate": 1,
+      "networkConditions": null,
+      "cacheMode": "controlled",
+      "viewport": null
+    }
+  ]
+}
