@@ -1,4 +1,4 @@
-# RFC-0135 — Semantic Agent Knowledge Graph Specification
+# RFC-0134 — Semantic Agent Memory Persistence Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -6,17 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Knowledge Graph** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Memory Architecture** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Knowledge Graph**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Memory Architecture**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
 ## Escopo semântico
 
-Define a representação relacional de conhecimento, distinta do conhecimento conceitual de RFC-0122.
+Define a arquitetura de persistência e recuperação da memória, distinta da memória conceitual de RFC-0121.
 
 ## Objetivos
 
@@ -41,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Knowledge Graph
+Memory Architecture
   ↓
 Typed Result
   ↓
@@ -54,8 +54,8 @@ Observation + Audit
 
 ```yaml
 artifact:
-  id: "rfc-0135"
-  canonical_label: "knowledge.graph"
+  id: "rfc-0134"
+  canonical_label: "memory.persistence"
   version: "1.0.0"
 
 contract:
@@ -150,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0136 — Semantic Agent Reasoning Process Specification**
+**RFC-0135 — Semantic Agent Knowledge Graph Specification**

@@ -150,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0134 — Semantic Agent Memory Architecture Specification**
+**RFC-0134 — Semantic Agent Memory Persistence Specification**

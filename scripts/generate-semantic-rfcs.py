@@ -82,11 +82,11 @@ TITLES = '''
 0128|Semantic Agent Capability Discovery Specification
 0129|Semantic Agent Delegation Resolution Specification
 0130|Semantic Agent Execution Coordination Specification
-0131|Semantic Agent Observation Stream Specification
+0131|Semantic Agent Observation Processing Specification
 0132|Semantic Agent Evaluation Criteria Specification
 0133|Semantic Agent Learning Adaptation Specification
-0134|Semantic Agent Memory Architecture Specification
-0135|Semantic Agent Knowledge Graph Specification
+0134|Semantic Agent Memory Persistence Specification
+0135|Semantic Agent Knowledge Relation Specification
 0136|Semantic Agent Reasoning Process Specification
 0137|Semantic Agent Decision Policy Specification
 0138|Semantic Agent Planning Strategy Specification

@@ -150,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0131 — Semantic Agent Observation Stream Specification**
+**RFC-0131 — Semantic Agent Observation Processing Specification**
