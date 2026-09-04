@@ -6,10 +6,11 @@ import { enrichHealingGraph } from '../runtime/healing-graph.js';
 import { validateSemanticGraph } from '../runtime/semantic-graph.js';
 import { compileSemanticTests } from '../runtime/test-graph.js';
 import { governSemanticGraph } from '../runtime/semantic-governor.js';
+import { enrichEvidenceGraph } from '../runtime/content-addressed-evidence.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
-const graph = await enrichHealingGraph(root, await compileRuntimeSemanticGraph(root));
+const graph = await enrichEvidenceGraph(root, await enrichHealingGraph(root, await compileRuntimeSemanticGraph(root)));
 const testErrors = await compileSemanticTests(root, graph);
 const governance = governSemanticGraph(graph);
 const errors = [...validateSemanticGraph(graph), ...testErrors, ...governance.errors];

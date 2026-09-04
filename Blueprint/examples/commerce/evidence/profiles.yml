@@ -1,0 +1,91 @@
+schema_version: allascode.validation-profiles/v1
+predicates:
+  unit: { id: correctness.unit.pass, version: 1.0.0, disposition: required }
+  integration:
+    { id: correctness.integration.pass, version: 1.0.0, disposition: required }
+  e2e: { id: correctness.e2e.pass, version: 1.0.0, disposition: required }
+  security:
+    { id: security.acceptance.pass, version: 1.0.0, disposition: required }
+  benchmark:
+    {
+      id: performance.benchmark.distribution,
+      version: 1.0.0,
+      disposition: characterize,
+    }
+  load:
+    { id: performance.load.envelope, version: 1.0.0, disposition: characterize }
+  stress:
+    {
+      id: resilience.stress.threshold,
+      version: 1.0.0,
+      disposition: characterize,
+    }
+  chaos:
+    {
+      id: resilience.chaos.degradation,
+      version: 1.0.0,
+      disposition: characterize,
+    }
+profiles:
+  local:
+    {
+      version: 1.0.0,
+      owner: contributor,
+      categories: [unit, benchmark, load, stress, chaos],
+      scope: changed-subjects,
+      reuse: optional,
+    }
+  dev:
+    {
+      version: 1.0.0,
+      owner: contributor-ci,
+      categories: [unit, benchmark, load, stress, chaos],
+      scope: changed-and-affected,
+      reuse: allowed,
+    }
+  stage:
+    {
+      version: 1.0.0,
+      owner: upstream-ci,
+      categories: [unit, integration, e2e, security],
+      scope: affected-system,
+      reuse: allowed,
+    }
+  qualification:
+    {
+      version: 1.0.0,
+      owner: upstream-ci,
+      categories:
+        [unit, integration, e2e, security, benchmark, load, stress, chaos],
+      scope: complete-evidence-closure,
+      reuse: verified-only,
+      require_complete_closure: true,
+      emit_passport: true,
+    }
+  upstream:
+    {
+      version: 1.0.0,
+      owner: upstream,
+      categories: [],
+      scope: proposal-lifecycle,
+      reuse: forbidden,
+    }
+shared_inputs:
+  - {
+      path: runtime/semantic-graph.ts,
+      categories: [integration, e2e, security],
+    }
+  - {
+      path: runtime/runtime-graph.ts,
+      categories: [integration, e2e, security, load, stress, chaos],
+    }
+  - {
+      path: evidence/profiles.yml,
+      categories:
+        [unit, integration, e2e, security, benchmark, load, stress, chaos],
+    }
+  - {
+      path: package-lock.json,
+      categories:
+        [unit, integration, e2e, security, benchmark, load, stress, chaos],
+    }

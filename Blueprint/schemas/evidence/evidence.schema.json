@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://allascode.dev/schemas/evidence/v1.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "evidence_key",
+    "requirement_id",
+    "subject_id",
+    "predicate",
+    "status",
+    "producer",
+    "profile",
+    "environment_class",
+    "input_manifest_digest",
+    "result_digest",
+    "attestation"
+  ],
+  "properties": {
+    "schema_version": { "const": "allascode.evidence/v1" },
+    "evidence_key": { "pattern": "^sha256:[a-f0-9]{64}$" },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "not-applicable",
+        "missing",
+        "expired",
+        "revoked"
+      ]
+    },
+    "reason": { "type": ["string", "null"] },
+    "attestation": {
+      "type": "object",
+      "required": ["verified", "authorized_profiles"]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "not-applicable" } } },
+      "then": {
+        "required": ["reason"],
+        "properties": { "reason": { "type": "string", "minLength": 1 } }
+      }
+    }
+  ]
+}

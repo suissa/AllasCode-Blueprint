@@ -51,6 +51,7 @@ export interface LoadedAgent {
 }
 
 export interface LoadedAction {
+  folder: string;
   ownerAgent: string;
   manifest: ActionManifest;
   implementation: ActionImplementation;
@@ -132,6 +133,7 @@ export async function loadActions(root: string, agents: LoadedAgent[]): Promise<
     const implementationPath = join(base, folder, 'implementation', 'implementation.js');
     const module = await import(pathToFileURL(implementationPath).href) as Record<string, unknown>;
     result.push({
+      folder,
       ownerAgent: owner.name,
       manifest,
       implementation: executableExport<ActionImplementation>(module, implementationPath),
