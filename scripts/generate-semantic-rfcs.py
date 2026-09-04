@@ -389,3 +389,4 @@ for i, title in RFC.items():
 (OUT / 'INDEX.md').write_text(expected_index, encoding='utf-8')
 print(f'Generated {len(RFC)} RFCs in {OUT}')
 # Exact content equality is enforced by --check.\n
+# Final deterministic collection audit.
