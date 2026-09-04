@@ -14,9 +14,7 @@ Esta RFC formaliza **Memory Architecture** como um artefato semântico de primei
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Memory Architecture**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
-## Escopo semântico
-
-Define a arquitetura de persistência e recuperação da memória, distinta da memória conceitual de RFC-0121.
+## Escopo semântico\n\nDefine persistência e recuperação da memória, distinta da arquitetura de memória de RFC-0146.
 
 ## Objetivos
 

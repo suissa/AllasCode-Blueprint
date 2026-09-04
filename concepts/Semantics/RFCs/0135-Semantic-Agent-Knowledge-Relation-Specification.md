@@ -14,9 +14,7 @@ Esta RFC formaliza **Knowledge Graph** como um artefato semântico de primeira c
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Knowledge Graph**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
-## Escopo semântico
-
-Define a representação relacional de conhecimento, distinta do conhecimento conceitual de RFC-0122.
+## Escopo semântico\n\nDefine relações semânticas entre unidades de conhecimento, distinta do knowledge graph de RFC-0147.
 
 ## Objetivos
 

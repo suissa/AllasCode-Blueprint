@@ -14,9 +14,7 @@ Esta RFC formaliza **Observation Stream** como um artefato semântico de primeir
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Observation Stream**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
-## Escopo semântico
-
-Define o fluxo contínuo de observações produzidas durante a execução.
+## Escopo semântico\n\nDefine o processamento operacional de observações, distinto do fluxo de observação de RFC-0141.
 
 ## Objetivos
 
