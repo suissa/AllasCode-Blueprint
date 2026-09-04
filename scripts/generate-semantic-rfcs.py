@@ -388,4 +388,4 @@ for i, title in RFC.items():
     (OUT / filename(i, title)).write_text(body(i, title), encoding='utf-8')
 (OUT / 'INDEX.md').write_text(expected_index, encoding='utf-8')
 print(f'Generated {len(RFC)} RFCs in {OUT}')
-\n# Exact content equality is enforced by --check.\n
+# Exact content equality is enforced by --check.\n
