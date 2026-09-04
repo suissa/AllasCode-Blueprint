@@ -14,6 +14,10 @@ Esta RFC formaliza **Capability Discovery** como um artefato semântico de prime
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Capability Discovery**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Capability Discovery.
+
 ## Objetivos
 
 - identidade canônica e versão;

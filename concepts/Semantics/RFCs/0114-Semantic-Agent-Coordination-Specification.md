@@ -14,6 +14,10 @@ Esta RFC formaliza **Coordination** como um artefato semântico de primeira clas
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Coordination**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Coordination.
+
 ## Objetivos
 
 - identidade canônica e versão;

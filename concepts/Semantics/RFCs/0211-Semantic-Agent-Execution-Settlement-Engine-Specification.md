@@ -14,6 +14,10 @@ Esta RFC formaliza **Execution Settlement Engine** como um artefato semântico d
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Execution Settlement Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Execution Settlement Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

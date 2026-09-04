@@ -6,13 +6,13 @@
 
 ## Resumo
 
-Esta RFC formaliza **Workflow** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Workflow Engine** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Workflow**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Workflow Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
 ## Escopo semântico
 
@@ -41,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Workflow
+Workflow Engine
   ↓
 Typed Result
   ↓

@@ -14,6 +14,10 @@ Esta RFC formaliza **Interaction Protocol** como um artefato semântico de prime
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Interaction Protocol**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Interaction Protocol.
+
 ## Objetivos
 
 - identidade canônica e versão;

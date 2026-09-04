@@ -6,13 +6,13 @@
 
 ## Resumo
 
-Esta RFC formaliza **Trust** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Trust Relationship** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Trust**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Trust Relationship**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
 ## Escopo semântico
 
@@ -41,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Trust
+Trust Relationship
   ↓
 Typed Result
   ↓

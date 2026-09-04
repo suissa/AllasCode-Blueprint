@@ -14,6 +14,10 @@ Esta RFC formaliza **Resource Scheduling Engine** como um artefato semântico de
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Resource Scheduling Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Resource Scheduling Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

@@ -14,6 +14,10 @@ Esta RFC formaliza **Observation** como um artefato semântico de primeira class
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Observation**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Observation.
+
 ## Objetivos
 
 - identidade canônica e versão;

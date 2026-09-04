@@ -14,6 +14,10 @@ Esta RFC formaliza **Human-in-the-Healing-Loop Engine** como um artefato semânt
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Human-in-the-Healing-Loop Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Human-in-the-Healing-Loop Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

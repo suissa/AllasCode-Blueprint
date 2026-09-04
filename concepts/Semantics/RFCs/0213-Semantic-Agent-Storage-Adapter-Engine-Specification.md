@@ -14,6 +14,10 @@ Esta RFC formaliza **Storage Adapter Engine** como um artefato semântico de pri
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Storage Adapter Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Storage Adapter Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

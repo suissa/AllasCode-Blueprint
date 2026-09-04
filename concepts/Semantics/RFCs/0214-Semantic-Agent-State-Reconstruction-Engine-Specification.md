@@ -14,6 +14,10 @@ Esta RFC formaliza **State Reconstruction Engine** como um artefato semântico d
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **State Reconstruction Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de State Reconstruction Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

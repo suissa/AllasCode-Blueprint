@@ -14,6 +14,10 @@ Esta RFC formaliza **Communication** como um artefato semântico de primeira cla
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Communication**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Communication.
+
 ## Objetivos
 
 - identidade canônica e versão;

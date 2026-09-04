@@ -14,6 +14,10 @@ Esta RFC formaliza **Semantic Collaboration** como um artefato semântico de pri
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Semantic Collaboration**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Semantic Collaboration.
+
 ## Objetivos
 
 - identidade canônica e versão;

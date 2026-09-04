@@ -14,6 +14,10 @@ Esta RFC formaliza **Resource** como um artefato semântico de primeira classe d
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Resource**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Resource.
+
 ## Objetivos
 
 - identidade canônica e versão;

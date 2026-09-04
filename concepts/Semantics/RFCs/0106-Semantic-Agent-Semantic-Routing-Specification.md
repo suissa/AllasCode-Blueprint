@@ -14,6 +14,10 @@ Esta RFC formaliza **Semantic Routing** como um artefato semântico de primeira 
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Semantic Routing**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Semantic Routing.
+
 ## Objetivos
 
 - identidade canônica e versão;

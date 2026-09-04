@@ -14,6 +14,10 @@ Esta RFC formaliza **Dynamic Skill Injection Engine** como um artefato semântic
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Dynamic Skill Injection Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Dynamic Skill Injection Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

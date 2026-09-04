@@ -14,6 +14,10 @@ Esta RFC formaliza **Evaluation** como um artefato semântico de primeira classe
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Evaluation**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Evaluation.
+
 ## Objetivos
 
 - identidade canônica e versão;

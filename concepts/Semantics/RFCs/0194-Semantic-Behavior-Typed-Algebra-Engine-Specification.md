@@ -14,6 +14,10 @@ Esta RFC formaliza **Semantic Behavior-Typed Algebra Engine** como um artefato s
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Semantic Behavior-Typed Algebra Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Semantic Behavior-Typed Algebra Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

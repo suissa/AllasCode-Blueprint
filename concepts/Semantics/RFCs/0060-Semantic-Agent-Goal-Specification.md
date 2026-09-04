@@ -14,6 +14,10 @@ Esta RFC formaliza **Goal** como um artefato semântico de primeira classe do Al
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Goal**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Goal.
+
 ## Objetivos
 
 - identidade canônica e versão;

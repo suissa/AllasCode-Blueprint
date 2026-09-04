@@ -14,6 +14,10 @@ Esta RFC formaliza **Snapshot Engine** como um artefato semântico de primeira c
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Snapshot Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Snapshot Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

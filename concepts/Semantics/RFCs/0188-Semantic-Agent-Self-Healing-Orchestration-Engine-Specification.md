@@ -14,6 +14,10 @@ Esta RFC formaliza **Self-Healing Orchestration Engine** como um artefato semân
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Self-Healing Orchestration Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Self-Healing Orchestration Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

@@ -14,6 +14,10 @@ Esta RFC formaliza **Behavioral Resolution Engine** como um artefato semântico 
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Behavioral Resolution Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Behavioral Resolution Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;

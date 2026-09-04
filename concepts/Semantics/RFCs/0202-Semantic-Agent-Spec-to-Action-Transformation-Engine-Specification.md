@@ -14,6 +14,10 @@ Esta RFC formaliza **Spec-to-Action Transformation Engine** como um artefato sem
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Spec-to-Action Transformation Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
 
+## Escopo semântico
+
+Define o escopo semântico específico de Spec-to-Action Transformation Engine.
+
 ## Objetivos
 
 - identidade canônica e versão;
