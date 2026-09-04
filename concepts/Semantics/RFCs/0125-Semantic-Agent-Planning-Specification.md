@@ -146,4 +146,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0126 — Semantic Agent Workflow Specification**
+**RFC-0126 — Semantic Agent Workflow Composition Specification**

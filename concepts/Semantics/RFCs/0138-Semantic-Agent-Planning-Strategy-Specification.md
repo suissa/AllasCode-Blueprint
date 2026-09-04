@@ -1,4 +1,4 @@
-# RFC-0155 — Semantic Agent Adaptation Engine Specification
+# RFC-0138 — Semantic Agent Planning Strategy Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -6,13 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Adaptation Engine** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Planning** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Adaptation Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Planning**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Define estratégias de planejamento, distinta do planejamento conceitual de RFC-0125.
 
 ## Objetivos
 
@@ -37,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Adaptation Engine
+Planning
   ↓
 Typed Result
   ↓
@@ -50,8 +54,8 @@ Observation + Audit
 
 ```yaml
 artifact:
-  id: "rfc-0155"
-  canonical_label: "adaptation.engine"
+  id: "rfc-0138"
+  canonical_label: "planning.strategy"
   version: "1.0.0"
 
 contract:
@@ -146,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0156 — Semantic Agent Self-Improvement Engine Specification**
+**RFC-0139 — Semantic Agent Workflow Specification**

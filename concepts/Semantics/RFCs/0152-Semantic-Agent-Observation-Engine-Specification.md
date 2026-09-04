@@ -146,4 +146,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0153 — Semantic Agent Evaluation Engine Specification**
+**RFC-0153 — Semantic Agent Evaluation Verification Engine Specification**

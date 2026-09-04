@@ -1,4 +1,4 @@
-# RFC-0153 — Semantic Agent Evaluation Engine Specification
+# RFC-0134 — Semantic Agent Memory Architecture Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -6,13 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Evaluation Engine** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Memory** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Evaluation Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Memory**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Define a arquitetura de persistência e recuperação da memória, distinta da memória conceitual de RFC-0121.
 
 ## Objetivos
 
@@ -37,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Evaluation Engine
+Memory
   ↓
 Typed Result
   ↓
@@ -50,8 +54,8 @@ Observation + Audit
 
 ```yaml
 artifact:
-  id: "rfc-0153"
-  canonical_label: "evaluation.engine"
+  id: "rfc-0134"
+  canonical_label: "memory.architecture"
   version: "1.0.0"
 
 contract:
@@ -146,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0154 — Semantic Agent Feedback Engine Specification**
+**RFC-0135 — Semantic Agent Knowledge Specification**

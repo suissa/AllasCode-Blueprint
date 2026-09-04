@@ -1,4 +1,4 @@
-# RFC-0171 — Semantic Agent Decision Engine Specification
+# RFC-0137 — Semantic Agent Decision Policy Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -6,13 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Decision Engine** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Decision** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Decision Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Decision**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Define decisões governadas por políticas, distinta da decisão conceitual de RFC-0124.
 
 ## Objetivos
 
@@ -37,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Decision Engine
+Decision
   ↓
 Typed Result
   ↓
@@ -50,8 +54,8 @@ Observation + Audit
 
 ```yaml
 artifact:
-  id: "rfc-0171"
-  canonical_label: "decision.engine"
+  id: "rfc-0137"
+  canonical_label: "decision.policy"
   version: "1.0.0"
 
 contract:
@@ -146,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0172 — Semantic Agent Goal Engine Specification**
+**RFC-0138 — Semantic Agent Planning Specification**

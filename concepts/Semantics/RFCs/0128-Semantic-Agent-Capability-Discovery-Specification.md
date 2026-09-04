@@ -146,4 +146,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0129 — Semantic Agent Delegation Specification**
+**RFC-0129 — Semantic Agent Delegation Resolution Specification**

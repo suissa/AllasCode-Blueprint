@@ -146,4 +146,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0155 — Semantic Agent Adaptation Engine Specification**
+**RFC-0155 — Semantic Agent Adaptation Runtime Engine Specification**

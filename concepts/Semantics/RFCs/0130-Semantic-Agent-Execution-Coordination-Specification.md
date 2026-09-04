@@ -1,4 +1,4 @@
-# RFC-0129 — Semantic Agent Delegation Specification
+# RFC-0130 — Semantic Agent Execution Coordination Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -6,13 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Delegation** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Execution** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Delegation**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Execution**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Coordena a execução distribuída entre unidades, distinta da definição geral de execução de RFC-0116.
 
 ## Objetivos
 
@@ -37,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Delegation
+Execution
   ↓
 Typed Result
   ↓
@@ -50,8 +54,8 @@ Observation + Audit
 
 ```yaml
 artifact:
-  id: "rfc-0129"
-  canonical_label: "delegation"
+  id: "rfc-0130"
+  canonical_label: "execution.coordination"
   version: "1.0.0"
 
 contract:
@@ -146,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0130 — Semantic Agent Execution Specification**
+**RFC-0131 — Semantic Agent Observation Specification**

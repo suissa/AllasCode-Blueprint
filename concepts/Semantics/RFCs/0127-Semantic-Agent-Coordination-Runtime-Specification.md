@@ -1,4 +1,4 @@
-# RFC-0127 — Semantic Agent Coordination Specification
+# RFC-0127 — Semantic Agent Coordination Runtime Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -13,6 +13,10 @@ Esta RFC formaliza **Coordination** como um artefato semântico de primeira clas
 ## Motivação
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Coordination**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Define coordenação em tempo de execução entre participantes já selecionados, distinta da coordenação conceitual de RFC-0114.
 
 ## Objetivos
 
@@ -51,7 +55,7 @@ Observation + Audit
 ```yaml
 artifact:
   id: "rfc-0127"
-  canonical_label: "coordination"
+  canonical_label: "coordination.runtime"
   version: "1.0.0"
 
 contract:

@@ -1,4 +1,4 @@
-# RFC-0139 — Semantic Agent Workflow Specification
+# RFC-0170 — Semantic Agent Reasoning Evaluation Engine Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -6,13 +6,17 @@
 
 ## Resumo
 
-Esta RFC formaliza **Workflow** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
+Esta RFC formaliza **Reasoning Engine** como um artefato semântico de primeira classe do AllasCode. Seu objetivo é retirar significado de implementações implícitas e convertê-lo em contrato versionável, componível, verificável e auditável.
 
 > **Semântica antes do mecanismo. A implementação pode mudar; o contrato semântico deve permanecer verificável.**
 
 ## Motivação
 
-Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Workflow**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Reasoning Engine**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Avalia e compõe resultados do raciocínio, distinta do engine de raciocínio de RFC-0148.
 
 ## Objetivos
 
@@ -37,7 +41,7 @@ Context
   ↓
 Identity + Trust + Governance
   ↓
-Workflow
+Reasoning Engine
   ↓
 Typed Result
   ↓
@@ -50,8 +54,8 @@ Observation + Audit
 
 ```yaml
 artifact:
-  id: "rfc-0139"
-  canonical_label: "workflow"
+  id: "rfc-0170"
+  canonical_label: "reasoning.evaluation.engine"
   version: "1.0.0"
 
 contract:
@@ -146,4 +150,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0140 — Semantic Agent Execution Runtime Specification**
+**RFC-0171 — Semantic Agent Decision Engine Specification**

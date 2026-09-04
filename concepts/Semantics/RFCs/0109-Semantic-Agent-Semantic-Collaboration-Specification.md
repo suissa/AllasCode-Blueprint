@@ -146,4 +146,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0110 — Semantic Agent Trust Specification**
+**RFC-0110 — Semantic Agent Trust Relationship Specification**

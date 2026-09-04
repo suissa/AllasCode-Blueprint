@@ -146,4 +146,4 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 
 ## Próximo artefato
 
-**RFC-0170 — Semantic Agent Reasoning Engine Specification**
+**RFC-0170 — Semantic Agent Reasoning Evaluation Engine Specification**

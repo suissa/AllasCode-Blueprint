@@ -1,4 +1,4 @@
-# RFC-0136 — Semantic Agent Reasoning Specification
+# RFC-0136 — Semantic Agent Reasoning Process Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -13,6 +13,10 @@ Esta RFC formaliza **Reasoning** como um artefato semântico de primeira classe 
 ## Motivação
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Reasoning**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Define o processo operacional de raciocínio, distinta do raciocínio conceitual de RFC-0123.
 
 ## Objetivos
 
@@ -51,7 +55,7 @@ Observation + Audit
 ```yaml
 artifact:
   id: "rfc-0136"
-  canonical_label: "reasoning"
+  canonical_label: "reasoning.process"
   version: "1.0.0"
 
 contract:

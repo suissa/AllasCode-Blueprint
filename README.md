@@ -387,6 +387,7 @@ The RFC collection is the normative/conceptual decomposition of the architecture
 | AtomicBehavior Type | Semantic nominal behavior contract | [RFC-0193](concepts/Semantics/RFCs/0193-Semantic-AtomicBehavior-Type-Engine-Specification.md) |
 | Behavior-Typed Algebra | Composition and reasoning over behaviors | [RFC-0194](concepts/Semantics/RFCs/0194-Semantic-Behavior-Typed-Algebra-Engine-Specification.md) |
 | Behavioral Composition | Composes compatible behaviors | [RFC-0195](concepts/Semantics/RFCs/0195-Semantic-Agent-Behavioral-Composition-Engine-Specification.md) |
+| Behavioral Resolution | Resolves compatible semantic behaviors | [RFC-0196](concepts/Semantics/RFCs/0196-Semantic-Agent-Behavioral-Resolution-Engine-Specification.md) |
 | Contradiction Detection | Rejects incompatible semantic compositions | [RFC-0197](concepts/Semantics/RFCs/0197-Semantic-Agent-Contradiction-Detection-Engine-Specification.md) |
 | Semantic Normal Form | Canonicalizes behavioral expressions | [RFC-0198](concepts/Semantics/RFCs/0198-Semantic-Agent-Normal-Form-Engine-Specification.md) |
 | Formal Proof | Generates/verifies proof obligations | [RFC-0199](concepts/Semantics/RFCs/0199-Semantic-Agent-Formal-Proof-Engine-Specification.md) |

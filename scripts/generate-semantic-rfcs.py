@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import sys
 
 OUT = Path('concepts/Semantics/RFCs')
 OUT.mkdir(parents=True, exist_ok=True)
@@ -60,7 +61,7 @@ TITLES = '''
 0107|Semantic Agent Semantic Orchestration Specification
 0108|Semantic Agent Semantic Choreography Specification
 0109|Semantic Agent Semantic Collaboration Specification
-0110|Semantic Agent Trust Specification
+0110|Semantic Agent Trust Relationship Specification
 0111|Semantic Agent Delegation Specification
 0112|Semantic Agent Communication Specification
 0113|Semantic Agent Interaction Protocol Specification
@@ -76,20 +77,20 @@ TITLES = '''
 0123|Semantic Agent Reasoning Specification
 0124|Semantic Agent Decision Specification
 0125|Semantic Agent Planning Specification
-0126|Semantic Agent Workflow Specification
-0127|Semantic Agent Coordination Specification
+0126|Semantic Agent Workflow Composition Specification
+0127|Semantic Agent Coordination Runtime Specification
 0128|Semantic Agent Capability Discovery Specification
-0129|Semantic Agent Delegation Specification
-0130|Semantic Agent Execution Specification
-0131|Semantic Agent Observation Specification
-0132|Semantic Agent Evaluation Specification
-0133|Semantic Agent Learning Specification
-0134|Semantic Agent Memory Specification
-0135|Semantic Agent Knowledge Specification
-0136|Semantic Agent Reasoning Specification
-0137|Semantic Agent Decision Specification
-0138|Semantic Agent Planning Specification
-0139|Semantic Agent Workflow Specification
+0129|Semantic Agent Delegation Resolution Specification
+0130|Semantic Agent Execution Coordination Specification
+0131|Semantic Agent Observation Stream Specification
+0132|Semantic Agent Evaluation Criteria Specification
+0133|Semantic Agent Learning Adaptation Specification
+0134|Semantic Agent Memory Architecture Specification
+0135|Semantic Agent Knowledge Graph Specification
+0136|Semantic Agent Reasoning Process Specification
+0137|Semantic Agent Decision Policy Specification
+0138|Semantic Agent Planning Strategy Specification
+0139|Semantic Agent Workflow Engine Specification
 0140|Semantic Agent Execution Runtime Specification
 0141|Semantic Agent Observation Stream Specification
 0142|Semantic Agent Evaluation Engine Specification
@@ -103,9 +104,9 @@ TITLES = '''
 0150|Semantic Agent Planning Engine Specification
 0151|Semantic Agent Execution Engine Specification
 0152|Semantic Agent Observation Engine Specification
-0153|Semantic Agent Evaluation Engine Specification
+0153|Semantic Agent Evaluation Verification Engine Specification
 0154|Semantic Agent Feedback Engine Specification
-0155|Semantic Agent Adaptation Engine Specification
+0155|Semantic Agent Adaptation Runtime Engine Specification
 0156|Semantic Agent Self-Improvement Engine Specification
 0157|Semantic Agent Meta-Learning Engine Specification
 0158|Semantic Agent Evolution Engine Specification
@@ -120,8 +121,8 @@ TITLES = '''
 0167|Semantic Agent Context Engine Specification
 0168|Semantic Agent Memory Engine Specification
 0169|Semantic Agent Knowledge Engine Specification
-0170|Semantic Agent Reasoning Engine Specification
-0171|Semantic Agent Decision Engine Specification
+0170|Semantic Agent Reasoning Evaluation Engine Specification
+0171|Semantic Agent Decision Selection Engine Specification
 0172|Semantic Agent Goal Engine Specification
 0173|Semantic Agent Intent Engine Specification
 0174|Semantic Agent Constraint Engine Specification
@@ -173,7 +174,29 @@ TITLES = '''
 0220|Semantic Agent Architecture Conformance Engine Specification
 '''.strip()
 
+
 RFC = dict(line.split('|', 1) for line in TITLES.splitlines())
+
+DETAILS = {
+    '0110': 'Modela relações de confiança entre agentes, identidades e participantes, sem duplicar a avaliação de confiança base definida em RFC-0076.',
+    '0126': 'Define composição e dependências entre etapas de workflows, enquanto RFC-0115 define o workflow como conceito geral e RFC-0139 trata sua execução.',
+    '0127': 'Define coordenação em tempo de execução entre participantes já selecionados, distinta da coordenação conceitual de RFC-0114.',
+    '0129': 'Resolve delegações compatíveis e seus destinatários, distinta da declaração de delegação de RFC-0111.',
+    '0130': 'Coordena a execução distribuída entre unidades, distinta da definição geral de execução de RFC-0116.',
+    '0131': 'Define o fluxo contínuo de observações produzidas durante a execução.',
+    '0132': 'Define critérios e métodos de avaliação, distinta da avaliação como conceito geral de RFC-0118.',
+    '0133': 'Define adaptação do aprendizado a partir de resultados observados, distinta do aprendizado conceitual de RFC-0119.',
+    '0134': 'Define a arquitetura de persistência e recuperação da memória, distinta da memória conceitual de RFC-0121.',
+    '0135': 'Define a representação relacional de conhecimento, distinta do conhecimento conceitual de RFC-0122.',
+    '0136': 'Define o processo operacional de raciocínio, distinta do raciocínio conceitual de RFC-0123.',
+    '0137': 'Define decisões governadas por políticas, distinta da decisão conceitual de RFC-0124.',
+    '0138': 'Define estratégias de planejamento, distinta do planejamento conceitual de RFC-0125.',
+    '0139': 'Define a execução operacional de workflows, distinta do workflow conceitual de RFC-0115 e da composição de RFC-0126.',
+    '0153': 'Verifica resultados de avaliação produzidos pelo engine de RFC-0142.',
+    '0155': 'Executa adaptações em runtime, distinta da definição de adaptação de RFC-0144.',
+    '0170': 'Avalia e compõe resultados do raciocínio, distinta do engine de raciocínio de RFC-0148.',
+    '0171': 'Seleciona uma decisão final entre alternativas válidas, distinta do engine de decisão de RFC-0149.'
+}
 
 def filename(i, title):
     return f"{i}-" + re.sub(r'[^A-Za-z0-9]+', '-', title).strip('-') + '.md'
@@ -184,6 +207,7 @@ def body(i, title):
     ni = f'{int(i)+1:04d}'
     if ni in RFC:
         nxt = f'\n## Próximo artefato\n\n**RFC-{ni} — {RFC[ni]}**\n'
+    detail = DETAILS.get(i, f'Define o escopo semântico específico de {subject}.')
     return f'''# RFC-{i} — {title}
 
 **Status:** Draft  
@@ -199,6 +223,10 @@ Esta RFC formaliza **{subject}** como um artefato semântico de primeira classe 
 ## Motivação
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **{subject}**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+{detail}
 
 ## Objetivos
 
@@ -331,11 +359,30 @@ Esta RFC compõe-se com Identity, Trust, Governance, Capability, Skill, Tool, Re
 **Healing** — recuperação orientada ao Intent e validada por invariantes.
 {nxt}'''
 
-for i, title in RFC.items():
-    (OUT / filename(i, title)).write_text(body(i, title), encoding='utf-8')
-
+expected_files = {filename(i, title) for i, title in RFC.items()} | {'INDEX.md', 'README.md'}
+stale_files = {p.name for p in OUT.glob('*.md')} - expected_files
 index = ['# Semantic RFC Index', '']
 for i, title in RFC.items():
     index.append(f'- [RFC-{i} — {title}]({filename(i, title)})')
-(OUT / 'INDEX.md').write_text('\n'.join(index) + '\n', encoding='utf-8')
+expected_index = '\n'.join(index) + '\n'
+
+if '--check' in sys.argv:
+    mismatches = sorted(stale_files)
+    for i, title in RFC.items():
+        path = OUT / filename(i, title)
+        if not path.exists() or path.read_text(encoding='utf-8') != body(i, title):
+            mismatches.append(path.name)
+    if not (OUT / 'INDEX.md').exists() or (OUT / 'INDEX.md').read_text(encoding='utf-8') != expected_index:
+        mismatches.append('INDEX.md')
+    if mismatches:
+        print('Generated RFC drift detected:')
+        for item in sorted(set(mismatches)): print(f' - {item}')
+        raise SystemExit(1)
+    print(f'RFC collection is up to date: {len(RFC)} RFCs')
+    raise SystemExit(0)
+
+for name in stale_files: (OUT / name).unlink()
+for i, title in RFC.items():
+    (OUT / filename(i, title)).write_text(body(i, title), encoding='utf-8')
+(OUT / 'INDEX.md').write_text(expected_index, encoding='utf-8')
 print(f'Generated {len(RFC)} RFCs in {OUT}')

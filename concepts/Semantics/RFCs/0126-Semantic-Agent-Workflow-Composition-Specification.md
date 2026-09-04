@@ -1,4 +1,4 @@
-# RFC-0126 — Semantic Agent Workflow Specification
+# RFC-0126 — Semantic Agent Workflow Composition Specification
 
 **Status:** Draft  
 **Categoria:** AllasCode Semantic Architecture  
@@ -13,6 +13,10 @@ Esta RFC formaliza **Workflow** como um artefato semântico de primeira classe d
 ## Motivação
 
 Sistemas agentivos não devem depender de significado escondido em código, prompts, infraestrutura ou convenções locais. Esta RFC delimita a responsabilidade de **Workflow**, suas relações com os demais componentes e as propriedades que uma implementação precisa demonstrar.
+
+## Escopo semântico
+
+Define composição e dependências entre etapas de workflows, enquanto RFC-0115 define o workflow como conceito geral e RFC-0139 trata sua execução.
 
 ## Objetivos
 
@@ -51,7 +55,7 @@ Observation + Audit
 ```yaml
 artifact:
   id: "rfc-0126"
-  canonical_label: "workflow"
+  canonical_label: "workflow.composition"
   version: "1.0.0"
 
 contract:
