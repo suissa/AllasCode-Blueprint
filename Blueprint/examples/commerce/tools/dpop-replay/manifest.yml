@@ -1,0 +1,5 @@
+name: DpopReplayTool
+kind: tool
+semantic_id: commerce.tool.dpop-replay
+capability: AtomicallyClaimDpopProof
+results: { Ok: DpopProofClaimed, Error: DpopReplayDetected }

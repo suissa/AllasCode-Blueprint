@@ -1,0 +1,6 @@
+name: KeyRotationTool
+version: 0.1.0
+kind: semantic-atomicbehavior-type
+semantic_id: commerce.atomicbehavior.key-rotation
+result: ../../events/result.yml
+emits: [Ok<KeyRotated>, Error<KeyRotationError>]

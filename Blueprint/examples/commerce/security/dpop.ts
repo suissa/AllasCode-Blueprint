@@ -5,6 +5,7 @@ import {
   randomBytes,
   randomUUID,
   sign as cryptoSign,
+  timingSafeEqual,
   verify as cryptoVerify,
   type KeyObject,
 } from 'node:crypto';
@@ -32,6 +33,12 @@ const json = (value: unknown) => encode(JSON.stringify(value));
 const sha256 = (value: Uint8Array | string) => createHash('sha256').update(value).digest();
 const digestToken = (token: string) => encode(sha256(token));
 export const accessTokenHash = (token: string) => encode(sha256(Buffer.from(token, 'ascii')));
+
+function constantTimeEqual(left: string, right: string): boolean {
+  const a = Buffer.from(left, 'utf8');
+  const b = Buffer.from(right, 'utf8');
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 function decodeJson(segment: string): Record<string, unknown> {
   return JSON.parse(Buffer.from(segment, 'base64url').toString('utf8')) as Record<string, unknown>;
@@ -109,16 +116,21 @@ export class DpopReplayStore {
   }
 }
 
+/** Production adapters must implement an atomic, durable claim shared by every replica. */
+export interface DpopReplayRepository {
+  accept(key: string, nowMs: number, ttlMs: number): boolean;
+}
+
 export interface DpopVerifierOptions {
   max_age_seconds?: number;
   clock_skew_seconds?: number;
-  replay_store?: DpopReplayStore;
+  replay_store?: DpopReplayRepository;
 }
 
 export class DpopVerifier {
   private readonly maxAgeSeconds: number;
   private readonly clockSkewSeconds: number;
-  private readonly replayStore: DpopReplayStore;
+  private readonly replayStore: DpopReplayRepository;
 
   constructor(options: DpopVerifierOptions = {}) {
     this.maxAgeSeconds = options.max_age_seconds ?? 300;
@@ -158,20 +170,20 @@ export class DpopVerifier {
       if (typeof payload.jti !== 'string' || payload.jti.length < 8 || typeof payload.htm !== 'string' || typeof payload.htu !== 'string' || typeof payload.iat !== 'number') {
         return { outcome: 'Error', code: 'InvalidDpopProof' };
       }
-      if (payload.htm !== input.method) return { outcome: 'Error', code: 'DpopHtmMismatch' };
+      if (!constantTimeEqual(payload.htm, input.method)) return { outcome: 'Error', code: 'DpopHtmMismatch' };
       const claimed = new URL(payload.htu);
       if (claimed.search || claimed.hash || normalizeDpopHtu(payload.htu) !== normalizeDpopHtu(input.url)) return { outcome: 'Error', code: 'DpopHtuMismatch' };
       const nowSeconds = Math.floor(new Date(input.now).getTime() / 1000);
       if (payload.iat < nowSeconds - this.maxAgeSeconds || payload.iat > nowSeconds + this.clockSkewSeconds) return { outcome: 'Error', code: 'DpopIatOutsideWindow' };
       if (input.expected_nonce !== undefined) {
         if (typeof payload.nonce !== 'string') return { outcome: 'Error', code: 'DpopNonceRequired' };
-        if (payload.nonce !== input.expected_nonce) return { outcome: 'Error', code: 'DpopNonceMismatch' };
+        if (!constantTimeEqual(payload.nonce, input.expected_nonce)) return { outcome: 'Error', code: 'DpopNonceMismatch' };
       }
       if (input.access_token !== undefined) {
-        if (typeof payload.ath !== 'string' || payload.ath !== accessTokenHash(input.access_token)) return { outcome: 'Error', code: 'DpopAthMismatch' };
+        if (typeof payload.ath !== 'string' || !constantTimeEqual(payload.ath, accessTokenHash(input.access_token))) return { outcome: 'Error', code: 'DpopAthMismatch' };
       }
       const jkt = calculateJwkThumbprint(jwk);
-      if (input.expected_jkt !== undefined && jkt !== input.expected_jkt) return { outcome: 'Error', code: 'DpopThumbprintMismatch' };
+      if (input.expected_jkt !== undefined && !constantTimeEqual(jkt, input.expected_jkt)) return { outcome: 'Error', code: 'DpopThumbprintMismatch' };
       const replayKey = `${jkt}:${payload.jti}`;
       if (!this.replayStore.accept(replayKey, new Date(input.now).getTime(), (this.maxAgeSeconds + this.clockSkewSeconds) * 1000)) return { outcome: 'Error', code: 'DpopReplayDetected' };
       return { outcome: 'Ok', value: { jti: payload.jti, jkt, iat: payload.iat } };
@@ -181,8 +193,7 @@ export class DpopVerifier {
   }
 }
 
-interface BoundTokenRecord {
-  token: string;
+export interface BoundTokenRecord {
   token_digest: string;
   jkt: string;
   principal_id: string;
@@ -190,6 +201,18 @@ interface BoundTokenRecord {
   capabilities: string[];
   issued_at: string;
   expires_at: string;
+}
+
+export interface DpopTokenRepository {
+  getByDigest(tokenDigest: string): BoundTokenRecord | undefined;
+  save(record: BoundTokenRecord): void;
+}
+
+/** Reference adapter only. Production must inject a durable, tenant-isolated repository. */
+export class InMemoryDpopTokenRepository implements DpopTokenRepository {
+  private readonly records = new Map<string, BoundTokenRecord>();
+  getByDigest(tokenDigest: string) { return this.records.get(tokenDigest); }
+  save(record: BoundTokenRecord) { this.records.set(record.token_digest, structuredClone(record)); }
 }
 
 export interface DpopAuditEvent {
@@ -205,10 +228,12 @@ export interface DpopAuditEvent {
 }
 
 export class DpopSecurityService {
-  private readonly tokens = new Map<string, BoundTokenRecord>();
   readonly audit: DpopAuditEvent[] = [];
 
-  constructor(private readonly verifier = new DpopVerifier()) {}
+  constructor(
+    private readonly verifier = new DpopVerifier(),
+    private readonly tokens: DpopTokenRepository = new InMemoryDpopTokenRepository(),
+  ) {}
 
   issueBoundAccessToken(input: {
     public_jwk: DpopPublicJwk;
@@ -221,8 +246,9 @@ export class DpopSecurityService {
     try {
       const jkt = calculateJwkThumbprint(input.public_jwk);
       const token = randomBytes(32).toString('base64url');
+      if (!Number.isFinite(input.ttl_ms) || input.ttl_ms <= 0) return { outcome: 'Error', code: 'InvalidDpopProof' };
+      if (!input.principal_id || !input.context_id || input.capabilities.length === 0) return { outcome: 'Error', code: 'InvalidDpopProof' };
       const record: BoundTokenRecord = {
-        token,
         token_digest: digestToken(token),
         jkt,
         principal_id: input.principal_id,
@@ -231,7 +257,7 @@ export class DpopSecurityService {
         issued_at: input.now,
         expires_at: new Date(new Date(input.now).getTime() + input.ttl_ms).toISOString(),
       };
-      this.tokens.set(token, record);
+      this.tokens.save(record);
       this.audit.push({ event: 'DPoP.TokenIssued', at: input.now, token_digest: record.token_digest, principal_id: record.principal_id, context_id: record.context_id, jkt });
       return { outcome: 'Ok', value: { access_token: token, token_type: 'DPoP', expires_in: Math.max(0, Math.floor(input.ttl_ms / 1000)), cnf: { jkt } } };
     } catch {
@@ -249,8 +275,8 @@ export class DpopSecurityService {
     now: string;
     expected_nonce?: string;
   }): DpopResult<{ principal_id: string; context_id: string; capability: string; jkt: string; proof_jti: string }> {
-    const record = this.tokens.get(input.access_token);
     const tokenDigest = digestToken(input.access_token);
+    const record = this.tokens.getByDigest(tokenDigest);
     if (!record || new Date(input.now).getTime() >= new Date(record.expires_at).getTime()) return this.deny(input, tokenDigest, record, 'AccessTokenInactive');
     if (record.context_id !== input.context_id) return this.deny(input, tokenDigest, record, 'CrossContextDenied');
     if (!(record.capabilities.includes('*') || record.capabilities.includes(input.capability))) return this.deny(input, tokenDigest, record, 'CapabilityDenied');

@@ -1,0 +1,5 @@
+name: PqEnvelopeTool
+kind: tool
+semantic_id: commerce.tool.pq-envelope
+capability: ProtectPostQuantumEnvelope
+results: { Ok: PqEnvelopeProtected, Error: PqEnvelopeError }

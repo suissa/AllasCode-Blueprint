@@ -1,0 +1,3 @@
+claim: atomic-put-if-absent
+durability: required
+replica_scope: shared

@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDpopProof, DpopSecurityService, generateDpopClientKeyPair } from '../security/dpop.js';
-import { PostQuantumSecurityService, type PqEncryptedEnvelope } from '../security/post-quantum.js';
+import { createDpopProof, DpopReplayStore, DpopSecurityService, DpopVerifier, generateDpopClientKeyPair, InMemoryDpopTokenRepository } from '../security/dpop.js';
+import { InMemoryPostQuantumKeyRepository, PostQuantumSecurityService, type PqEncryptedEnvelope } from '../security/post-quantum.js';
+import { AuthSessionService } from '../security/auth-session.js';
+import { AuthManagerAgent } from '../security/auth-manager-agent.js';
 
 const now = '2026-09-01T18:00:00.000Z';
 const url = 'https://api.example.test/v1/sales?expand=items#ignored';
@@ -114,4 +116,20 @@ test('PQ key rotation keeps old envelopes decryptable until explicit retirement 
   assert.equal(publicView.includes('private'), false);
   assert.equal(pq.retire({ key_id: 'rotating', version: 1, now: '2026-09-01T18:02:00.000Z' }).outcome, 'Ok');
   assert.deepEqual(pq.decrypt({ envelope: oldEnvelope, context_id: 'store-a', now }), { outcome: 'Error', code: 'PqKeyUnavailable' });
+});
+
+test('DPoP state can be shared across Auth replicas through injected repositories',()=>{
+  const tokens=new InMemoryDpopTokenRepository();const replay=new DpopReplayStore();
+  const first=new DpopSecurityService(undefined,tokens);const key=generateDpopClientKeyPair();
+  const issued=expectOk(first.issueBoundAccessToken({public_jwk:key.public_jwk,principal_id:'operator-1',context_id:'store-a',capabilities:['sales.read'],ttl_ms:60_000,now}));
+  const proof=createDpopProof({private_key:key.private_key,public_jwk:key.public_jwk,method:'GET',url,now,access_token:issued.access_token});
+  const replica=new DpopSecurityService(new DpopVerifier({replay_store:replay}),tokens);
+  assert.equal(replica.verifyProtectedRequest({access_token:issued.access_token,proof,method:'GET',url,context_id:'store-a',capability:'sales.read',now}).outcome,'Ok');
+});
+
+test('AuthManagerAgent remains the sole authorization facade',()=>{
+ const sessions=new AuthSessionService();const dpop=new DpopSecurityService();const pq=new PostQuantumSecurityService(new InMemoryPostQuantumKeyRepository());const manager=new AuthManagerAgent(sessions,dpop,pq);
+ const session=sessions.createSession({principal_id:'op1',principal_type:'operator',role:'operator',context_id:'store-a',ttl_ms:60_000,now});const key=generateDpopClientKeyPair();
+ assert.equal(manager.issueSenderConstrainedToken({session_id:session.session_id,public_jwk:key.public_jwk,context_id:'store-a',ttl_ms:60_000,now}).outcome,'Ok');
+ assert.deepEqual(manager.issueSenderConstrainedToken({session_id:session.session_id,public_jwk:key.public_jwk,context_id:'store-b',ttl_ms:60_000,now}),{outcome:'Error',code:'CrossContextDenied'});
 });

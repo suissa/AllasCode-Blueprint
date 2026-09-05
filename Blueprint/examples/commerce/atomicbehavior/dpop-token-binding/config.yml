@@ -1,0 +1,3 @@
+token_storage: digest-only
+context_isolation: required
+capability_authorization: required

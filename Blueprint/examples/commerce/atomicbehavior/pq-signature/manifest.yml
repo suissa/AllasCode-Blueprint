@@ -1,0 +1,6 @@
+name: PqSignatureTool
+version: 0.1.0
+kind: semantic-atomicbehavior-type
+semantic_id: commerce.atomicbehavior.pq-signature
+result: ../../events/result.yml
+emits: [Ok<PqSignatureVerified>, Error<PqSignatureError>]
