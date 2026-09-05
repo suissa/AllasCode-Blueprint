@@ -1,0 +1,24 @@
+sequenceDiagram
+  participant P as Provider
+  participant C as CommunicationManager
+  participant M as ModuleManager
+  participant H as AgentHarness
+  participant A as SubAgent
+  participant T as Tool
+  participant D as Domain
+  participant E as EvidenceStore
+
+  P->>C: webhook(provider_message_id)
+  C->>C: normalize + derive idempotency_key
+  C->>M: Intent(correlation_id)
+  M->>H: prepare(invocation)
+  H->>H: capability + deadline check
+  H->>A: invoke(payload)
+  A->>T: requested operation
+  T->>D: effect(idempotency_key)
+  D-->>T: Ok / Error
+  T-->>A: explicit result
+  A-->>H: agent output
+  H->>H: evaluate(output contract)
+  H->>E: finalize(EvidenceEnvelope)
+  H-->>M: Ok / Error

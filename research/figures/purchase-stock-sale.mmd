@@ -1,0 +1,31 @@
+flowchart LR
+  MSG[Message / UI]
+  PI[PurchaseIntent]
+  PM[PurchaseManagerAgent]
+  PURCHASE[(Purchase)]
+  IE[Inventory Entry]
+  STOCK[(Stock)]
+  EXP[Expense]
+  SI[SaleIntent]
+  SM[SalesManagerAgent]
+  SALE[(Sale)]
+  EXIT[Inventory Exit]
+  REV[Revenue]
+  LEDGER[(Financial / Accounting)]
+
+  MSG --> PI
+  PI --> PM
+  PM --> PURCHASE
+  PURCHASE --> IE
+  IE --> STOCK
+  PURCHASE --> EXP
+  EXP --> LEDGER
+
+  MSG --> SI
+  SI --> SM
+  SM --> SALE
+  STOCK --> SM
+  SALE --> EXIT
+  EXIT --> STOCK
+  SALE --> REV
+  REV --> LEDGER

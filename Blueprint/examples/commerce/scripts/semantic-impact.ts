@@ -18,6 +18,14 @@ const report = analyzeSemanticImpact(graph, changed);
 await mkdir(join(root,'tests','dashboard'),{recursive:true});
 await writeFile(join(root,'tests','dashboard','semantic-impact.json'),`${JSON.stringify(report,null,2)}\n`,'utf8');
 console.log(`Semantic impact: ${report.impacted_nodes.length} nodes, ${report.required_tests.length} tests, risk=${report.risk} (${report.risk_score})`);
-if (report.seed_nodes.length === 0 && changed.some(file=>file.includes('Blueprint/examples/commerce/'))) {
-  throw new Error(`Semantic impact could not map changed commerce files to graph nodes:\n- ${changed.join('\n- ')}`);
+const commercePrefix = 'Blueprint/examples/commerce/';
+const mappingRequired = changed.filter(file => {
+  if (!file.startsWith(commercePrefix)) return false;
+  const relative = file.slice(commercePrefix.length);
+  return !relative.startsWith('docs/')
+    && !relative.endsWith('.md')
+    && !relative.endsWith('.mdx');
+});
+if (report.seed_nodes.length === 0 && mappingRequired.length > 0) {
+  throw new Error(`Semantic impact could not map changed commerce files to graph nodes:\n- ${mappingRequired.join('\n- ')}`);
 }

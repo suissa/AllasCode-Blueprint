@@ -1,0 +1,48 @@
+flowchart TB
+  U[Human / External System]
+
+  subgraph Providers[Provider Adapters]
+    WA[WhatsApp]
+    TG[Telegram]
+    IG[Instagram]
+    FB[Facebook]
+    TT[TikTok]
+    UI[Web UI / API]
+  end
+
+  N[Normalized Message / Intent]
+
+  subgraph Runtime[Semantic Runtime]
+    MM[Module ManagerAgent]
+    H[Agent Harness]
+    SA[SubAgents]
+    TL[Tools]
+    GOV[Capabilities / Policies / Governor]
+  end
+
+  subgraph Ports[Ports & Adapters]
+    DB[Persistence Port]
+    EVT[Event Transport Port]
+    AI[Model Inference Port]
+    PAY[Payment Port]
+    FIS[Fiscal Port]
+    COM[Communication Port]
+  end
+
+  D[Domain Modules]
+  E[Events / Evidence / Projections]
+  O[Observability / Audit]
+
+  U --> Providers
+  Providers --> N
+  N --> MM
+  MM --> H
+  H --> SA
+  SA --> TL
+  GOV --> H
+  GOV --> TL
+  TL --> Ports
+  Ports --> D
+  D --> E
+  E --> MM
+  E --> O
