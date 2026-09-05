@@ -1,0 +1,123 @@
+apiVersion: allascode.io/v1alpha1
+kind: DataPlaneEvidenceBundle
+
+metadata:
+  id: evidence-db-x-2026-09-04-001
+  version: 1.0.0
+  createdAt: "2026-09-04T19:45:00Z"
+  digest: "sha256:EVIDENCE_BUNDLE_DIGEST"
+
+spec:
+  evaluationEpoch:
+    id: "ev-2026-09-04T19:30:00Z"
+
+  context:
+    fingerprint: "sha256:CONTEXT_DIGEST"
+
+    semanticContract:
+      version: 4.2.0
+      digest: "sha256:SEMANTIC_CONTRACT_DIGEST"
+
+    evolutionContract:
+      version: 2.0.0
+      digest: "sha256:EVOLUTION_CONTRACT_DIGEST"
+
+    workload:
+      captureDigest: "sha256:WORKLOAD_DIGEST"
+      capturedForCurrentEpoch: true
+
+    data:
+      snapshotDigest: "sha256:DATA_SNAPSHOT_DIGEST"
+
+    environment:
+      manifestDigest: "sha256:ENVIRONMENT_DIGEST"
+
+    businessState:
+      digest: "sha256:BUSINESS_STATE_DIGEST"
+
+  comparison:
+    baseline:
+      id: postgres-adapter
+      version: 4.8.1
+      digest: "sha256:BASELINE_DIGEST"
+
+    candidate:
+      id: database-x
+      version: 1.3.0
+      digest: "sha256:CANDIDATE_DIGEST"
+
+  results:
+    semantic:
+      status: pass
+      evaluatedCases: 1842
+      violations: 0
+
+    technical:
+      latencyP99:
+        baselineMs: 41.8
+        candidateMs: 28.3
+        deltaPercent: -32.30
+
+        statistics:
+          evidenceClass: measured
+          confidenceLevel: 0.99
+          confidenceIntervalPercent:
+            low: -35.9
+            high: -28.1
+
+      throughput:
+        baselineOpsSecond: 42800
+        candidateOpsSecond: 60350
+        deltaPercent: 41.00
+        evidenceClass: measured
+
+    distributed:
+      invariantViolations: 0
+      duplicateBusinessEffects: 0
+      evidenceClass: measured
+
+    data:
+      dataLossCount: 0
+      dataAgeP99Ms: 312
+      evidenceClass: measured
+
+    economics:
+      additionalMonthlyCost: 180000
+      expectedValueDelta: 265000
+      evidenceClass: derived
+
+    businessImpact:
+      expectedRetentionValue: 40000
+      evidenceClass: forecast
+
+    affordability:
+      status: fail
+      reason:
+        - additional-cost-exceeds-current-headroom
+
+    recovery:
+      strategy: dual-run-rollback
+      rollbackSupported: true
+      expectedRto: "4m"
+      expectedRpo: "0s"
+
+  provenance:
+    evaluator:
+      id: dataplane-evaluation-engine
+      version: 1.0.0
+
+    signature:
+      required: true
+      algorithm: ed25519
+      value: "SIGNATURE"
+
+  decision:
+    status: deferred
+    reason:
+      - technical-fitness-pass
+      - semantic-fitness-pass
+      - economic-fitness-pass
+      - affordability-fail
+
+    mayBeReevaluated: true
+    reuseThisEvidenceForFutureAuthorization: false
