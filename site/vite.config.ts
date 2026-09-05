@@ -9,4 +9,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        old: fileURLToPath(new URL('./old.html', import.meta.url)),
+      },
+    },
+  },
 })
