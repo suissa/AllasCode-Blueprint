@@ -1,0 +1,150 @@
+apiVersion: allascode.io/v1alpha1
+kind: EvolutionContract
+
+metadata:
+  id: dataplane-growth
+  version: 2.0.0
+  immutable: true
+
+spec:
+  mode: evidence-optimized
+
+  semanticContract:
+    ref: semantic://commerce/data-plane
+    version: 4.2.0
+    digest: "sha256:SEMANTIC_CONTRACT_DIGEST"
+    mutableDuringEvaluation: false
+
+  evidence:
+    authority: local-current-context
+    externalBenchmarks: discovery-only
+
+    require:
+      currentEvaluationEpoch: true
+      exactContextFingerprint: true
+      signature: true
+      provenance: true
+      statisticalMetadata: true
+
+    historicalEvidence:
+      mayAuthorizeCurrentDecision: false
+      allowedUses:
+        - discovery
+        - learning
+        - trend-analysis
+
+  invariants:
+    - id: semantic-equivalence
+      operator: eq
+      value: true
+
+    - id: unauthorized-data-mutations
+      operator: eq
+      value: 0
+
+    - id: duplicate-business-effects
+      operator: eq
+      value: 0
+
+    - id: critical-data-rpo
+      operator: eq
+      value: "0s"
+
+  constraints:
+    dataAgeP99:
+      operator: lte
+      value: "500ms"
+
+    recoveryRto:
+      operator: lte
+      value: "5m"
+
+  objectives:
+    strategy: constrained-pareto-lexicographic
+
+    priority:
+      - semantic-safety
+      - availability
+      - latency-p99
+      - throughput
+      - unit-cost
+      - operational-complexity
+
+    minimumPracticalImprovement:
+      latency-p99: 0.10
+
+    requiredConfidence:
+      latency-p99: 0.99
+
+  economics:
+    valueDimensions:
+      - revenue
+      - retention
+      - capacity
+      - avoided-cost
+      - risk-avoided
+
+    include:
+      - operational-cost
+      - migration-cost
+      - expected-recovery-cost
+
+  affordability:
+    # Valores apenas ilustrativos.
+    maxAdditionalMonthlyCostAbsolute: 5000
+    maxAdditionalCostPercentRevenue: 0.03
+    minimumRunwayMonthsAfterPromotion: 9
+    maximumPaybackMonths: 6
+
+  recovery:
+    required: true
+
+    allowedStrategies:
+      - rollback
+      - roll-forward
+      - restore-replay
+      - dual-run-reconciliation
+
+  promotion:
+    defaultAuthority: autonomous
+
+    riskClasses:
+      low:
+        authority: autonomous
+
+      medium:
+        authority: autonomous
+
+      high:
+        authority: human-approval-required
+
+  reEvaluation:
+    onMaterialContextChange: new-evaluation-epoch
+    reuseHistoricalEvidenceForAuthorization: false
+
+  transitions:
+    - id: financial-headroom-achieved
+      when:
+        all:
+          - metric: business.monthly_revenue
+            operator: gte
+            value: 150000
+
+          - metric: business.runway_months
+            operator: gte
+            value: 12
+
+      activateContract:
+        id: dataplane-performance-sensitive
+        version: 3.0.0
+
+    - id: financial-health-degraded
+      when:
+        any:
+          - metric: business.runway_months
+            operator: lt
+            value: 9
+
+      activateContract:
+        id: dataplane-cost-sensitive
+        version: 1.5.0
