@@ -53,5 +53,5 @@ export type ActionOk = { status: 'Ok'; event: string; payload: unknown };
 export type ActionError = { status: 'Error'; event: string; payload: { message: string; details?: unknown } };
 export type ActionResult = ActionOk | ActionError;
 export interface ActionImplementation { execute(context: ActionContext): Promise<ActionResult> | ActionResult; }
-export interface ActionManifest { name: string; semantic_id: string; results: { Ok: string; Error: string }; }
+export interface ActionManifest { name: string; semantic_id: string; canonical_label?: string; validation?: Record<string, unknown>; results: { Ok: string; Error: string }; }
 export interface ExecutionReport { status: 'Ok' | 'Error'; intent: string; last_event: string | undefined; payload: unknown; }
