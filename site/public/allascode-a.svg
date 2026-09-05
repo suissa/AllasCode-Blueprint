@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="AllasCode">
+  <defs>
+    <linearGradient id="a" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14e8ff"/>
+      <stop offset=".43" stop-color="#008cff"/>
+      <stop offset=".72" stop-color="#2458ff"/>
+      <stop offset="1" stop-color="#6b36ff"/>
+    </linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#05dcff"/>
+      <stop offset="1" stop-color="#1975ff"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="13" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#glow)">
+    <path d="M125 140 42 210l83 70 38-44-32-27 32-27z" fill="url(#b)"/>
+    <path d="m515 140 83 70-83 70-38-44 32-27-32-27z" fill="url(#b)"/>
+    <path d="M202 327 300 70c8-20 37-20 45 0l101 257h-78l-22-60H239l-23 60z" fill="url(#a)"/>
+    <path d="M254 224h139l-25 61H232z" fill="#08d6f7" opacity=".94"/>
+    <path d="M302 71c13-28 49-25 59 4l-17 47-65 169-62 36z" fill="#1bc7ff" opacity=".72"/>
+  </g>
+</svg>
