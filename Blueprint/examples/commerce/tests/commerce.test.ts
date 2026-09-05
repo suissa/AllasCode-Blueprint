@@ -49,7 +49,9 @@ test('runtime topology is projected from compiled graph', async () => {
   assert.equal(kernel.projection.agents.length, 7);
   assert.equal(kernel.projection.actors.length, 7);
   assert.equal(kernel.projection.actions.length, 11);
-  assert.equal(kernel.projection.tools.length, 3);
+  assert.equal(kernel.projection.tools.length, 9);
+  for(const tool of ['DpopProofTool','DpopReplayTool','DpopTokenBindingTool','KeyRotationTool','PqEnvelopeTool','PqSignatureTool'])
+    assert.ok(kernel.projection.tools.some(candidate=>candidate.name===tool),`${tool} must be projected`);
   const inventory = kernel.projection.agents.find(agent => agent.name === 'InventoryAgent');
   assert.equal(inventory?.actor, 'InventoryActor');
   assert.deepEqual(inventory?.actions, ['DecreaseStock', 'DecreaseStockVerified', 'IncreaseStock']);

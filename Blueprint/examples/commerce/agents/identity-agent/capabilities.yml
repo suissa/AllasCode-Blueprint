@@ -1,2 +1,2 @@
 actions: [AuthorizeOperatorIntent]
-tools: []
+tools: [DpopProofTool, DpopTokenBindingTool, DpopReplayTool, PqEnvelopeTool, PqSignatureTool, KeyRotationTool]

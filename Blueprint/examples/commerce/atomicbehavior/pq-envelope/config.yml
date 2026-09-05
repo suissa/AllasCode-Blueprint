@@ -1,0 +1,4 @@
+kem: ML-KEM-768
+kdf: HKDF-SHA-256
+aead: AES-256-GCM
+context_binding: required

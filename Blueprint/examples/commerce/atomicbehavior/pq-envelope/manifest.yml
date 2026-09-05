@@ -1,0 +1,6 @@
+name: PqEnvelopeTool
+version: 0.1.0
+kind: semantic-atomicbehavior-type
+semantic_id: commerce.atomicbehavior.pq-envelope
+result: ../../events/result.yml
+emits: [Ok<PqEnvelope>, Error<PqEnvelopeError>]

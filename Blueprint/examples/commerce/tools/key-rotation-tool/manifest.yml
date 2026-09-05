@@ -1,0 +1,5 @@
+name: KeyRotationTool
+kind: tool
+semantic_id: commerce.tool.key-rotation
+capability: ManagePostQuantumKeyLifecycle
+results: { Ok: KeyRotated, Error: KeyRotationError }
