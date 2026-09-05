@@ -1,0 +1,4 @@
+id: AccountingContext
+entities: [AccountingEntry]
+accepts: [SaleCompleted, PurchaseRegistered, SaleInvoiceIssued]
+exports: [AccountingEffectRecorded, AccountingEffectRecordError]

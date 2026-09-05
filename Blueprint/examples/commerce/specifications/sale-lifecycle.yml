@@ -1,0 +1,10 @@
+feature: Sale lifecycle
+scenario: complete an identified terminal sale
+when:
+  - a new sale is identified
+  - sold products are resolved
+then:
+  - Inventory quantities decrease exactly once
+  - Financial receives one sale inflow
+  - Sale becomes completed
+  - SaleCompleted is emitted

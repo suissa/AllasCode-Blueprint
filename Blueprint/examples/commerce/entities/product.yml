@@ -1,12 +1,9 @@
-name: Product
-semantic_id: commerce.entity.product
+id: Product
+identity: product_id
 properties:
-  id: ProductId
+  product_id: SemanticId
   canonical_label: CanonicalLabel
   name: Text
   unit: Unit
-  category: ProductCategory
 invariants:
-  - id != null
-  - canonical_label != null
-  - name != null
+  - canonical_label uniquely identifies the product meaning within the commerce context

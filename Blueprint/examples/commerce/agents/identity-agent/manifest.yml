@@ -1,0 +1,7 @@
+name: IdentityAgent
+kind: agent
+semantic_id: commerce.agent.identity
+context: ../../contexts/identity.yml
+actor: ../../actors/identity-actor/manifest.yml
+capabilities: ./capabilities.yml
+policies: ./policies.yml

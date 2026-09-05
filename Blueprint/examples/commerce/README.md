@@ -1,51 +1,65 @@
-# Commerce Management Example
+# Simple Commerce System — Executable AllasCode Example
 
-This directory is a complete semantic example of a small commerce-management system modeled with AllasCode.
+This directory is both a semantic reference and a minimal executable TypeScript projection of a small commercial management system.
 
-The example covers two main business intentions:
+The semantic files remain the source of truth. The TypeScript code exists only under `runtime/`, `tests/`, and each Action's `implementation/` folder. The runtime reads the `.2flow` choreography and Action `manifest.yml` files instead of hard-coding the workflow order or accepted domain events.
 
-1. **Purchase products** — the merchant sends purchase evidence (image/Pix receipt) and a description or audio; the system identifies supplier, products, quantities and unit costs, then records the stock entry and its financial consequence.
-2. **Sell products** — the system detects a new card-machine sale, asks which products were sold, resolves the answer, commits the stock decrease and closes the sale.
-
-## Architectural rule
-
-The example separates semantic identity, internal configuration, contracts and orchestration:
-
-- `manifest.yml` — what the system exposes and semantically declares.
-- `config.yml` — internal values used to instantiate and execute the system.
-- `contexts/` — boundaries of knowledge.
-- `entities/` — domain identities and invariants.
-- `actions/` — independently identifiable and invocable domain actions.
-- `atomicbehavior/` — smallest semantic behavior types.
-- `intents/` — desired outcomes that organize actions.
-- `flows/` — choreography between contexts/agents through events.
-- `events/` — shared event result algebra. Every function emits only `Ok<T>` or `Error<E>`.
-- `specifications/` — behavioral rules independent from implementation.
-- `formalization/` — optional machine-verifiable laws and proofs.
-
-Every internal directory contains its own `README.md` explaining the purpose of each file and showing concrete values.
-
-## Execution principle
+## Business lifecycle
 
 ```text
-Input
-  -> Intent
-  -> Agent / Context
-  -> Action
-  -> Semantic AtomicBehavior
-       -> validate
-            -> normalization (only when needed by validation)
-       -> behavior
-       -> validate output
-       -> self-healing on non-conformance
-            -> normalization/transformation
-            -> revalidate
-       -> Ok<T> | Error<E>
-  -> next Agent through emitted event
+Supplier purchase
+  -> PurchaseProductsRequested
+  ->> PurchaseAgent.RegisterPurchase
+  <- PurchaseRegistered
+  ->> InventoryAgent.IncreaseStock
+  <- StockIncreased
+  ->> FinancialAgent.RecordPurchaseExpense
+  <- PurchaseCompleted
+
+Detected sale
+  -> SaleIdentified
+  ->> SalesAgent.ResolveSaleProducts
+  <- SaleProductsResolved
+  ->> InventoryAgent.DecreaseStock
+  <- StockDecreased
+  ->> FinancialAgent.CloseSale
+  <- SaleCompleted
 ```
 
-Self-healing is part of the Semantic AtomicBehavior contract, not an optional middleware. Automatic corrective transformations must preserve enough information to be reversible or auditable.
+Every Action returns exactly one terminal result type: `Ok<T>` or `Error<E>`. The runtime verifies that the event emitted by the TypeScript implementation matches the event declared in that Action's `manifest.yml`.
 
-## Start here
+## Structure
 
-Read `manifest.yml` and `config.yml` first, then follow `flows/purchase-products.2flow` and `flows/sale-products.2flow` to see how the complete example is connected.
+- `agents/`: semantic actors and domain knowledge boundaries.
+- `contexts/`: what each agent is allowed to know.
+- `entities/`: domain identities and state-bearing concepts.
+- `actions/`: semantic Actions plus their TypeScript projection under `implementation/`.
+- `atomicbehavior/`: reusable behavior definitions.
+- `events/`: domain event definitions.
+- `intents/`: desired outcomes.
+- `flows/`: executable `.2flow` choreography.
+- `specifications/`: behavioral contracts.
+- `formalization/`: invariants and laws.
+- `runtime/`: minimal TypeScript runtime, registry, manifest loader, event bus and flow interpreter.
+- `tests/`: executable acceptance checks.
+
+## Run
+
+From `Blueprint/examples/commerce`:
+
+```bash
+npm install
+npm run check
+npm test
+npm run demo
+```
+
+The demo runs a supplier purchase followed by a sale. State is intentionally in memory so that the example demonstrates AllasCode semantics without coupling the reference to a database, web framework, queue, container platform or cloud provider.
+
+## What is definition-driven
+
+The runtime reads `flows/*.2flow` to determine Action order and expected events. Each Action is resolved through `Agent.Action`, and the registry loads the corresponding `manifest.yml` to validate its declared `Ok` and `Error` event names. This means changing the flow choreography changes runtime ordering without rewriting the TypeScript orchestrator.
+
+## Deliberate limitations
+
+This example is small by design. It does not yet implement schema validation, the full self-healing pipeline, persistence adapters, concurrency control, durable event sourcing, external integrations or a compiler from arbitrary Blueprint definitions. Those are runtime capabilities, not business semantics, and can be added without changing the commerce model itself.

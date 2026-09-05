@@ -1,0 +1,2 @@
+rule StockDecreasedRequiresAppliedMovements:
+  emit Ok<StockDecreased> only_if all requested sale movements were applied

@@ -1,0 +1,9 @@
+policies:
+  identity_immutable: true
+  quantity_owned_by_product: false
+  inactive_product:
+    allow_historical_reference: true
+    allow_new_sale: false
+  identifiers:
+    barcode_unique_when_present: true
+    sku_unique_when_present: true

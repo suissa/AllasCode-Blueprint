@@ -1,0 +1,6 @@
+policies:
+  identity_immutable: true
+  evidence_preserved: true
+  amount_mutation_after_confirmation: forbidden
+  reference_mutation_after_confirmation: forbidden
+  external_reference_unique_when_present: true

@@ -1,0 +1,21 @@
+module Sales
+manager SalesManagerAgent
+
+-> SaleDetected
+SalesManagerAgent ->> SaleResolutionAgent
+SaleResolutionAgent ->> SaleLookupTool
+SaleLookupTool <- Ok | Error
+SaleResolutionAgent ->> ProductResolutionTool
+ProductResolutionTool <- Ok | Error
+SaleResolutionAgent <- Ok | Error
+SalesManagerAgent ->> SaleValidationAgent
+SaleValidationAgent ->> InventoryReadTool
+InventoryReadTool <- Ok | Error
+SaleValidationAgent <- Ok | Error
+SalesManagerAgent ->> SaleClosingAgent
+SaleClosingAgent ->> SaleRepositoryTool
+SaleRepositoryTool <- Ok | Error
+SaleClosingAgent <- Ok | Error
+SalesManagerAgent ->> SaleHealingTool
+SaleHealingTool <- Ok | Error
+SalesManagerAgent <- SaleClosed.Ok | Sale.Error

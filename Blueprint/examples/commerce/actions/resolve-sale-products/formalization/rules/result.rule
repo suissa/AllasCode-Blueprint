@@ -1,0 +1,2 @@
+rule SaleProductsResolvedRequiresIdentities:
+  emit Ok<SaleProductsResolved> only_if every sold item has product_id and quantity > 0

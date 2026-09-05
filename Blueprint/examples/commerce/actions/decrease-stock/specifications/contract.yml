@@ -1,0 +1,12 @@
+preconditions:
+  - sale_id_is_known
+  - items_are_non_empty
+  - every_quantity_is_positive
+  - available_stock_is_sufficient
+postconditions:
+  Ok:
+    - inventory_decreased_for_every_item
+  Error:
+    - success_event_not_emitted
+invariants:
+  - same_sale_id_is_applied_at_most_once

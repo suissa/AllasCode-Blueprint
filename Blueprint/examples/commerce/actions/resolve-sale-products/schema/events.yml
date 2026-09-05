@@ -1,0 +1,5 @@
+listen:
+  - ResolveSaleProductsRequested
+emit:
+  ok: SaleProductsResolved
+  error: SaleProductsResolutionError

@@ -1,0 +1,47 @@
+name: Commerce V1 Release
+on:
+  push:
+    tags: ['v1.*.*']
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Immutable v1 release tag
+        required: true
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Blueprint/examples/commerce
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 24}
+      - run: npm install
+      - run: npm test
+  staging:
+    needs: acceptance
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy immutable release to staging
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          RELEASE: ${{ github.ref_name }}
+        run: Blueprint/examples/commerce/deploy/remote-deploy.sh staging "$RELEASE"
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Promote same immutable release to production
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          RELEASE: ${{ github.ref_name }}
+        run: Blueprint/examples/commerce/deploy/remote-deploy.sh production "$RELEASE"

@@ -1,0 +1,11 @@
+id: Customer
+identity: customer_id
+properties:
+  customer_id: SemanticId
+  name: HumanName
+  contact: ContactReference
+  created_at: DateTime
+states: [identified, active, inactive]
+invariants:
+  - customer_id is immutable
+  - an active customer must have at least one valid contact reference

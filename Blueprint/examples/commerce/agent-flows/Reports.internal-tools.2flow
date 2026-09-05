@@ -1,0 +1,23 @@
+module Reports
+manager ReportsManagerAgent
+
+-> ReportIntent
+ReportsManagerAgent ->> ProjectionAgent
+ProjectionAgent ->> ReportProjectionTool
+ReportProjectionTool <- Ok | Error
+ProjectionAgent <- Ok | Error
+ReportsManagerAgent ->> CompositionAgent
+CompositionAgent ->> WidgetCompositionTool
+WidgetCompositionTool <- Ok | Error
+CompositionAgent ->> ConversationStateTool
+ConversationStateTool <- Ok | Error
+CompositionAgent <- Ok | Error
+ReportsManagerAgent ->> ShareAgent
+ShareAgent ->> UniqueShareLinkTool
+UniqueShareLinkTool <- Ok | Error
+ShareAgent ->> PreviewImageTool
+PreviewImageTool <- Ok | Error
+ShareAgent ->> CommunicationIntentTool
+CommunicationIntentTool <- Ok | Error
+ShareAgent <- Ok | Error
+ReportsManagerAgent <- Reports.Ok | Reports.Error

@@ -1,0 +1,4 @@
+invariants:
+  - lookup_is_read_only
+  - unknown_product_returns_Error
+  - exactly_one_terminal_result

@@ -1,0 +1,5 @@
+laws:
+  NonNegativeInventory: for every Stock in Inventory, quantity >= 0
+  PurchaseEffectOnce: same purchase_id changes Inventory at most once
+  SaleEffectOnce: same sale_id changes Inventory at most once
+  ContextIsolation: Inventory changes only from accepted Inventory actions/events, never direct foreign-context mutation

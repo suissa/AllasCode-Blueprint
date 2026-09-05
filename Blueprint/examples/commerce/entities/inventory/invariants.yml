@@ -1,0 +1,5 @@
+invariants:
+  - inventory_id is immutable
+  - Inventory does not own Purchase or Sale state
+  - every authoritative quantity is held by a Stock entity
+  - no accepted mutation may make stock quantity negative

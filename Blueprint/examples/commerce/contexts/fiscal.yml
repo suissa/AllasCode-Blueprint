@@ -1,0 +1,4 @@
+id: FiscalContext
+entities: [Invoice]
+accepts: [SaleCompleted]
+exports: [SaleInvoiceIssued, SaleInvoiceIssueError]

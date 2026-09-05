@@ -1,0 +1,8 @@
+name: RecordAccountingEffect
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.record-accounting-effect
+purpose: record_an_append_only_accounting_effect_from_a_business_event
+results:
+  Ok: AccountingEffectRecorded
+  Error: AccountingEffectRecordError

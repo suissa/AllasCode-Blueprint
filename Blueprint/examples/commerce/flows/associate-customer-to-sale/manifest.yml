@@ -1,0 +1,6 @@
+name: associate-customer-to-sale
+kind: flow
+semantic_id: commerce.flow.associate-customer-to-sale
+source: ../associate-customer-to-sale.2flow
+active: true
+intent: AssociateCustomerToSaleIntent

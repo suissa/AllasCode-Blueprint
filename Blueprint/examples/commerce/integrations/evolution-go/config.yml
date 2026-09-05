@@ -1,0 +1,21 @@
+provider: evolution-go
+base_url: http://localhost:4000
+instance_api_key_env: EVOLUTION_GO_API_KEY
+webhook_secret_env: EVOLUTION_GO_WEBHOOK_SECRET
+webhook_secret_header: x-allascode-webhook-secret
+subscribe:
+  - MESSAGE
+  - READ_RECEIPT
+  - DELIVERY_RECEIPT
+  - MESSAGE_STATUS
+outbound:
+  text_endpoint: /send/text
+  media_endpoint: /send/media
+  status_endpoint: /message/status
+inbound:
+  intent: WhatsAppInboundMessageIntent
+  ignore_from_me: true
+  accepted_media:
+    - image
+    - audio
+    - document

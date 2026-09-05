@@ -1,0 +1,4 @@
+accepts:
+  - action: AuthorizeOperatorIntent
+ordering: fifo
+concurrency: 1

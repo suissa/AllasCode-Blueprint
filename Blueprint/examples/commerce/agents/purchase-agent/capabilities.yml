@@ -1,0 +1,2 @@
+actions: [RegisterPurchase]
+tools: [PurchaseEvidenceReader, ProductCatalogLookup]

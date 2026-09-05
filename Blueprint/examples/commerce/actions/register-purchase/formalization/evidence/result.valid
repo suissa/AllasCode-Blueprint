@@ -1,0 +1,7 @@
+evidence:
+  contract: ../../specifications/contract.yml
+  schemas:
+    - ../../schema/input.yml
+    - ../../schema/output.yml
+    - ../../schema/error.yml
+  status: reference-example

@@ -1,0 +1,6 @@
+AuthorizeOperatorIntent
+-> AuthorizeOperatorRequested
+->> IdentityAgent.AuthorizeOperatorIntent
+<- OperatorAuthorized
+
+AuthorizeOperatorIntent.Error -> Error

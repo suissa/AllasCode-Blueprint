@@ -1,0 +1,6 @@
+accounting_entry_id: SemanticId
+source_id: SemanticId
+source_type: AccountingSourceType
+debit: CurrencyAmount
+credit: CurrencyAmount
+occurred_at: DateTime

@@ -1,0 +1,5 @@
+participates_in:
+  - flow: ProcessSaleIntent
+    role: optional-sale-origin-evidence
+  - flow: PurchaseProductsIntent
+    role: optional-purchase-evidence

@@ -1,31 +1,26 @@
-name: commerce-management-example
+id: commerce.simple
+name: Simple Commerce System
 version: 0.1.0
-kind: system
-semantic_id: allascode.examples.commerce-management
-
-purpose: manage_purchase_stock_sale_and_financial_lifecycle
+kind: semantic-system
 
 exposes:
   intents:
-    - PurchaseProducts
-    - SellProducts
+    - PurchaseProductsIntent
+    - ProcessSaleIntent
+  events:
+    - PurchaseCompleted
+    - SaleCompleted
+    - Error
   entities:
     - Supplier
     - Product
-    - Stock
+    - Purchase
+    - Inventory
+    - Financial
     - Sale
-    - Payment
-  events:
+
+semantics:
+  terminal-events:
     - Ok
     - Error
-
-contracts:
-  result_algebra: ./events/result.yml
-  specifications: ./specifications/system.yml
-
-composition:
-  contexts: ./contexts
-  actions: ./actions
-  atomicbehaviors: ./atomicbehavior
-  intents: ./intents
-  flows: ./flows
+  implementation-independent: true

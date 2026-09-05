@@ -1,0 +1,11 @@
+preconditions:
+  - sale_id_is_known
+  - products_resolved_is_true
+  - stock_decreased_is_true
+postconditions:
+  Ok:
+    - sale_status_is_completed
+  Error:
+    - success_event_not_emitted
+invariants:
+  - same_sale_id_is_closed_at_most_once

@@ -1,0 +1,49 @@
+flow SellProducts
+
+FinancialAgent
+  -> SalePollingTick
+  ->> DetectNewSale
+  <<- DetectNewSale
+
+  Ok<SaleDetected>
+    <- Ok<SaleDetected>
+
+  Error<SaleDetectionError>
+    <- Error<SaleDetectionError>
+
+SalesAgent
+  -> Ok<SaleDetected>
+  ->> AskMerchantProducts
+  <<- AskMerchantProducts
+
+  Ok<MerchantProductsDeclared>
+    ->> ResolveSaleProducts
+    <<- ResolveSaleProducts
+
+    Ok<SaleResolved>
+      <- Ok<SaleResolved>
+
+    Error<SaleResolutionError>
+      <- Error<SaleResolutionError>
+
+StockAgent
+  -> Ok<SaleResolved>
+  ->> DecreaseStock
+  <<- DecreaseStock
+
+  Ok<StockExitCommitted>
+    <- Ok<StockExitCommitted>
+
+  Error<StockExitError>
+    <- Error<StockExitError>
+
+SalesAgent
+  -> Ok<StockExitCommitted>
+  ->> CloseSale
+  <<- CloseSale
+
+  Ok<SaleClosed>
+    <- Ok<SaleClosed>
+
+  Error<SaleCloseError>
+    <- Error<SaleCloseError>

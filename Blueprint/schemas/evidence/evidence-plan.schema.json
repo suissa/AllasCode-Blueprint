@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://allascode.dev/schemas/evidence-plan/v1.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "artifact_id",
+    "profile",
+    "environment_class",
+    "requirements",
+    "decisions",
+    "closure"
+  ],
+  "properties": { "schema_version": { "const": "allascode.evidence-plan/v1" } }
+}

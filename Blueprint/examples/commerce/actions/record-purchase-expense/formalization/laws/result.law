@@ -1,0 +1,5 @@
+law PurchaseExpenseIdempotency:
+  same(purchase_id) -> purchase_expense_occurs_at_most_once
+
+law PurchaseExpenseResultExclusivity:
+  RecordPurchaseExpense(x) -> exactly_one(Ok(PurchaseExpenseRecorded), Error(PurchaseExpenseRecordingError))

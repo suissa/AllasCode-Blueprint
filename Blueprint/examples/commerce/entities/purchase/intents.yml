@@ -1,0 +1,5 @@
+intents:
+  - id: PurchaseProductsIntent
+    goal: transform purchase evidence into a registered commercial fact with stock and financial consequences
+  - id: RegisterPurchase
+    goal: establish the Purchase fact without duplicating side effects

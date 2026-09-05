@@ -1,0 +1,6 @@
+AssociateCustomerToSaleIntent
+-> CustomerAssociationRequested
+->> SalesAgent.AssociateCustomerToSale
+<- CustomerAssociatedToSale
+
+AssociateCustomerToSale.Error -> Error

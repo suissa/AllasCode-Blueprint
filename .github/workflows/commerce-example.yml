@@ -1,0 +1,95 @@
+# GENERATED FILE
+# Do not edit manually.
+# Semantic source: Blueprint/examples/commerce/config.yml#ci
+# Language binding: AllasCode-infra/actions/languages/typescript.yml
+# Platform projection: AllasCode-infra/actions/platforms/github-actions.yml
+
+name: Commerce Example CI
+
+on:
+  pull_request:
+    branches:
+      - examples
+    paths:
+      - 'Blueprint/examples/commerce/**'
+      - '.github/workflows/commerce-example.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  semantic-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Blueprint/examples/commerce
+
+    steps:
+      - name: SourceCheckout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: EnvironmentSetup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: DependencyInstall
+        run: npm install
+      - name: Validate
+        run: npm run check
+      - name: SemanticImpact
+        run: npm run semantic-impact
+      - name: SelectorConfidence
+        run: npm run selector-confidence
+      - name: SemanticPrDiff
+        run: npm run semantic-pr-diff
+      - name: SemanticMergeGate
+        id: semantic_merge_gate
+        continue-on-error: true
+        run: npm run semantic-merge-gate
+      - name: PublishSemanticReports
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const reports = [
+              ['<!-- allascode-semantic-pr-diff -->', 'Blueprint/examples/commerce/tests/dashboard/semantic-pr-diff.md'],
+              ['<!-- allascode-semantic-merge-gate -->', 'Blueprint/examples/commerce/tests/dashboard/semantic-merge-gate.md'],
+            ];
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            for (const [marker, path] of reports) {
+              const body = fs.readFileSync(path, 'utf8');
+              const previous = comments.find(comment => comment.user?.type === 'Bot' && comment.body?.includes(marker));
+              if (previous) await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body });
+              else await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+      - name: EnforceSemanticMergeGate
+        if: steps.semantic_merge_gate.outcome == 'failure'
+        run: |
+          echo 'Semantic merge blocked by protected semantic change.'
+          exit 1
+      - name: SelectiveSemanticTests
+        run: npm run test:selective
+      - name: SemanticCiPolicy
+        id: semantic_policy
+        run: npm run semantic-ci-policy
+      - name: ActionTests
+        if: steps.semantic_policy.outputs.run_full_actions == 'true'
+        run: npm run test:actions
+      - name: ArchitectureTests
+        if: steps.semantic_policy.outputs.run_full_architecture == 'true'
+        run: npm run test:architecture
+      - name: EvidenceFreshness
+        run: npm run test:evidence
+      - name: SemanticReleaseGate
+        run: npm run semantic-release-gate
+      - name: CoreTests
+        run: npm run test:core
+      - name: Demo
+        run: npm run demo

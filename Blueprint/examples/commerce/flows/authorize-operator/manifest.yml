@@ -1,0 +1,6 @@
+name: authorize-operator
+kind: flow
+semantic_id: commerce.flow.authorize-operator
+source: ../authorize-operator.2flow
+active: true
+intent: AuthorizeOperatorIntent

@@ -1,0 +1,9 @@
+purchase_id: SemanticId
+supplier_id: SemanticId
+items: PurchaseItemList
+total: CurrencyAmount
+currency: Currency
+evidence: OptionalEvidenceReference
+occurred_at: DateTime
+registered_at: OptionalDateTime
+status: identified|registered|completed

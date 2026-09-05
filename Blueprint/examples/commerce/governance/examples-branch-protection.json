@@ -1,0 +1,13 @@
+{
+  "branch": "examples",
+  "require_pull_request": true,
+  "required_status_checks": ["semantic-ci"],
+  "strict_status_checks": true,
+  "block_on_pending": true,
+  "block_on_failure": true,
+  "semantic_merge_gate": {
+    "allow": "mergeable when semantic-ci is green",
+    "review": "requires review according to repository policy",
+    "block": "must make semantic-ci fail and therefore prevent merge"
+  }
+}

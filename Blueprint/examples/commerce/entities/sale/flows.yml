@@ -1,0 +1,11 @@
+owns:
+  - flow: ProcessSaleIntent
+    definition: ../../flows/process-sale.2flow
+sequence:
+  - SaleIdentified
+  - SalesAgent.ResolveSaleProducts
+  - SaleProductsResolved
+  - InventoryAgent.DecreaseStock
+  - StockDecreased
+  - FinancialAgent.CloseSale
+  - SaleCompleted

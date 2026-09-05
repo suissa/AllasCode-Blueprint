@@ -1,0 +1,6 @@
+proof_obligation:
+  subject: ResolveSaleProducts
+  prove:
+    - terminal_result_is_exclusive
+    - each_output_item_has_resolved_identity
+    - action_does_not_mutate_inventory

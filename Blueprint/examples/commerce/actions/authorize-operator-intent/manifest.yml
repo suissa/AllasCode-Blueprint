@@ -1,0 +1,8 @@
+name: AuthorizeOperatorIntent
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.authorize-operator-intent
+purpose: authorize_an_active_operator_before_an_intent_can_start
+results:
+  Ok: OperatorAuthorized
+  Error: OperatorAuthorizationError

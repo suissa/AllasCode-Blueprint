@@ -1,0 +1,8 @@
+name: AssociateCustomerToSale
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.associate-customer-to-sale
+purpose: associate_an_identified_customer_with_an_existing_sale
+results:
+  Ok: CustomerAssociatedToSale
+  Error: CustomerAssociationError

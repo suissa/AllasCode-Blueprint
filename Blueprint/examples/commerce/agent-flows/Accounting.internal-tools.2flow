@@ -1,0 +1,19 @@
+module Accounting
+manager AccountingManagerAgent
+
+-> AccountingProjectionIntent
+AccountingManagerAgent ->> ProjectionAgent
+ProjectionAgent ->> EventStreamReadTool
+EventStreamReadTool <- Ok | Error
+ProjectionAgent ->> AccountingProjectionTool
+AccountingProjectionTool <- Ok | Error
+ProjectionAgent <- Ok | Error
+AccountingManagerAgent ->> RebuildAgent
+RebuildAgent ->> ProjectionRebuildTool
+ProjectionRebuildTool <- Ok | Error
+RebuildAgent <- Ok | Error
+AccountingManagerAgent ->> ReportAgent
+ReportAgent ->> ManagementReportTool
+ManagementReportTool <- Ok | Error
+ReportAgent <- Ok | Error
+AccountingManagerAgent <- Accounting.Ok | Accounting.Error

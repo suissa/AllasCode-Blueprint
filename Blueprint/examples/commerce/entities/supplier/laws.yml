@@ -1,0 +1,4 @@
+laws:
+  IdentityPreservation: update(Supplier) preserves supplier_id
+  HistoricalIntegrity: referenced_by(Purchase) implies Supplier remains addressable
+  DisableIsNonDestructive: disable(Supplier) does not delete or rewrite past Purchase facts

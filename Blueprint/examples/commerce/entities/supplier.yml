@@ -1,10 +1,8 @@
-name: Supplier
-semantic_id: commerce.entity.supplier
+id: Supplier
+identity: supplier_id
 properties:
-  id: SupplierId
-  canonical_label: CanonicalLabel
-  legal_name: Text
-  tax_id: TaxId
+  supplier_id: SemanticId
+  name: Text
+  document: OptionalText
 invariants:
-  - id != null
-  - canonical_label != null
+  - supplier_id is stable

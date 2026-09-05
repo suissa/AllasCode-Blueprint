@@ -1,0 +1,7 @@
+supplier_id: SemanticId
+name: NonEmptyString
+document: OptionalString
+phone: OptionalPhone
+status: active|inactive
+created_at: DateTime
+updated_at: DateTime

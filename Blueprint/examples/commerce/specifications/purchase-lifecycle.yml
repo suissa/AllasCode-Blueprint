@@ -1,0 +1,9 @@
+feature: Purchase lifecycle
+scenario: register a supplier purchase and make products available
+when:
+  - purchase evidence and product description are provided
+then:
+  - Purchase is registered
+  - Inventory quantities increase exactly once
+  - Financial receives one purchase outflow
+  - PurchaseCompleted is emitted

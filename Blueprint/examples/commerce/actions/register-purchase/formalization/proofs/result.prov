@@ -1,0 +1,6 @@
+proof_obligation:
+  subject: RegisterPurchase
+  prove:
+    - terminal_result_is_exclusive
+    - successful_output_conforms_to_schema
+    - unresolved_input_terminates_as_error

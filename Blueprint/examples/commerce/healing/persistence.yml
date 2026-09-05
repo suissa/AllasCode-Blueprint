@@ -1,0 +1,13 @@
+store:
+  driver: json-file
+  path: .runtime/healing-cases.json
+  authority: runtime
+  consumers:
+    - application-api
+    - whatsapp-adapter
+    - ui-adapter
+rules:
+  transport_owns_healing: false
+  single_use_resume_token: true
+  preserve_original_correlation: true
+  audit_resolution: true

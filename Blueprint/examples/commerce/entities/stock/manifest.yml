@@ -1,0 +1,13 @@
+id: Stock
+kind: Entity
+semantic_id: commerce.entity.stock
+identity: stock_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  inventory: Inventory[1]
+  product: Product[1]

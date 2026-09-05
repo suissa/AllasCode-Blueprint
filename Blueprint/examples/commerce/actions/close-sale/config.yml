@@ -1,0 +1,7 @@
+action:
+  idempotency_key: sale_id
+  require_products_resolved: true
+  require_stock_decreased: true
+  healing_enabled: true
+  normalization_scope: healing_only
+  unresolved_behavior: Error

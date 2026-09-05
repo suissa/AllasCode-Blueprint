@@ -1,0 +1,4 @@
+result: Ok
+payload:
+  event: PurchaseExpenseRecorded
+  schema: ../../schema/output.yml

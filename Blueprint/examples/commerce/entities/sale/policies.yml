@@ -1,0 +1,12 @@
+policies:
+  idempotency:
+    key: sale_id
+  product_resolution:
+    required_before_stock_effect: true
+    human_context_allowed: true
+  completion:
+    requires_stock_decrease: true
+    requires_financial_record: true
+  normalization:
+    allowed_only_in: [validation, self-healing]
+    reversible_only: true

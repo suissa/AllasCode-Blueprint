@@ -1,0 +1,6 @@
+id: IssueSaleInvoiceIntent
+starts-with: SaleCompleted
+success: SaleInvoiceIssued
+failure: Error
+requires:
+  - validated completed sale event

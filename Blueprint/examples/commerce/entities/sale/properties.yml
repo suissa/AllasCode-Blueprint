@@ -1,0 +1,8 @@
+sale_id: SemanticId
+amount: CurrencyAmount
+currency: Currency
+products: OptionalSaleItemList
+identified_at: DateTime
+resolved_at: OptionalDateTime
+completed_at: OptionalDateTime
+status: identified|products-resolved|completed

@@ -1,0 +1,5 @@
+name: DpopProofTool
+kind: tool
+semantic_id: commerce.tool.dpop-proof
+capability: VerifyDpopProtectedRequest
+results: { Ok: DpopProofVerified, Error: DpopProofError }

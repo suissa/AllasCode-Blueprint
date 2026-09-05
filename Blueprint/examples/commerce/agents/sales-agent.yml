@@ -1,0 +1,12 @@
+id: SalesAgent
+context: SalesContext
+knows:
+  - Sale
+  - Product
+can-invoke:
+  - ResolveSaleProducts
+listens:
+  - SaleIdentified
+emits:
+  - SaleProductsResolved
+  - Error

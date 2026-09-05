@@ -1,0 +1,5 @@
+listen:
+  - DecreaseStockRequested
+emit:
+  ok: StockDecreased
+  error: StockDecreaseError

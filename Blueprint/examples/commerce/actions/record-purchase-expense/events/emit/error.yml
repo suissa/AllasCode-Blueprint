@@ -1,0 +1,4 @@
+result: Error
+payload:
+  event: PurchaseExpenseRecordingError
+  schema: ../../schema/error.yml

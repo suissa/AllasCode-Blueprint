@@ -1,0 +1,6 @@
+name: DpopReplayTool
+version: 0.1.0
+kind: semantic-atomicbehavior-type
+semantic_id: commerce.atomicbehavior.dpop-replay
+result: ../../events/result.yml
+emits: [Ok<DpopProofClaimed>, Error<DpopReplayDetected>]

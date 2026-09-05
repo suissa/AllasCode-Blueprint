@@ -1,0 +1,16 @@
+id: AccountingEntry
+identity: accounting_entry_id
+properties:
+  accounting_entry_id: SemanticId
+  source_id: SemanticId
+  source_type: AccountingSourceType
+  debit: CurrencyAmount
+  credit: CurrencyAmount
+  occurred_at: DateTime
+states: [recorded, reversed]
+invariants:
+  - accounting_entry_id is immutable
+  - debit >= 0
+  - credit >= 0
+  - exactly one of debit or credit must be greater than zero
+  - a reversed entry remains auditable and cannot be deleted

@@ -1,0 +1,13 @@
+version: 1.0.0
+retry:
+  max_attempts: 2
+  timeout_ms: 1500
+  backoff_ms: 25
+human:
+  resume_ttl_ms: 86400000
+normalization:
+  allowed_in: [validation, self-healing]
+  reversible_required: true
+audit:
+  enabled: true
+  payload_hash: sha256

@@ -1,0 +1,5 @@
+invoice_id: SemanticId
+sale_id: SemanticId
+amount: CurrencyAmount
+issued_at: DateTime
+status: InvoiceStatus

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "commerce.application-api.v1",
+  "title": "Application API v1 Envelope",
+  "type": "object",
+  "required": ["version", "correlation_id", "outcome"],
+  "properties": {
+    "version": { "const": "v1" },
+    "correlation_id": { "type": "string", "minLength": 1 },
+    "outcome": { "enum": ["Ok", "Error"] },
+    "data": {},
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "required": ["code", "message"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

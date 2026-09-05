@@ -1,0 +1,11 @@
+name: PurchaseEvidenceReader
+kind: tool
+semantic_id: commerce.tool.purchase-evidence-reader
+capability: ReadPurchaseEvidence
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+results:
+  Ok: PurchaseEvidenceRead
+  Error: PurchaseEvidenceReadError

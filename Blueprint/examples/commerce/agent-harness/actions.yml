@@ -1,0 +1,38 @@
+api_version: allascode/v1
+kind: ActionSet
+identity:
+  canonical_label: AgentHarness
+  version: 1.0.0
+rules:
+  result_events_only:
+    - Ok
+    - Error
+  hidden_state: forbidden
+  hidden_retry: forbidden
+  hidden_normalization: forbidden
+  domain_state_access: declared-capabilities-only
+actions:
+  - canonical_label: AgentHarness.prepare
+    behavior_type: guard
+    input: AgentInvocation
+    output: PreparedAgentInvocation
+    errors: [UnauthorizedAgent, CrossContextDenied, DeadlineExceeded]
+  - canonical_label: AgentHarness.invoke
+    behavior_type: effect
+    input: PreparedAgentInvocation
+    output: AgentOutput
+    errors: [DeadlineExceeded, AgentFailure]
+  - canonical_label: AgentHarness.observe
+    behavior_type: projection
+    input: CorrelationId
+    output: HarnessEvidence
+    mutation: none
+  - canonical_label: AgentHarness.evaluate
+    behavior_type: predicate
+    input: AgentOutput
+    output: ValidatedAgentOutput
+    errors: [InvalidAgentOutput]
+  - canonical_label: AgentHarness.finalize
+    behavior_type: projection
+    input: HarnessResult
+    output: HarnessEvidenceEnvelope

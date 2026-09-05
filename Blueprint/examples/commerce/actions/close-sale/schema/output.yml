@@ -1,0 +1,5 @@
+type: object
+required: [sale_id, status]
+properties:
+  sale_id: { semantic_type: SaleId }
+  status: { const: completed }

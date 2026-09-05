@@ -1,0 +1,3 @@
+name: RecordPurchaseExpenseRequested
+kind: request
+payload: ../../schema/input.yml

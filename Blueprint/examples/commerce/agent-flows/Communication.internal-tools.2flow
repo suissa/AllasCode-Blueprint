@@ -1,0 +1,21 @@
+module Communication
+manager CommunicationManagerAgent
+
+-> CommunicationIntent
+CommunicationManagerAgent ->> IngressAgent
+IngressAgent ->> ProviderWebhookTool
+ProviderWebhookTool <- Ok | Error
+IngressAgent ->> MessageNormalizationTool
+MessageNormalizationTool <- Ok | Error
+IngressAgent <- Ok | Error
+CommunicationManagerAgent ->> OutboundAgent
+OutboundAgent ->> ProviderCapabilityTool
+ProviderCapabilityTool <- Ok | Error
+OutboundAgent ->> ProviderSendTool
+ProviderSendTool <- Ok | Error
+OutboundAgent <- Ok | Error
+CommunicationManagerAgent ->> DeliveryStatusAgent
+DeliveryStatusAgent ->> ProviderStatusTool
+ProviderStatusTool <- Ok | Error
+DeliveryStatusAgent <- Ok | Error
+CommunicationManagerAgent <- Communication.Ok | Communication.Error

@@ -1,0 +1,5 @@
+listen:
+  - CloseSaleRequested
+emit:
+  ok: SaleCompleted
+  error: SaleCloseError

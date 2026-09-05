@@ -1,0 +1,7 @@
+invariants:
+  - stock_id is immutable
+  - inventory_id is immutable
+  - product_id is immutable
+  - quantity >= 0
+  - version never decreases
+  - one stock_id identifies exactly one inventory-product pair

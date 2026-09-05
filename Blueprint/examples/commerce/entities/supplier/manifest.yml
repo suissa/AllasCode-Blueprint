@@ -1,0 +1,13 @@
+id: Supplier
+kind: Entity
+semantic_id: commerce.entity.supplier
+identity: supplier_id
+properties: ./properties.yml
+intents: ./intents.yml
+flows: ./flows.yml
+policies: ./policies.yml
+invariants: ./invariants.yml
+laws: ./laws.yml
+relations:
+  purchases: Purchase[*]
+  products: Product[*]

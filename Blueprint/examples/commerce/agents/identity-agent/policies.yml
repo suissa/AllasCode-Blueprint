@@ -1,0 +1,3 @@
+deny_direct_context_access: [Purchase, Inventory, Financial, Sales, Fiscal, Accounting]
+allow_actor: IdentityActor
+allow_tools: [DpopProofTool, DpopTokenBindingTool, DpopReplayTool, PqEnvelopeTool, PqSignatureTool, KeyRotationTool]

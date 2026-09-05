@@ -1,0 +1,4 @@
+type: object
+required: [product]
+properties:
+  product: { type: object }

@@ -1,0 +1,19 @@
+module Purchase
+manager PurchaseManagerAgent
+
+-> PurchaseIntent
+PurchaseManagerAgent ->> PurchaseEvidenceAgent
+PurchaseEvidenceAgent ->> MediaExtractionTool
+MediaExtractionTool <- Ok | Error
+PurchaseEvidenceAgent <- Ok | Error
+PurchaseManagerAgent ->> SupplierResolutionAgent
+SupplierResolutionAgent ->> SupplierLookupTool
+SupplierLookupTool <- Ok | Error
+SupplierResolutionAgent <- Ok | Error
+PurchaseManagerAgent ->> PurchaseRegistrationAgent
+PurchaseRegistrationAgent ->> PurchaseRepositoryTool
+PurchaseRepositoryTool <- Ok | Error
+PurchaseRegistrationAgent <- Ok | Error
+PurchaseManagerAgent ->> PurchaseHealingTool
+PurchaseHealingTool <- Ok | Error
+PurchaseManagerAgent <- PurchaseRegistered.Ok | Purchase.Error

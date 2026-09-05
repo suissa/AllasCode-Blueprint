@@ -1,0 +1,5 @@
+name: PqSignatureTool
+kind: tool
+semantic_id: commerce.tool.pq-signature
+capability: SignOrVerifyPostQuantum
+results: { Ok: PqSignatureVerified, Error: PqSignatureError }

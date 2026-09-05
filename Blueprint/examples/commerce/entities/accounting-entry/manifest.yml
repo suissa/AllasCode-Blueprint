@@ -1,0 +1,7 @@
+id: AccountingEntry
+kind: Entity
+semantic_id: commerce.entity.accounting-entry
+identity: accounting_entry_id
+properties: ./properties.yml
+relations:
+  invoice: Invoice[1]

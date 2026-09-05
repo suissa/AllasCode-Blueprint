@@ -1,0 +1,6 @@
+proof_obligation:
+  subject: IncreaseStock
+  prove:
+    - terminal_result_is_exclusive
+    - purchase_application_is_idempotent
+    - successful_movements_match_requested_items

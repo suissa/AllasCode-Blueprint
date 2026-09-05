@@ -1,0 +1,3 @@
+listeners:
+  - event: PurchaseProductsRequested
+    dispatch: RegisterPurchase

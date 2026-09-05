@@ -1,0 +1,9 @@
+participates_in:
+  - flow: PurchaseProductsIntent
+    action: InventoryAgent.IncreaseStock
+    consumes: PurchaseRegistered
+    emits: StockIncreased
+  - flow: ProcessSaleIntent
+    action: InventoryAgent.DecreaseStock
+    consumes: SaleProductsResolved
+    emits: StockDecreased

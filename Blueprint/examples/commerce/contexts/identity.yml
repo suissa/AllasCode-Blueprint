@@ -1,0 +1,4 @@
+id: IdentityContext
+entities: [User]
+accepts: [AuthorizeOperatorRequested]
+exports: [OperatorAuthorized, OperatorAuthorizationError]

@@ -1,0 +1,12 @@
+id: User
+identity: user_id
+properties:
+  user_id: SemanticId
+  actor_reference: SemanticId
+  status: UserStatus
+  created_at: DateTime
+states: [active, suspended, disabled]
+invariants:
+  - user_id is immutable
+  - every user must resolve to an authorized actor identity
+  - a disabled user cannot initiate intents

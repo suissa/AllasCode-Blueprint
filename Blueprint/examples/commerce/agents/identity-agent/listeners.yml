@@ -1,0 +1,3 @@
+listeners:
+  - event: AuthorizeOperatorRequested
+    dispatch: AuthorizeOperatorIntent

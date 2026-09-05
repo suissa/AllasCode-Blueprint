@@ -1,0 +1,15 @@
+id: InventoryAgent
+context: InventoryContext
+knows:
+  - Product
+  - Inventory
+can-invoke:
+  - IncreaseStock
+  - DecreaseStock
+listens:
+  - PurchaseRegistered
+  - SaleProductsResolved
+emits:
+  - StockIncreased
+  - StockDecreased
+  - Error

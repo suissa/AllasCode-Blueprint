@@ -1,0 +1,5 @@
+type: object
+required: [evidence]
+properties:
+  evidence:
+    description: Opaque evidence already accepted by the system boundary.

@@ -1,0 +1,16 @@
+name: DecreaseStock
+version: 0.1.0
+kind: action
+semantic_id: commerce.action.decrease-stock
+purpose: apply_resolved_sale_to_inventory
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+  events: ./schema/events.yml
+  specification: ./specifications/contract.yml
+  healing: ./healing/pipeline.yml
+  formalization: ./formalization/README.md
+results:
+  Ok: StockDecreased
+  Error: StockDecreaseError

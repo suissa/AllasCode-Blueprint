@@ -1,0 +1,4 @@
+user_id: SemanticId
+actor_reference: SemanticId
+status: UserStatus
+created_at: DateTime

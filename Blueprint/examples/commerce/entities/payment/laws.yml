@@ -1,0 +1,5 @@
+laws:
+  ConfirmationFinality: confirmed(Payment) preserves amount, currency and commercial reference
+  EvidencePreservation: transition(Payment) never destroys original evidence
+  ReferenceUniqueness: confirmed Payment refers to exactly one commercial fact
+  Auditability: rejected Payment remains addressable by payment_id

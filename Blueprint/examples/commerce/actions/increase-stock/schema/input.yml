@@ -1,0 +1,11 @@
+type: object
+required: [purchase_id, items]
+properties:
+  purchase_id: { semantic_type: PurchaseId }
+  items:
+    type: array
+    items:
+      required: [product_id, quantity]
+      properties:
+        product_id: { semantic_type: ProductId }
+        quantity: { semantic_type: Quantity }

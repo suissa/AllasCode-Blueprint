@@ -1,0 +1,13 @@
+id: Purchase
+identity: purchase_id
+properties:
+  purchase_id: SemanticId
+  supplier_id: SemanticId
+  items: PurchaseItemList
+  total: CurrencyAmount
+  evidence: EvidenceReference
+  occurred_at: DateTime
+states: [identified, registered, completed]
+invariants:
+  - total >= 0
+  - items is not empty

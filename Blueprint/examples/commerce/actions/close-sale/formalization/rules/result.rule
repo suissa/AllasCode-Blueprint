@@ -1,0 +1,2 @@
+rule SaleCompletedRequiresUpstreamEvidence:
+  emit Ok<SaleCompleted> only_if products_resolved and stock_decreased

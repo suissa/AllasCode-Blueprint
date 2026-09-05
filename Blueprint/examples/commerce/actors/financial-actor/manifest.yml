@@ -1,0 +1,7 @@
+name: FinancialActor
+kind: actor
+semantic_id: commerce.actor.financial
+context: Financial
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml
+actions: [RecordPurchaseExpense, CloseSale]

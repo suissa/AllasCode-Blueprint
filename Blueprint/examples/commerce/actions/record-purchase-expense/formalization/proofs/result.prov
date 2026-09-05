@@ -1,0 +1,6 @@
+proof_obligation:
+  subject: RecordPurchaseExpense
+  prove:
+    - terminal_result_is_exclusive
+    - expense_is_idempotent_by_purchase_id
+    - successful_entry_is_correlated

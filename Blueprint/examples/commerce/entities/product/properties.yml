@@ -1,0 +1,9 @@
+product_id: SemanticId
+name: NonEmptyString
+sku: OptionalString
+barcode: OptionalString
+unit: UnitOfMeasure
+sale_price: OptionalCurrencyAmount
+status: active|inactive
+created_at: DateTime
+updated_at: DateTime

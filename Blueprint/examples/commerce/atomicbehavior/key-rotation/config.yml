@@ -1,0 +1,3 @@
+versioning: monotonic
+previous_state: decrypt-only
+commit: atomic

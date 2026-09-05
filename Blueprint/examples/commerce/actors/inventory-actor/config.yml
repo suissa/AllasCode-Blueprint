@@ -1,0 +1,3 @@
+execution: serial
+mailbox_capacity: 64
+state_access: inventory-context-only

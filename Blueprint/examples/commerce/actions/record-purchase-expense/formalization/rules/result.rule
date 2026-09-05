@@ -1,0 +1,2 @@
+rule ExpenseRecordedRequiresCorrelation:
+  emit Ok<PurchaseExpenseRecorded> only_if financial_entry_id is correlated_to purchase_id

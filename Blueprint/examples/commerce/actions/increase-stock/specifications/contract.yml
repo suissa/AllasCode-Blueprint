@@ -1,0 +1,12 @@
+preconditions:
+  - purchase_id_is_known
+  - items_are_non_empty
+  - every_quantity_is_positive
+postconditions:
+  Ok:
+    - inventory_increased_for_every_item
+    - movement_correlates_with_purchase_id
+  Error:
+    - success_event_not_emitted
+invariants:
+  - same_purchase_id_is_applied_at_most_once

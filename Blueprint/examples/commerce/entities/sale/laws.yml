@@ -1,0 +1,6 @@
+laws:
+  ResolutionBeforeMutation: StockDecreased implies SaleProductsResolved happened-before it
+  SingleStockEffect: SaleCompleted implies count(StockDecrease by sale_id) = 1
+  SingleFinancialEffect: SaleCompleted implies count(SaleRevenue by sale_id) = 1
+  CausalCompletion: SaleCompleted implies SaleProductsResolved happened-before StockDecreased happened-before SaleCompleted
+  IdempotentCompletion: repeating ProcessSaleIntent for completed sale_id does not duplicate effects

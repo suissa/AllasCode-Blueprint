@@ -1,41 +1,18 @@
-# Actions
+# Commerce Actions
 
-Actions are independently identifiable and invocable domain operations. An Action expresses **what domain operation is requested**, while Semantic AtomicBehaviors express the smallest behaviors used to realize it.
+This directory is the golden-reference structure for AllasCode Actions in the commerce example.
 
-## Required structure
+Every Action MUST contain the same semantic contract:
 
-Each Action example may contain:
+- `README.md` — human explanation of purpose, inputs, outputs, events and invariants.
+- `manifest.yml` — externally visible semantic identity and contract references.
+- `config.yml` — internal configuration used to instantiate the Action.
+- `schema/` — input, output, error and event payload definitions.
+- `events/` — events listened to and emitted by the Action.
+- `specifications/` — executable/declarative behavioral contract.
+- `healing/` — reversible self-healing pipeline. Normalization is allowed only here or inside validation behaviors.
+- `formalization/` — laws, rules, proof obligations and evidence.
 
-- `README.md` — human explanation: purpose, inputs, outputs, files and usage example.
-- `manifest.yml` — public semantic identity and contract references.
-- `config.yml` — internal runtime/binding values.
-- `schema/input.yml` — shape of accepted input.
-- `schema/output.yml` — shape of successful output payload.
-- `schema/error.yml` — shape of error payload when the common result is `Error<E>`.
-- `specifications/contract.yml` — preconditions, postconditions and invariants.
-- `formalization/` — optional formal laws/proofs when this Action requires them.
+An Action has exactly two terminal result types: `Ok<T>` and `Error<E>`. Domain events such as `PurchaseRegistered` or `StockDecreased` are payloads carried by those terminal result types, not additional terminal states.
 
-Actions do **not** create new result/event categories. Every invocation returns only the shared `Ok<T>` or `Error<E>` declared in `../events/result.yml`.
-
-## Examples
-
-- `register-purchase/` — turns interpreted supplier purchase data into a registered purchase ready for stock entry.
-- `resolve-sale-products/` — resolves which products compose a sale detected by the card machine.
-
-Example invocation result:
-
-```yaml
-kind: Ok
-semantic: PurchaseRegistered
-value:
-  purchase_id: purchase:2026-0001
-```
-
-A domain failure remains an `Error`, even if the payload identifies a more specific semantic reason:
-
-```yaml
-kind: Error
-semantic: PurchaseRegistrationFailed
-error:
-  code: SUPPLIER_UNRESOLVED
-```
+No file in this example selects a programming language, framework, database or transport implementation.

@@ -1,0 +1,6 @@
+proof_obligation:
+  subject: DecreaseStock
+  prove:
+    - terminal_result_is_exclusive
+    - sale_application_is_idempotent
+    - stock_never_becomes_negative

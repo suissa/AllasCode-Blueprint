@@ -1,0 +1,2 @@
+rule StockIncreasedRequiresAppliedMovements:
+  emit Ok<StockIncreased> only_if all requested movements were applied and correlated to purchase_id

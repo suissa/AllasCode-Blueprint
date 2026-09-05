@@ -1,0 +1,7 @@
+name: InventoryActor
+kind: actor
+semantic_id: commerce.actor.inventory
+context: Inventory
+mailbox: ./mailbox.yml
+supervision: ./supervision.yml
+actions: [IncreaseStock, DecreaseStock, DecreaseStockVerified]

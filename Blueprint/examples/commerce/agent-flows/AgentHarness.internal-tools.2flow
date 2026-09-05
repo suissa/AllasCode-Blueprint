@@ -1,0 +1,27 @@
+module AgentHarness
+manager AgentHarnessManagerAgent
+
+-> HarnessInvocation
+AgentHarnessManagerAgent ->> PrepareAgent
+PrepareAgent ->> AuthorizationTool
+AuthorizationTool <- Ok | Error
+PrepareAgent ->> DeadlineTool
+DeadlineTool <- Ok | Error
+PrepareAgent <- Ok | Error
+AgentHarnessManagerAgent ->> InvokeAgent
+InvokeAgent ->> AgentExecutionTool
+AgentExecutionTool <- Ok | Error
+InvokeAgent <- Ok | Error
+AgentHarnessManagerAgent ->> ObserveAgent
+ObserveAgent ->> EvidenceTool
+EvidenceTool <- Ok | Error
+ObserveAgent <- Ok | Error
+AgentHarnessManagerAgent ->> EvaluateAgent
+EvaluateAgent ->> OutputContractTool
+OutputContractTool <- Ok | Error
+EvaluateAgent <- Ok | Error
+AgentHarnessManagerAgent ->> FinalizeAgent
+FinalizeAgent ->> HarnessEvidenceTool
+HarnessEvidenceTool <- Ok | Error
+FinalizeAgent <- Ok | Error
+AgentHarnessManagerAgent <- Harness.Ok | Harness.Error
