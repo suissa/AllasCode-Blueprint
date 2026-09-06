@@ -1,8 +1,7 @@
 # GENERATED FILE
 # Do not edit manually.
 # Semantic source: Blueprint/examples/commerce/config.yml#ci
-# Language binding: AllasCode-infra/actions/languages/typescript.yml
-# Platform projection: AllasCode-infra/actions/platforms/github-actions.yml
+# Language binding and platform projection are repository-local executable declarations.
 
 name: Commerce Example CI
 
