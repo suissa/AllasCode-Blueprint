@@ -1,5 +1,11 @@
-status: valid
+status: unproven
 law: invocation.law
 proof: invocation.prov
-verified_by: Agda
-timestamp: 2026-08-23T00:00:00Z
+verification:
+  kind: claim
+  checker: none
+  reason: Agda proof is not currently executed by repository CI.
+requirements_to_promote:
+  - machine-checkable proof term
+  - agda --safe verification
+  - CI step producing content-addressed verification evidence
