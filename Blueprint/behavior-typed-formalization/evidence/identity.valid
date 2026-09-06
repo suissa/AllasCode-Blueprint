@@ -1,4 +1,11 @@
-status: valid
+status: unproven
 law: identity.law
 proof: identity.prov
-verified_by: Agda
+verification:
+  kind: claim
+  checker: none
+  reason: Agda proof is not currently executed by repository CI.
+requirements_to_promote:
+  - machine-checkable proof term
+  - agda --safe verification
+  - CI step producing content-addressed verification evidence
