@@ -1,6 +1,6 @@
 # AllasCode Blueprint
 
-## Semantic-First, Proof-Governed, Self-Healing Architecture
+## Semantic as Code, Proof-Governed, Self-Healing Architecture
 
 AllasCode is an architectural blueprint for building systems in which **domain semantics are the primary source of structure** and implementation is a replaceable consequence of those semantics.
 
