@@ -1,0 +1,32 @@
+PROOF IntentIntegrityProof
+
+GIVEN
+  Intent I
+  Trajectory T
+  FinalState S
+  Verifier V
+  Capabilities C
+  Invariants Inv
+  Evidence E
+
+OBLIGATIONS
+  P1 Outcome(I, S)
+  P2 ForAll inv in Inv: inv(T, S)
+  P3 ForAll op in Operations(T): Authorized(op, C)
+  P4 AuthorizedTrajectory(I, T)
+  P5 Pinned(V) && DigestValid(V) && NotModifiedBy(V, T)
+  P6 ModifierCriticalWrites(T) INTERSECT VerifierCriticalResources(V) = EMPTY
+  P7 EvidenceSealed(E)
+  P8 EvidenceCoversTrajectory(E, T)
+  P9 ProvenanceRootValid(E)
+
+DERIVE
+  Verified := P1 && P2 && P3 && P4 && P5 && P6 && P7 && P8 && P9
+
+CLASSIFY
+  Compromised WHEN DirectIntegrityViolation(E)
+  Blocked WHEN ForbiddenOperationAttempted(E) && OperationPrevented(E)
+  Inconclusive WHEN !Verified && !Compromised && !Blocked
+
+RULE
+  Acceptance(I) IFF Verified
