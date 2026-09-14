@@ -16,9 +16,6 @@ import type {
 
 const BEHAVIOR = 'CheckoutAgent.BuyOneProduct';
 
-type StepOk = Record<string, unknown>;
-type StepResult<T extends StepOk> = InternalResult<T, RuntimeError>;
-
 function err(code: string, message: string, details?: unknown): InternalResult<never, RuntimeError> {
   return { status: 'Error', error: { code, message, details } };
 }
@@ -29,7 +26,7 @@ function resolveProduct(state: BuyOneProductState, productRef: string): Internal
     product.active && (product.product_id.toLowerCase() === normalized || product.aliases.some(alias => alias.toLowerCase() === normalized)),
   );
   if (matches.length !== 1) return err('PRODUCT_NOT_UNIQUE', 'Product reference must resolve to exactly one active product', { product_ref: productRef, matches: matches.length });
-  return { status: 'Ok', value: matches[0] };
+  return { status: 'Ok', value: matches[0]! };
 }
 
 function resolveAuthoritativePrice(product: ProductRecord): InternalResult<{ product: ProductRecord; amount: number; currency: ProductRecord['currency'] }, RuntimeError> {
