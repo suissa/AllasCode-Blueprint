@@ -10,5 +10,14 @@ behaviors:
 capabilities: ./capabilities.yml
 runtime:
   executable_directly: false
-  may_emit_events: false
-  result_contract: InternalResult<Ok,Error>
+  function_execution_authority: Runtime
+  action_result_delivery: local_event
+  self_healing_on_action_error: mandatory
+  predecessor_binding:
+    source: Intent.2flow
+    persistence: runtime_only
+    static_config: forbidden
+    injected_field: previous_agent
+    purpose:
+      - subscribe_to_previous_agent_ok
+      - route_unrecoverable_error_upstream
