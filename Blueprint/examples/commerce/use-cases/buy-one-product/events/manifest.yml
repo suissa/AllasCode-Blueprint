@@ -1,0 +1,33 @@
+api_version: allascode/v1
+kind: EventContract
+behavior: CheckoutAgent.BuyOneProduct
+source_of_truth: Runtime
+input_trigger:
+  name: BuyOneProductRequested
+  origin:
+    - GatewayAgent
+    - UIAgent
+  creates_trace_id: true
+terminal_events:
+  derivation: "{behavior.canonical_label}.{internal_result.status}"
+  allowed:
+    - CheckoutAgent.BuyOneProduct.Ok
+    - CheckoutAgent.BuyOneProduct.Error
+  configurable: false
+  emitted_by_implementation: false
+  emitted_by_agent: false
+  emitted_by_actor: false
+  emitted_by_runtime: true
+envelope:
+  required:
+    - event_id
+    - trace_id
+    - causation_id
+    - canonical_label
+    - occurred_at
+    - payload
+rules:
+  - one_terminal_event_per_behavior_execution
+  - event_status_equals_internal_result_status
+  - terminal_event_is_a_side_effect_of_runtime_execution
+  - action_results_are_internal_and_do_not_create_public_action_events
