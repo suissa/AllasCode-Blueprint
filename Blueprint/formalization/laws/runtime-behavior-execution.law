@@ -1,0 +1,20 @@
+Execute(Runtime, Behavior, Input) -> InternalResult
+
+InternalResult = Ok(Value) | Error(Cause)
+
+Only(Runtime, ExecuteFunction)
+Not(Agent, ExecuteFunction)
+Not(Actor, ExecuteFunction)
+Not(BehaviorImplementation, EmitEvent)
+Not(ActionImplementation, EmitEvent)
+
+BehaviorLabel = AgentName.IntentName
+
+Execute(Runtime, Behavior[BehaviorLabel], Input) = Ok(Value)
+  -> SideEffect(Runtime, Emit(BehaviorLabel.Ok, Value))
+
+Execute(Runtime, Behavior[BehaviorLabel], Input) = Error(Cause)
+  -> SideEffect(Runtime, Emit(BehaviorLabel.Error, Cause))
+
+EventLabel is Derived, not Configured
+EventEmission is a Runtime SideEffect of Behavior Execution
