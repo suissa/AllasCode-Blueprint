@@ -1,0 +1,22 @@
+BuyOneProductIntent
+-> BuyOneProductRequested
+->> CheckoutAgent.ResolveProduct
+<<- ResolveProduct.Ok
+->> CheckoutAgent.ResolveAuthoritativePrice
+<<- ResolveAuthoritativePrice.Ok
+->> CheckoutAgent.ReserveOneStockUnit
+<<- ReserveOneStockUnit.Ok
+->> CheckoutAgent.AuthorizePayment
+<<- AuthorizePayment.Ok
+->> CheckoutAgent.RegisterSale
+<<- RegisterSale.Ok
+->> CheckoutAgent.CommitStockReservation
+<<- CommitStockReservation.Ok
+<- CheckoutAgent.BuyOneProduct.Ok
+
+ResolveProduct.Error -> CheckoutAgent.BuyOneProduct.Error
+ResolveAuthoritativePrice.Error -> CheckoutAgent.BuyOneProduct.Error
+ReserveOneStockUnit.Error -> CheckoutAgent.BuyOneProduct.Error
+AuthorizePayment.Error ->> CheckoutAgent.ReleaseStockReservation
+RegisterSale.Error -> [CheckoutAgent.ReleasePaymentAuthorization, CheckoutAgent.ReleaseStockReservation]
+CommitStockReservation.Error -> [CheckoutAgent.ReleasePaymentAuthorization, CheckoutAgent.ReleaseStockReservation]
