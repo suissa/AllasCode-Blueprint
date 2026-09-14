@@ -1,72 +1,104 @@
 # Buy One Product — canonical executable vertical slice
 
-This use case models the human intent **"I want to buy one product"** as an AllasCode execution lineage rather than as an imperative command chain.
+This use case models the human intent **"I want to buy one product"** as an AllasCode execution lineage driven by an Intent 2flow.
 
-## Semantic lineage
+## Runtime authority
 
-```text
-User/UI/Gateway
-  -> BuyOneProductRequested
-  -> Runtime resolves CheckoutAgent.BuyOneProduct
-  -> Runtime executes the Behavior
-  -> Runtime executes the supervised Atomic Actions required by the Behavior
-  -> Agent/Behavior returns only an internal Result<Ok, Error>
-  -> Runtime derives and emits CheckoutAgent.BuyOneProduct.Ok | CheckoutAgent.BuyOneProduct.Error
-```
+Only the Runtime executes functions. Actions do not call one another and Agents do not imperatively command one another.
 
-The initiating `trace_id` is created by the GatewayAgent, or by the UIAgent when the intent originates in the UI. Every execution record preserves the same `trace_id`; each emitted event receives its own `event_id` and direct `causation_id`.
-
-## Runtime authority rule
-
-Only the Runtime may execute a function. Agents, Actors, Behaviors and Actions describe executable semantics and return internal results; they do not publish events themselves.
-
-For every Behavior `B` with canonical label `L`:
+The semantic sequence is:
 
 ```text
-Runtime.execute(B, input) -> InternalResult
-
-InternalResult.Ok(value)
-  => Runtime side effect: emit L.Ok(value)
-
-InternalResult.Error(error)
-  => Runtime side effect: emit L.Error(error)
+Runtime executes Action
+  -> Action produces Ok | Error
+  -> Runtime materializes that result as an Agent-local Action event
+  -> owning Agent consumes the Action event
 ```
 
-Therefore event names are not configurable by implementation code and are not returned by Agent code. Event emission is an observable side effect of Behavior execution controlled exclusively by the Runtime.
+The `Ok` and `Error` therefore **originate semantically from the Action execution**, even though the Runtime is the publication authority.
 
-Because an Action is a Semantic AtomicBehavior, the same rule applies recursively to Atomic Actions.
+## Ok path
 
-## Required artifacts
+An Action `Ok` is not automatically an Agent `Ok`.
 
-- Intent: `intents/buy-one-product.yml`
-- Behavior: `behaviors/buy-one-product/manifest.yml`
-- Flow: `flows/buy-one-product.2flow`
-- Agent + Actor: `agents/checkout-agent/*`, `actors/checkout-actor/*`
-- Atomic Actions: `actions/*/manifest.yml`
-- Runtime execution contract: `runtime/*`
-- Event derivation contract: `events/manifest.yml`
-- Policy and invariants: `formalization/invariants.yml`
-- Executable scenarios: `tests/scenarios.yml`
+After every Action `Ok`, the Runtime reads the current Agent's position in the Intent 2flow:
 
-## Business contract
+```text
+Action.Ok
+  -> remaining Action exists
+       -> Runtime executes next Action
+  -> no remaining Action exists
+       -> Runtime emits CheckoutAgent.BuyOneProduct.Ok
+```
 
-Input identifies exactly one product and quantity is fixed to `1`. The Runtime must resolve the product and authoritative price, reserve one stock unit, authorize payment, register the sale, and atomically commit the reservation. If a later step cannot complete, compensation runs before healing continues.
+`CheckoutAgent.BuyOneProduct.Ok` is therefore evidence that the Agent's portion of the Intent 2flow is exhausted successfully.
 
-No Agent commands another Agent. The flow is a declarative execution plan interpreted by the Runtime; it is not imperative Agent-to-Agent invocation.
+## Error path
 
-## Success
+An Action `Error` is consumed first by the owning Agent:
 
-Success is observable only after all of the following are true:
+```text
+Action.Error
+  -> Agent receives local Error
+  -> mandatory self-healing pipeline
+       -> healed: Runtime resumes execution
+       -> exhausted: Runtime publishes CheckoutAgent.BuyOneProduct.Error
+```
 
-1. product identity and price were resolved from authoritative data;
-2. one stock unit was reserved;
-3. payment was authorized for the resolved amount;
-4. the sale was durably registered;
-5. reservation became a committed stock decrement;
-6. Event Sourcing contains the accepted transition chain.
+The public Agent `Error` does not exist before the final stage of self-healing is exhausted.
 
-The Agent/Behavior returns internal `Ok`. The Runtime then derives and emits `CheckoutAgent.BuyOneProduct.Ok`.
+## Dynamic cross-Agent wiring
 
-## Error semantics
+An Agent source config contains no hard-coded foreign Agent name.
 
-The Agent/Behavior returns internal `Error`; it never emits `.Error` itself. The Runtime derives the canonical `.Error` event, records it, and routes the failure through compensation and Healing. If automatic healing cannot safely continue, the case becomes Human-in-the-Healing-Loop while preserving the same trace.
+When the Intent 2flow is read to instantiate the runtime Agents, the predecessor relationship is derived from the flow and injected into the Agent runtime instance:
+
+```text
+Intent.2flow
+  A -> B
+
+Runtime creates B with:
+  previous_agent = "A"
+```
+
+That injected `previous_agent` is the **only foreign Agent identity visible to B**. It is runtime-only and is never persisted in B's authored config.
+
+It is used for two things:
+
+1. B subscribes to `A.<Intent>.Ok` to know when its part of the flow may start.
+2. If B exhausts self-healing, `B.<Intent>.Error` is routed back to A.
+
+B does not need to know the name of any downstream Agent. Successful continuation is event choreography: downstream Agents are themselves instantiated with their own predecessor binding from the same 2flow.
+
+## Purchase actions
+
+```text
+ResolveProduct
+ResolveAuthoritativePrice
+ReserveOneStockUnit
+AuthorizePayment
+RegisterSale
+CommitStockReservation
+```
+
+Compensation Actions are available for reversible effects:
+
+```text
+ReleasePaymentAuthorization
+ReleaseStockReservation
+```
+
+## Trace lineage
+
+The initiating `trace_id` is created by the GatewayAgent, or by the UIAgent when the Intent originates in the UI. Action-local events, healing activity and public Agent completion events preserve that trace. Each emitted event has its own `event_id` and direct `causation_id`.
+
+## Canonical rules demonstrated
+
+- Runtime is the only function execution authority.
+- Action execution is the semantic origin of local `Ok | Error` events.
+- Action `Ok` advances the 2flow; it does not by itself mean Agent success.
+- Agent `Ok` exists only when the Runtime proves that no Action remains for that Agent in the Intent 2flow.
+- Action `Error` is handled by the owning Agent's self-healing pipeline.
+- Agent `Error` exists only after self-healing is exhausted and is routed to the dynamically injected predecessor.
+- Foreign Agent identities are never hard-coded in Agent source configuration.
+- Runtime Agent wiring is derived exclusively from the Intent 2flow.
