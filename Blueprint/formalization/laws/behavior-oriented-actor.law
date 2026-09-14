@@ -1,0 +1,25 @@
+# Behavior-Oriented Actor Model laws
+
+Agent(a) ∧ OwnsIntent(a, i) ∧ Realizes(i, b) → Governs(i, b)
+
+Execute(action) → ∃ intent, behavior : Governs(intent, behavior) ∧ Contains(behavior, action)
+
+Actor(r) → ∃! agent : BelongsTo(r, agent)
+
+ActionExecution(x) → ∃! supervisor : Supervises(supervisor, x)
+
+Actor(r1) ∧ Actor(r2) ∧ r1 ≠ r2 → ¬DirectWrite(r1, PrivateState(r2))
+
+Observe(r1, r2) → PolicyAllows(r1, Projection(State(r2)))
+
+InterAgentEffect(a, b) → ChoreographedByEvent(a, b) ∨ ExplicitCompensation(a, b)
+
+Action(a) ∧ Effect(a, x) → DeclaredCapability(a, x)
+
+CompositeBehavior(b) → ∀ a ∈ Actions(b) : PreservesInvariant(b, a)
+
+State(r) = Fold(Apply, InitialState(r), AcceptedLocalEvents(r))
+
+Intent(i) ∧ ExecutionInstance(i, x) → ImmutableSemanticIdentity(i, x)
+
+InScopeInvocation(i) → Eventually(Ok(i) ∨ Healing(Error(i)) ∨ HumanHealingEscalation(i))
