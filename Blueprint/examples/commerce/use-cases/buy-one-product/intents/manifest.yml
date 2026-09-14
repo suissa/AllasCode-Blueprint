@@ -1,0 +1,21 @@
+api_version: allascode/v1
+kind: intent
+name: BuyOneProductIntent
+semantic_id: commerce.intent.buy-one-product
+canonical_label: CheckoutAgent.BuyOneProduct
+source: ./buy-one-product.yml
+active: true
+flow: ../flows/buy-one-product.2flow
+behavior: ../behaviors/buy-one-product/manifest.yml
+input:
+  type: BuyOneProductInput
+  required: [buyer_id, product_ref, payment_method]
+  properties:
+    buyer_id: { type: string }
+    product_ref: { type: string }
+    quantity: { const: 1 }
+    payment_method: { type: string }
+    idempotency_key: { type: string }
+output:
+  type: BuyOneProductResult
+  required: [sale_id, product_id, quantity, amount, currency, payment_id]
