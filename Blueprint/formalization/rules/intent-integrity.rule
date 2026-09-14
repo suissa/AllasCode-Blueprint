@@ -1,0 +1,37 @@
+RULESET IntentIntegrityRuntime
+
+WHEN IntentExecutionCompletes
+  REQUIRE ProofStatus
+
+IF ProofStatus == Verified
+  THEN ExternalEvent.Type = Ok
+
+IF ProofStatus == Compromised
+  THEN ExternalEvent.Type = Error
+  AND ROUTE Healing
+
+IF ProofStatus == Blocked
+  THEN ExternalEvent.Type = Error
+  AND RECORD AttemptedViolation
+  AND ROUTE Healing
+
+IF ProofStatus == Inconclusive
+  THEN DO_NOT_ACCEPT
+  AND ROUTE HealingOrHumanInTheHealingLoop
+
+FORBID ExecutionModifier WRITE VerifierImplementation
+FORBID ExecutionModifier WRITE AcceptanceSpecification
+FORBID ExecutionModifier WRITE TrustedVerificationInput
+FORBID ExecutionModifier WRITE ProofPolicy
+FORBID ExecutionModifier WRITE InvariantDefinitionUsedByCurrentExecution
+FORBID ExecutionModifier WRITE SealedEvidence
+
+REQUIRE Verifier.IdentityPinned
+REQUIRE Verifier.VersionPinned
+REQUIRE Verifier.DigestPinned
+REQUIRE Evidence.Sealed
+REQUIRE Evidence.ProvenanceRoot
+REQUIRE CapabilityUse.Auditable
+REQUIRE Trajectory.Auditable
+
+NOTE Internal proof richness MUST NOT change the public event naming rule `{Agent-name}.{Intent-name}.{Type}` where Type is `Ok|Error`.
