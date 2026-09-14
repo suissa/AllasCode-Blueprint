@@ -1,0 +1,63 @@
+scenarios:
+  - id: BUY-OK-001
+    given:
+      product: coffee-500g
+      stock: 3
+      authoritative_price: 24.90
+      payment: authorized
+    when:
+      intent: BuyOneProductIntent
+      quantity: 1
+    then:
+      internal_result: Ok
+      terminal_event: CheckoutAgent.BuyOneProduct.Ok
+      stock: 2
+      sale_count: 1
+      event_count: 1
+
+  - id: BUY-ERROR-STOCK-001
+    given:
+      product: coffee-500g
+      stock: 0
+    when:
+      intent: BuyOneProductIntent
+    then:
+      internal_result: Error
+      error_code: OUT_OF_STOCK
+      terminal_event: CheckoutAgent.BuyOneProduct.Error
+      sale_count: 0
+      payment_count: 0
+      event_count: 1
+
+  - id: BUY-ERROR-PAYMENT-001
+    given:
+      product: coffee-500g
+      stock: 3
+      payment: declined
+    when:
+      intent: BuyOneProductIntent
+    then:
+      internal_result: Error
+      error_code: PAYMENT_DECLINED
+      reservation_released: true
+      terminal_event: CheckoutAgent.BuyOneProduct.Error
+      stock: 3
+      event_count: 1
+
+  - id: BUY-IDEMPOTENT-001
+    given:
+      same_idempotency_key_is_submitted_twice: true
+    when:
+      intent: BuyOneProductIntent
+    then:
+      successful_sale_count: 1
+      stock_decrement: 1
+      second_result_equals_first: true
+
+  - id: BUY-RUNTIME-AUTHORITY-001
+    then:
+      agent_emits_event: false
+      actor_emits_event: false
+      action_emits_event: false
+      runtime_emits_terminal_event: true
+      event_name_is_derived_from_internal_result: true
