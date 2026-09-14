@@ -23,8 +23,8 @@ test('runtime executes the behavior and derives the Ok event from the internal r
   assert.equal(state.stock.get('coffee-500g'), 2);
   assert.equal(state.sales.size, 1);
   assert.equal(events.events.length, 1);
-  assert.equal(events.events[0].canonical_label, 'CheckoutAgent.BuyOneProduct.Ok');
-  assert.equal(events.events[0].trace_id, 'trace-buy-1');
+  assert.equal(events.events.at(0)?.canonical_label, 'CheckoutAgent.BuyOneProduct.Ok');
+  assert.equal(events.events.at(0)?.trace_id, 'trace-buy-1');
 });
 
 test('out of stock becomes internal Error and Runtime emits canonical Error', () => {
@@ -53,7 +53,8 @@ test('payment failure compensates the stock reservation before Runtime emits Err
   const result = runtime.execute(input(), trace());
 
   assert.equal(result.status, 'Error');
-  const reservation = [...state.reservations.values()][0];
+  const reservation = [...state.reservations.values()].at(0);
+  assert.ok(reservation);
   assert.equal(reservation.released, true);
   assert.equal(state.stock.get('coffee-500g'), 3);
   assert.equal(events.events.at(-1)?.canonical_label, 'CheckoutAgent.BuyOneProduct.Error');
