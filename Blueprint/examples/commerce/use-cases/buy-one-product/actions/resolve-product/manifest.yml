@@ -1,0 +1,17 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: ResolveProduct
+semantic_id: commerce.action.resolve-product
+owner: CheckoutAgent
+purpose: resolve_product_reference_to_one_active_product
+input: ProductReference
+output: ResolvedProduct
+result: InternalResult<ResolvedProduct,ResolveProductError>
+capabilities: [Product.catalog.read]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+invariants:
+  - exactly_one_product_must_match
+  - product_must_be_active
