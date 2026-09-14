@@ -1,0 +1,10 @@
+mailbox:
+  capacity_bytes: 1048576
+  ordering: per-trace
+  accepted:
+    - RuntimeBehaviorInvocation
+  rejects:
+    - direct_agent_command
+    - arbitrary_function_call
+  correlation:
+    key: trace_id
