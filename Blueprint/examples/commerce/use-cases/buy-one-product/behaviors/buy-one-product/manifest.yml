@@ -1,0 +1,42 @@
+api_version: allascode/v1
+kind: Behavior
+identity:
+  canonical_label: CheckoutAgent.BuyOneProduct
+  name: BuyOneProduct
+  version: 1.0.0
+owner:
+  agent: CheckoutAgent
+intent: BuyOneProductIntent
+classification:
+  composite: true
+  deterministic: true
+execution:
+  authority: Runtime
+  implementation_may_execute_functions: false
+  implementation_may_emit_events: false
+  result:
+    internal_union: [Ok, Error]
+  runtime_event_derivation:
+    Ok: CheckoutAgent.BuyOneProduct.Ok
+    Error: CheckoutAgent.BuyOneProduct.Error
+plan:
+  - ResolveProduct
+  - ResolveAuthoritativePrice
+  - ReserveOneStockUnit
+  - AuthorizePayment
+  - RegisterSale
+  - CommitStockReservation
+compensation:
+  reverse_order: true
+  on_failure_after_payment:
+    - ReleasePaymentAuthorization
+    - ReleaseStockReservation
+  on_failure_before_payment:
+    - ReleaseStockReservation
+invariants:
+  - quantity_is_exactly_one
+  - price_is_authoritative_at_execution
+  - stock_is_reserved_before_payment
+  - sale_is_not_committed_without_payment_authorization
+  - event_emission_is_runtime_only
+  - emitted_event_is_derived_from_internal_result
