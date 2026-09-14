@@ -1,0 +1,19 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: AuthorizePayment
+semantic_id: commerce.action.authorize-payment
+owner: CheckoutAgent
+purpose: authorize_payment_for_the_authoritative_purchase_amount
+input: CheckoutPaymentRequest
+output: PaymentAuthorization
+result: InternalResult<PaymentAuthorization,PaymentAuthorizationError>
+capabilities: [Payment.authorize]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+invariants:
+  - authorized_amount_equals_authoritative_price
+  - authorized_currency_equals_price_currency
+  - authorization_is_bound_to_trace_id
+  - duplicate_authorization_is_prevented_by_idempotency_key
