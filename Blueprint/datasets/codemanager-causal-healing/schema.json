@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CodeManager Causal Healing Dataset Record",
+  "type": "object",
+  "required": [
+    "id",
+    "observable_input",
+    "gold_codemanager",
+    "gold_solution"
+  ],
+  "properties": {
+    "id": {"type": "string"},
+    "split": {"type": "string", "enum": ["train", "eval"]},
+    "observable_input": {
+      "type": "object",
+      "required": ["intent", "actions", "events", "metrics", "traces", "logs", "error"],
+      "properties": {
+        "intent": {
+          "type": "object",
+          "required": ["canonical_label", "goal", "invariants"],
+          "properties": {
+            "canonical_label": {"type": "string"},
+            "goal": {"type": "string"},
+            "invariants": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["canonical_label", "description", "preconditions", "postconditions"],
+            "properties": {
+              "canonical_label": {"type": "string"},
+              "description": {"type": "string"},
+              "preconditions": {"type": "array", "items": {"type": "string"}},
+              "postconditions": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "events": {"type": "array", "items": {"type": "string"}},
+        "metrics": {"type": "object", "additionalProperties": true},
+        "traces": {"type": "array", "items": {"type": "string"}},
+        "logs": {"type": "array", "items": {"type": "string"}},
+        "error": {"type": "string"}
+      }
+    },
+    "gold_codemanager": {
+      "type": "object",
+      "required": [
+        "fault_class",
+        "suspected_scope",
+        "thesis",
+        "mechanism",
+        "causal_chain",
+        "falsification_criteria",
+        "alternative_causes",
+        "solution_request"
+      ],
+      "properties": {
+        "fault_class": {"type": "string", "enum": ["code", "system", "unknown"]},
+        "suspected_scope": {"type": "string"},
+        "thesis": {"type": "string"},
+        "mechanism": {"type": "string"},
+        "causal_chain": {"type": "array", "items": {"type": "string"}},
+        "falsification_criteria": {"type": "array", "items": {"type": "string"}},
+        "alternative_causes": {"type": "array", "items": {"type": "string"}},
+        "solution_request": {"type": "string"}
+      }
+    },
+    "gold_solution": {
+      "type": "object",
+      "required": [
+        "causal_explanation",
+        "proposed_change",
+        "mutation_scope",
+        "predicted_effect",
+        "risks",
+        "verification"
+      ],
+      "properties": {
+        "causal_explanation": {"type": "string"},
+        "proposed_change": {"type": "string"},
+        "mutation_scope": {"type": "string"},
+        "predicted_effect": {"type": "string"},
+        "risks": {"type": "array", "items": {"type": "string"}},
+        "verification": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}
