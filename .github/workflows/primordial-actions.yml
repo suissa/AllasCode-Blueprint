@@ -1,0 +1,34 @@
+name: Primordial Action Contracts
+
+on:
+  pull_request:
+    paths:
+      - 'Blueprint/atomicbehavior/actions/**'
+      - '.github/workflows/primordial-actions.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'Blueprint/atomicbehavior/actions/**'
+      - '.github/workflows/primordial-actions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SourceCheckout
+        uses: actions/checkout@v4
+      - name: EnvironmentSetup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: PrimordialActionContracts
+        run: >-
+          python -m unittest discover
+          -s Blueprint/atomicbehavior/actions/tests
+          -p 'test_*.py'
+          -v
