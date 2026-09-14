@@ -1,37 +1,56 @@
 # Contextual Behavioral Identity
 
-Contextual Behavioral Identity is compiler step `4.5`, executed after Semantic Identity Resolution and before Runtime Topology generation.
+Contextual Behavioral Identity is compiler step `4.5`, after Semantic Identity
+Resolution and before Runtime Topology generation.
+
+A semantic identity answers whether one entity can be recognized. A contextual
+behavioral identity answers whether identities from distinct entities have been
+coupled, inside one exact behavior context, so that the entity can exhibit that
+behavior completely.
+
+## Normative derivation
+
+For canonical participant paths `P` and context `C`, the compiler derives:
 
 ```text
-Semantic Identity
-  -> Contextual Identity Coupling
-  -> Behavioral Identity Resolution
-  -> Behavioral Completion Proofs
-  -> Runtime Topology
+contextual_identity_id = "cbi:sha256:" + SHA-256(
+  canonical-json({ context: C, participants: sort(P) })
+)
 ```
 
-## Identity layers
+Participant order therefore does not alter identity, while changing the context
+or a participant does. A valid coupling MUST:
 
-| Layer | Question | Result |
-| --- | --- | --- |
-| Semantic Identity | How is this entity recognized? | `semantically_identified` |
-| Behavioral Identity | Can this entity participate in this behavior? | `behaviorally_partial` or `behaviorally_concretized` |
-| Contextual Identity Coupling | Which identities complete each other in this context? | graph edges and proof dependencies |
-| Canonical Characteristic | Which semantic property bridges identities? | coupling point, identity bridge, theorem dependency |
+- declare a non-empty name and context;
+- contain at least two canonical characteristics;
+- join at least two distinct entities;
+- reference properties actually declared by those entities;
+- remain isolated from couplings in every other context.
 
-An entity may exist semantically before it exists behaviorally. For example, a `User` with `email`, `cpf`, `phone`, and `name` is recognized, but remains partial for `CheckoutBehavior` until `AddressIdentity`, `PaymentIdentity`, `ProductIdentity`, `StockIdentity`, and `SessionIdentity` are coupled.
+Invalid or unresolved couplings are fail-closed: they remain
+`behaviorally_partial`, produce failed proof obligations and diagnostics, and
+MUST NOT be projected into runtime topology.
+
+## Identity states
+
+| Scope | States |
+| --- | --- |
+| Entity semantic identity | `semantically_identified`, `semantically_partial` |
+| Contextual coupling | `behaviorally_concretized`, `behaviorally_partial` |
+| Behavior completion | `contextually_complete`, `behaviorally_partial` |
+
+Semantic state is emitted per entity. The aggregate is
+`semantically_identified` only when every entity is identified.
 
 ## DSL surface
 
 ```text
 behavioral_identity StockBehavioralIdentity {
   context Stock
-
   couples {
     Product.sku
     Warehouse.location
   }
-
   provides {
     Stock.contextually_complete
   }
@@ -41,47 +60,36 @@ behavioral_identity StockBehavioralIdentity {
 ```text
 behavioral_identity CheckoutBehavioralIdentity {
   context Order.Checkout
-
   requires_identity {
     UserIdentity
     ProductIdentity
     StockIdentity
     PaymentIdentity
     AddressIdentity
+    SessionIdentity
   }
-
   provides {
     Order.contextually_complete
   }
 }
 ```
 
-## Compiler module
+A required identity is satisfied only by a concretized coupling with the exact
+same context. A similarly named identity from another context cannot complete
+the behavior.
 
-The executable reference implementation lives in `src/compiler/behavioral-identity`.
+## Compiler evidence
 
-Main entrypoint:
+The executable implementation is in `src/compiler/behavioral-identity`.
+`deriveBehavioralIdentity(entityIR)` emits:
 
-```js
-import { deriveBehavioralIdentity } from "../../../src/compiler/behavioral-identity/index.mjs";
-```
+- per-entity semantic states and canonical characteristics;
+- deterministic, context-bound composite identity IDs;
+- resolved coupling edges only;
+- explicit unresolved dependencies and diagnostics;
+- behavior completion states;
+- proof obligations with SHA-256 evidence digests.
 
-The resolver emits:
-
-- derived canonical characteristics;
-- contextual coupling graph edges;
-- identity completion states;
-- proof obligations for coupling and contextual completion;
-- runtime topology nodes and edges.
-
-## Required semantics
-
-A `canonical_characteristic` is not a common property. It is treated as:
-
-- semantic coupling point;
-- identity bridge;
-- behavioral completion requirement;
-- graph edge source;
-- theorem dependency;
-- convergence participant.
-
+A proof is `proved` only when its complete obligation holds. Missing
+characteristics, structural violations, unresolved requirements, or partial
+semantic identity produce `failed`, never an inconclusive success.
