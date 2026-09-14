@@ -1,22 +1,27 @@
 BuyOneProductIntent
 -> BuyOneProductRequested
-->> CheckoutAgent.ResolveProduct
-<<- ResolveProduct.Ok
-->> CheckoutAgent.ResolveAuthoritativePrice
-<<- ResolveAuthoritativePrice.Ok
-->> CheckoutAgent.ReserveOneStockUnit
-<<- ReserveOneStockUnit.Ok
-->> CheckoutAgent.AuthorizePayment
-<<- AuthorizePayment.Ok
-->> CheckoutAgent.RegisterSale
-<<- RegisterSale.Ok
-->> CheckoutAgent.CommitStockReservation
-<<- CommitStockReservation.Ok
-<- CheckoutAgent.BuyOneProduct.Ok
 
-ResolveProduct.Error -> CheckoutAgent.BuyOneProduct.Error
-ResolveAuthoritativePrice.Error -> CheckoutAgent.BuyOneProduct.Error
-ReserveOneStockUnit.Error -> CheckoutAgent.BuyOneProduct.Error
-AuthorizePayment.Error ->> CheckoutAgent.ReleaseStockReservation
-RegisterSale.Error -> [CheckoutAgent.ReleasePaymentAuthorization, CheckoutAgent.ReleaseStockReservation]
-CommitStockReservation.Error -> [CheckoutAgent.ReleasePaymentAuthorization, CheckoutAgent.ReleaseStockReservation]
+try {
+  ->> CheckoutAgent.ResolveProduct
+  <<- product
+
+  ->> CheckoutAgent.ResolveAuthoritativePrice
+  <<- priced_product
+
+  ->> CheckoutAgent.ReserveOneStockUnit
+  <<- reservation
+
+  ->> CheckoutAgent.AuthorizePayment
+  <<- payment_authorization
+
+  ->> CheckoutAgent.RegisterSale
+  <<- sale
+
+  ->> CheckoutAgent.CommitStockReservation
+  <<- purchase_result
+} catch {
+  error#last-error
+}
+
+# The flow returns only an internal Ok/Error result.
+# Runtime derives CheckoutAgent.BuyOneProduct.Ok|Error and emits it as a side effect.
