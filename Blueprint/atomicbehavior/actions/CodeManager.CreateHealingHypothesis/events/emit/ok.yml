@@ -1,0 +1,9 @@
+canonical_label: CodeManager.CreateHealingHypothesis.Ok
+kind: result
+status: Ok
+payload:
+  schema: ../../schema/output.yml
+correlation:
+  required: true
+causation:
+  required: true

@@ -1,0 +1,9 @@
+law HumanHealing_RequestContext_AuthorityAndCausality
+
+For every execution e of HumanHealing.RequestContext:
+
+1. e emits exactly one terminal result in {HumanHealing.RequestContext.Ok, HumanHealing.RequestContext.Error}.
+2. every mutation performed by e is contained in its declared write scope.
+3. e preserves the original Intent and all declared invariants.
+4. evidence used by e retains provenance and content identity.
+5. if a precondition or authority check fails, no candidate mutation becomes authoritative.

@@ -1,0 +1,28 @@
+preconditions:
+  - "automatic_disposition_is_unknown_or_inconclusive"
+  - "original_intent_and_checkpoint_are_available"
+postconditions:
+  Ok:
+    - "minimum_answerable_questions_are_emitted"
+    - "continuation_preserves_the_same_intent_and_last_proven_state"
+  Error:
+    - "execution_remains_safely_suspended"
+    - "no_domain_error_is_returned_to_the_user_as_a_terminal outcome"
+invariants:
+  - id: INV-HUMAN-001
+    rule: "the original Intent is immutable"
+  - id: INV-HUMAN-002
+    rule: "previously proven successful work is preserved"
+  - id: INV-HUMAN-003
+    rule: "questions request evidence or authorization, never silently delegate responsibility"
+  - id: INV-HUMAN-004
+    rule: "lack of confidence cannot trigger speculative mutation"
+forbidden:
+  - "replace the Intent with an easier objective"
+  - "discard the checkpoint"
+  - "ask for data already present"
+  - "grant write authority"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

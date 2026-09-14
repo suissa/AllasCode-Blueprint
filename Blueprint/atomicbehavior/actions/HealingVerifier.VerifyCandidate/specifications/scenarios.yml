@@ -1,0 +1,10 @@
+scenarios:
+  - name: predictions-match
+    given: "failure disappears and predicted observables change while invariants hold"
+    expected: "Ok with supported"
+  - name: test-passes-mechanism-fails
+    given: "visible tests pass but predicted metrics do not change"
+    expected: "Ok with falsified"
+  - name: missing-hidden-evidence
+    given: "required acceptance evidence is unavailable"
+    expected: "Error or inconclusive; never supported"

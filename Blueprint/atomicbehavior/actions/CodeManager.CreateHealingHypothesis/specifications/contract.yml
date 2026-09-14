@@ -1,0 +1,27 @@
+preconditions:
+  - "all_input_hashes_are_valid"
+  - "the_complete_failed_intent_is_available"
+postconditions:
+  Ok:
+    - "hypothesis_precedes_mutation"
+    - "mechanism_connects_evidence_to_predicted_intervention_effect"
+  Error:
+    - "fault_class_is_unknown_when_evidence_is_underdetermined"
+    - "mutation_scope_is_empty"
+invariants:
+  - id: INV-HYP-001
+    rule: "the CodeManager has no mutation authority"
+  - id: INV-HYP-002
+    rule: "fault class is exactly code, system, or unknown"
+  - id: INV-HYP-003
+    rule: "every hypothesis states supporting evidence, contrary or missing evidence, alternatives, predictions, and falsification criteria"
+  - id: INV-HYP-004
+    rule: "known verified cases are contextual priors, never unconditional commands"
+forbidden:
+  - "request simultaneous code and config mutation in one experiment"
+  - "derive cause only from the final error"
+  - "write a candidate"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

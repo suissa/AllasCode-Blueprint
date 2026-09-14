@@ -1,0 +1,60 @@
+api_version: allascode/v1
+kind: PrimordialActionCatalog
+version: 0.1.0
+actions:
+  - order: 1
+    canonical_label: CodeKnowledge.BuildObservationEnvelope
+    manifest: ./CodeKnowledge.BuildObservationEnvelope/manifest.yml
+    authoring_skill: ./CodeKnowledge.BuildObservationEnvelope/skills/authoring/SKILL.md
+    semantics_skill: ./CodeKnowledge.BuildObservationEnvelope/skills/semantics/SKILL.md
+  - order: 2
+    canonical_label: CodeKnowledge.ResolveArtifact
+    manifest: ./CodeKnowledge.ResolveArtifact/manifest.yml
+    authoring_skill: ./CodeKnowledge.ResolveArtifact/skills/authoring/SKILL.md
+    semantics_skill: ./CodeKnowledge.ResolveArtifact/skills/semantics/SKILL.md
+  - order: 3
+    canonical_label: CodeKnowledge.ResolveSkill
+    manifest: ./CodeKnowledge.ResolveSkill/manifest.yml
+    authoring_skill: ./CodeKnowledge.ResolveSkill/skills/authoring/SKILL.md
+    semantics_skill: ./CodeKnowledge.ResolveSkill/skills/semantics/SKILL.md
+  - order: 4
+    canonical_label: CodeKnowledge.CompileArtifactSkills
+    manifest: ./CodeKnowledge.CompileArtifactSkills/manifest.yml
+    authoring_skill: ./CodeKnowledge.CompileArtifactSkills/skills/authoring/SKILL.md
+    semantics_skill: ./CodeKnowledge.CompileArtifactSkills/skills/semantics/SKILL.md
+  - order: 5
+    canonical_label: CodeManager.CreateHealingHypothesis
+    manifest: ./CodeManager.CreateHealingHypothesis/manifest.yml
+    authoring_skill: ./CodeManager.CreateHealingHypothesis/skills/authoring/SKILL.md
+    semantics_skill: ./CodeManager.CreateHealingHypothesis/skills/semantics/SKILL.md
+  - order: 6
+    canonical_label: CodeHealer.StageCodeCandidate
+    manifest: ./CodeHealer.StageCodeCandidate/manifest.yml
+    authoring_skill: ./CodeHealer.StageCodeCandidate/skills/authoring/SKILL.md
+    semantics_skill: ./CodeHealer.StageCodeCandidate/skills/semantics/SKILL.md
+  - order: 7
+    canonical_label: SystemHealer.StageConfigCandidate
+    manifest: ./SystemHealer.StageConfigCandidate/manifest.yml
+    authoring_skill: ./SystemHealer.StageConfigCandidate/skills/authoring/SKILL.md
+    semantics_skill: ./SystemHealer.StageConfigCandidate/skills/semantics/SKILL.md
+  - order: 8
+    canonical_label: HealingVerifier.VerifyCandidate
+    manifest: ./HealingVerifier.VerifyCandidate/manifest.yml
+    authoring_skill: ./HealingVerifier.VerifyCandidate/skills/authoring/SKILL.md
+    semantics_skill: ./HealingVerifier.VerifyCandidate/skills/semantics/SKILL.md
+  - order: 9
+    canonical_label: CodeKnowledge.PublishHealingCase
+    manifest: ./CodeKnowledge.PublishHealingCase/manifest.yml
+    authoring_skill: ./CodeKnowledge.PublishHealingCase/skills/authoring/SKILL.md
+    semantics_skill: ./CodeKnowledge.PublishHealingCase/skills/semantics/SKILL.md
+  - order: 10
+    canonical_label: HumanHealing.RequestContext
+    manifest: ./HumanHealing.RequestContext/manifest.yml
+    authoring_skill: ./HumanHealing.RequestContext/skills/authoring/SKILL.md
+    semantics_skill: ./HumanHealing.RequestContext/skills/semantics/SKILL.md
+global_invariants:
+  - skill_is_generated_from_canonical_artifact_sources
+  - code_and_configuration_mutation_authorities_are_disjoint
+  - hypothesis_exists_before_mutation
+  - candidate_producer_cannot_verify_or_promote
+  - unresolved_execution_preserves_intent_and_reaches_human_healing

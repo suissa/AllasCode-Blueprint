@@ -1,0 +1,37 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+identity:
+  canonical_label: CodeKnowledge.BuildObservationEnvelope
+  version: 0.1.0
+  maturity: specified
+role:
+  actor: CodeKnowledgeAgent
+purpose: "Build a content-addressed, provenance-preserving envelope from the complete failed Intent execution."
+authority:
+  mode: read_only
+  read_scope:
+    - "Intent and Action contracts"
+    - "events"
+    - "metrics"
+    - "traces"
+    - "logs"
+    - "terminal error"
+    - "code references"
+    - "configuration snapshot"
+  write_scope:
+    []
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  events: ./schema/events.yml
+  specification: ./specifications/contract.yml
+  scenarios: ./specifications/scenarios.yml
+  healing: ./healing/pipeline.yml
+  law: ./formalization/laws/core.law
+  proof_evidence: ./formalization/proofs/core.prov
+skills:
+  authoring: ./skills/authoring/SKILL.md
+  semantics: ./skills/semantics/SKILL.md
+results:
+  Ok: CodeKnowledge.BuildObservationEnvelope.Ok
+  Error: CodeKnowledge.BuildObservationEnvelope.Error

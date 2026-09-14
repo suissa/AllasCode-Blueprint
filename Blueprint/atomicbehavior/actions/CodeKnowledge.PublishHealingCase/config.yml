@@ -1,0 +1,16 @@
+execution:
+  timeout_ms: 5000
+  idempotent: true
+  network: false
+  deterministic_when_inputs_are_equal: true
+sandbox:
+  enabled: true
+  workspace_only: true
+authority:
+  mode: bounded_knowledge_write
+  write_scope:
+    - "knowledge/healing-cases/**"
+    - "generated/skills/healing-cases/**"
+failure:
+  preserve_original_intent: true
+  unresolved: Human-in-the-Healing-Loop

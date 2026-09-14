@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeManager.CreateHealingHypothesis.input
+type: object
+additionalProperties: false
+required:
+  - "observation_envelope"
+  - "artifact_resolution"
+  - "skill_bundle"
+  - "allowed_fault_classes"
+properties:
+  observation_envelope:
+    semantic_type: ObservationEnvelope
+  artifact_resolution:
+    semantic_type: ArtifactResolution
+  skill_bundle:
+    semantic_type: SkillBundle
+  allowed_fault_classes:
+    semantic_type: FaultClassSet

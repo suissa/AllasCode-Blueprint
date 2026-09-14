@@ -1,0 +1,34 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+identity:
+  canonical_label: CodeManager.CreateHealingHypothesis
+  version: 0.1.0
+  maturity: specified
+role:
+  actor: CodeManager
+purpose: "Create an immutable, falsifiable healing hypothesis before any code or configuration mutation."
+authority:
+  mode: read_only
+  read_scope:
+    - "ObservationEnvelope"
+    - "ArtifactResolution"
+    - "SkillBundle"
+    - "Intent topology"
+    - "alternative causal candidates"
+  write_scope:
+    []
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  events: ./schema/events.yml
+  specification: ./specifications/contract.yml
+  scenarios: ./specifications/scenarios.yml
+  healing: ./healing/pipeline.yml
+  law: ./formalization/laws/core.law
+  proof_evidence: ./formalization/proofs/core.prov
+skills:
+  authoring: ./skills/authoring/SKILL.md
+  semantics: ./skills/semantics/SKILL.md
+results:
+  Ok: CodeManager.CreateHealingHypothesis.Ok
+  Error: CodeManager.CreateHealingHypothesis.Error

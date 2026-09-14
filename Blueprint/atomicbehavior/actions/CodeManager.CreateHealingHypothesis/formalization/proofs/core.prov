@@ -1,0 +1,16 @@
+artifact:
+  canonical_label: CodeManager.CreateHealingHypothesis
+  version: 0.1.0
+property:
+  authority_and_causality_law: ../laws/core.law
+verification:
+  status: specified
+  proof_obligations:
+    - INV-HYP-001
+    - INV-HYP-002
+    - INV-HYP-003
+    - INV-HYP-004
+  executable_evidence:
+    - ../../tests/contract.test.yml
+  holes: 0
+  note: "Runtime binding and independent conformance evidence are required before status may become proved."

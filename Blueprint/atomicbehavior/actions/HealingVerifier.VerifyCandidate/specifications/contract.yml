@@ -1,0 +1,28 @@
+preconditions:
+  - "hypothesis_and_candidate_hashes_are_valid"
+  - "verifier_is_independent_from_candidate_producer"
+postconditions:
+  Ok:
+    - "disposition_is_supported_falsified_or_inconclusive"
+    - "prediction_comparison_and_all_test_evidence_are_recorded"
+  Error:
+    - "no_candidate_is_promoted"
+    - "verification_gap_is_explicit"
+invariants:
+  - id: INV-VERIFY-001
+    rule: "the proposing Agent cannot verify or promote its own candidate"
+  - id: INV-VERIFY-002
+    rule: "visible test success alone is insufficient"
+  - id: INV-VERIFY-003
+    rule: "all original Intent invariants and hidden acceptance obligations remain authoritative"
+  - id: INV-VERIFY-004
+    rule: "inconclusive evidence never becomes supported"
+forbidden:
+  - "mutate the candidate"
+  - "change the hypothesis after observing results"
+  - "hide failed tests"
+  - "promote directly"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

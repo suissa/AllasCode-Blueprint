@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeHealer.StageCodeCandidate.input
+type: object
+additionalProperties: false
+required:
+  - "hypothesis"
+  - "target_action"
+  - "base_hash"
+  - "patch"
+properties:
+  hypothesis:
+    semantic_type: HealingHypothesis
+  target_action:
+    semantic_type: ActionIdentity
+  base_hash:
+    semantic_type: ContentHash
+  patch:
+    semantic_type: CandidatePatch

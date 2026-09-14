@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeHealer.StageCodeCandidate.output
+type: object
+additionalProperties: false
+required:
+  - "candidate_id"
+  - "candidate_hash"
+  - "diff"
+  - "requested_tests"
+properties:
+  candidate_id:
+    semantic_type: CandidateId
+  candidate_hash:
+    semantic_type: ContentHash
+  diff:
+    semantic_type: BoundedDiff
+  requested_tests:
+    semantic_type: VerificationPlan

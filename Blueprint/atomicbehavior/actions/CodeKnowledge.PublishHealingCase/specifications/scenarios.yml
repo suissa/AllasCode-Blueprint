@@ -1,0 +1,10 @@
+scenarios:
+  - name: supported-experiment
+    given: "independent verification supports all predictions"
+    expected: "Ok with replay-eligible Skill"
+  - name: falsified-experiment
+    given: "verification refutes the mechanism"
+    expected: "Ok with negative non-replayable Skill"
+  - name: missing-provenance
+    given: "candidate or evidence hash is absent"
+    expected: "Error and quarantine"

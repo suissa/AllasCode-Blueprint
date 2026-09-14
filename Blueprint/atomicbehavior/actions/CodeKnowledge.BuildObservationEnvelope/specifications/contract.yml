@@ -1,0 +1,26 @@
+preconditions:
+  - "execution_id_is_known"
+  - "intent_contract_is_versioned"
+  - "all_received_evidence_has_source"
+postconditions:
+  Ok:
+    - "envelope_contains_only_observed_or_explicitly_marked_missing_evidence"
+    - "evidence_hash_matches_canonical_serialization"
+  Error:
+    - "no_partial_envelope_is_presented_as_complete"
+    - "missing_sources_are_reported"
+invariants:
+  - id: INV-OBS-001
+    rule: "no evidence may be invented, repaired, or normalized into a different claim"
+  - id: INV-OBS-002
+    rule: "source, timestamp, execution, correlation, and causation provenance are preserved"
+  - id: INV-OBS-003
+    rule: "canonical serialization of identical evidence produces the same evidence hash"
+forbidden:
+  - "infer a root cause"
+  - "mutate code or configuration"
+  - "erase contradictory evidence"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

@@ -1,0 +1,13 @@
+canonical_label: CodeKnowledge.PublishHealingCase.Error
+kind: result
+status: Error
+payload:
+  error:
+    semantic_type: HealingActionError
+  evidence_reference:
+    semantic_type: OptionalEvidenceHash
+correlation:
+  required: true
+causation:
+  required: true
+fallback: Human-in-the-Healing-Loop

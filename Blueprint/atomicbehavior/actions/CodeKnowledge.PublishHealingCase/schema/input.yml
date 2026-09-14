@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.PublishHealingCase.input
+type: object
+additionalProperties: false
+required:
+  - "hypothesis"
+  - "candidate"
+  - "verification"
+  - "context_constraints"
+properties:
+  hypothesis:
+    semantic_type: HealingHypothesis
+  candidate:
+    semantic_type: CandidateArtifact
+  verification:
+    semantic_type: VerificationResult
+  context_constraints:
+    semantic_type: CompatibilityConstraintSet

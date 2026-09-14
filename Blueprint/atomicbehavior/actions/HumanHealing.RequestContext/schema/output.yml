@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: HumanHealing.RequestContext.output
+type: object
+additionalProperties: false
+required:
+  - "request_id"
+  - "continuation_token"
+  - "preserved_state_hash"
+  - "status"
+properties:
+  request_id:
+    semantic_type: RequestId
+  continuation_token:
+    semantic_type: ContinuationToken
+  preserved_state_hash:
+    semantic_type: ContentHash
+  status:
+    semantic_type: HumanHealingStatus

@@ -1,0 +1,27 @@
+preconditions:
+  - "artifact_snapshot_is_complete_for_declared_maturity"
+  - "source_hash_matches_snapshot"
+postconditions:
+  Ok:
+    - "exactly_two_skill_projections_are_emitted"
+    - "both_skills_reference_the_same_source_hash"
+  Error:
+    - "no_stale_or_partial_skill_is_published"
+    - "missing_required_sources_are_reported"
+invariants:
+  - id: INV-SKCOMP-001
+    rule: "Skills are generated views and never independent sources of semantic truth"
+  - id: INV-SKCOMP-002
+    rule: "same canonical snapshot and compiler version produce byte-identical output"
+  - id: INV-SKCOMP-003
+    rule: "authoring and semantics projections remain distinct and source-linked"
+  - id: INV-SKCOMP-004
+    rule: "a source change invalidates the previous generated hashes"
+forbidden:
+  - "manually rewrite source semantics during compilation"
+  - "publish only one projection"
+  - "mark draft proof as proved"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

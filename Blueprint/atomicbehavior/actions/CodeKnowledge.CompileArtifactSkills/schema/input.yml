@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.CompileArtifactSkills.input
+type: object
+additionalProperties: false
+required:
+  - "canonical_label"
+  - "artifact_kind"
+  - "artifact_snapshot"
+  - "source_hash"
+properties:
+  canonical_label:
+    semantic_type: CanonicalLabel
+  artifact_kind:
+    semantic_type: ArtifactKind
+  artifact_snapshot:
+    semantic_type: ArtifactSnapshot
+  source_hash:
+    semantic_type: ContentHash

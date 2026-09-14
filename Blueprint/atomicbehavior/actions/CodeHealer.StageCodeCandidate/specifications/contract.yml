@@ -1,0 +1,29 @@
+preconditions:
+  - "hypothesis_fault_class_is_code"
+  - "hypothesis_hash_is_valid"
+  - "target_matches_authorized_mutation_scope"
+postconditions:
+  Ok:
+    - "candidate_is_isolated_and_content_addressed"
+    - "only_authorized_implementation_files_differ"
+  Error:
+    - "base_remains_unchanged"
+    - "rejected_paths_and_invariants_are_reported"
+invariants:
+  - id: INV-CODESTAGE-001
+    rule: "contracts, schemas, invariants, specifications, tests, and Git metadata are read-only"
+  - id: INV-CODESTAGE-002
+    rule: "the original Intent and its version remain unchanged"
+  - id: INV-CODESTAGE-003
+    rule: "the candidate cannot promote or verify itself"
+  - id: INV-CODESTAGE-004
+    rule: "the patch is minimal with respect to the declared causal dimension"
+forbidden:
+  - "edit tests to make the candidate pass"
+  - "change configs/core.yml"
+  - "commit or merge"
+  - "weaken an invariant"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

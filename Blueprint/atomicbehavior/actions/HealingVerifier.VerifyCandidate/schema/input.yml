@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: HealingVerifier.VerifyCandidate.input
+type: object
+additionalProperties: false
+required:
+  - "hypothesis"
+  - "candidate"
+  - "predicted_effects"
+  - "verification_plan"
+properties:
+  hypothesis:
+    semantic_type: HealingHypothesis
+  candidate:
+    semantic_type: CandidateArtifact
+  predicted_effects:
+    semantic_type: PredictedEffectList
+  verification_plan:
+    semantic_type: VerificationPlan

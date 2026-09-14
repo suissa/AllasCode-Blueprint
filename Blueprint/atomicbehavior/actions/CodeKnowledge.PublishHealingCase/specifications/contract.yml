@@ -1,0 +1,27 @@
+preconditions:
+  - "all_provenance_hashes_are_valid"
+  - "verification_disposition_is_final"
+postconditions:
+  Ok:
+    - "case_preserves_context_and_verifier_disposition"
+    - "supported_and_falsified knowledge are distinguishable"
+  Error:
+    - "no_trusted_case_is_published"
+    - "provenance_gap_is_reported"
+invariants:
+  - id: INV-CASE-001
+    rule: "only independently supported cases may be replay-eligible"
+  - id: INV-CASE-002
+    rule: "falsified cases remain negative knowledge that prevents repeated failed interventions"
+  - id: INV-CASE-003
+    rule: "inconclusive cases cannot authorize autonomous mutation"
+  - id: INV-CASE-004
+    rule: "the case records versions, evidence, mechanism, intervention, predictions, effects, regressions, and disposition"
+forbidden:
+  - "erase failed experiments"
+  - "generalize beyond recorded compatibility constraints"
+  - "publish unsigned external content as trusted"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: SystemHealer.StageConfigCandidate.input
+type: object
+additionalProperties: false
+required:
+  - "hypothesis"
+  - "config_path"
+  - "base_hash"
+  - "current_value"
+  - "candidate_value"
+properties:
+  hypothesis:
+    semantic_type: HealingHypothesis
+  config_path:
+    semantic_type: ConfigPath
+  base_hash:
+    semantic_type: ContentHash
+  current_value:
+    semantic_type: SemanticValue
+  candidate_value:
+    semantic_type: SemanticValue
