@@ -1,0 +1,14 @@
+api_version: allascode/v1
+kind: Agent
+name: CheckoutAgent
+semantic_id: commerce.agent.checkout
+actor: ../../actors/checkout-actor/manifest.yml
+intents:
+  - BuyOneProductIntent
+behaviors:
+  - ../../behaviors/buy-one-product/manifest.yml
+capabilities: ./capabilities.yml
+runtime:
+  executable_directly: false
+  may_emit_events: false
+  result_contract: InternalResult<Ok,Error>
