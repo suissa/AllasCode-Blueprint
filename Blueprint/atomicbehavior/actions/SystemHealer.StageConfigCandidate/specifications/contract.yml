@@ -1,5 +1,6 @@
 preconditions:
   - "hypothesis_fault_class_is_system"
+  - "hypothesis_hash_is_valid"
   - "config_property_is_declared_healable"
   - "candidate_value_is_inside_safety_bounds"
 postconditions:
