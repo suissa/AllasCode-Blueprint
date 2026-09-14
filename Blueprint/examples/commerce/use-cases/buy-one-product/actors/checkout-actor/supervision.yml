@@ -1,0 +1,15 @@
+supervisor:
+  name: CheckoutActorSupervisor
+  strategy: resume_after_healing
+  max_automatic_attempts: 3
+  on_internal_error:
+    - capture_error
+    - preserve_trace
+    - compensate_if_needed
+    - invoke_healing_pipeline
+  escalation:
+    terminal_target: HumanInTheHealingLoop
+  guarantees:
+    - no_raw_error_returned_to_external_caller
+    - compensation_is_idempotent
+    - resume_preserves_original_trace_id
