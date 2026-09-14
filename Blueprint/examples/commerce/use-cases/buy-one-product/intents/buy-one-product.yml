@@ -1,0 +1,21 @@
+id: BuyOneProductIntent
+canonical_label: CheckoutAgent.BuyOneProduct
+starts-with: BuyOneProductRequested
+success: CheckoutAgent.BuyOneProduct.Ok
+failure: CheckoutAgent.BuyOneProduct.Error
+quantity: 1
+immutable: true
+requires:
+  - product reference resolvable to exactly one active product
+  - buyer identity or resumable anonymous session
+  - payment instrument or payment authorization capability
+  - authoritative price resolvable at execution time
+  - one reservable stock unit
+trace:
+  created_by:
+    - GatewayAgent
+    - UIAgent
+  preserve_across_entire_intent: true
+result:
+  raw_error_to_user: false
+  healing_required_on_error: true
