@@ -4,6 +4,8 @@ type: object
 additionalProperties: false
 required:
   - "hypothesis"
+  - "hypothesis_hash"
+  - "observation_hash"
   - "config_path"
   - "base_hash"
   - "current_value"
@@ -11,6 +13,10 @@ required:
 properties:
   hypothesis:
     semantic_type: HealingHypothesis
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  observation_hash:
+    semantic_type: EvidenceHash
   config_path:
     semantic_type: ConfigPath
   base_hash:
@@ -18,4 +24,4 @@ properties:
   current_value:
     semantic_type: SemanticValue
   candidate_value:
-    semantic_type: SemanticValue
+    semantic_type: ProposedIntervention
