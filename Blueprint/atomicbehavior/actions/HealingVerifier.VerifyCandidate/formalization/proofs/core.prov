@@ -10,7 +10,13 @@ verification:
     - INV-VERIFY-002
     - INV-VERIFY-003
     - INV-VERIFY-004
-  executable_evidence:
+    - INV-VERIFY-005
+    - INV-VERIFY-006
+  specification_evidence:
     - ../../tests/contract.test.yml
-  holes: 0
-  note: "Runtime binding and independent conformance evidence are required before status may become proved."
+  open_obligations:
+    - runtime_verifier_identity_binding
+    - producer_verifier_independence
+    - hidden_acceptance_execution
+    - independent_runtime_conformance
+  note: "Specification evidence does not discharge runtime or independent conformance obligations."
