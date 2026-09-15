@@ -10,7 +10,13 @@ verification:
     - INV-HYP-002
     - INV-HYP-003
     - INV-HYP-004
-  executable_evidence:
+    - INV-HYP-005
+    - INV-HYP-006
+  specification_evidence:
     - ../../tests/contract.test.yml
-  holes: 0
-  note: "Runtime binding and independent conformance evidence are required before status may become proved."
+  open_obligations:
+    - runtime_authority_enforcement
+    - hypothesis_temporal_precedence
+    - hypothesis_content_binding
+    - independent_runtime_conformance
+  note: "Specification evidence does not discharge runtime or independent conformance obligations."
