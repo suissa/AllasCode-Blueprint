@@ -25,6 +25,7 @@ REQUIRED = (
     "manifest.yml",
     "config.yml",
     "schema/input.yml",
+    "schema/error.yml",
     "schema/output.yml",
     "schema/events.yml",
     "events/listen/request.yml",
@@ -76,6 +77,27 @@ class PrimordialActionContracts(unittest.TestCase):
                 self.assertIn("status: Ok", ok_event)
                 self.assertIn(f"canonical_label: {action}.Error", error_event)
                 self.assertIn("status: Error", error_event)
+
+    def test_idempotency_capabilities_and_error_contract_are_explicit(self) -> None:
+        for action in ACTIONS:
+            with self.subTest(action=action):
+                input_schema = read(action, "schema/input.yml")
+                config = read(action, "config.yml")
+                manifest = read(action, "manifest.yml")
+                error_schema = read(action, "schema/error.yml")
+                error_event = read(action, "events/emit/error.yml")
+                contract = read(action, "specifications/contract.yml")
+                self.assertIn("idempotency_key", required_fields(input_schema))
+                self.assertIn("semantic_type: IdempotencyKey", input_schema)
+                self.assertIn("effect_identity:", config)
+                self.assertIn("source: input.idempotency_key", config)
+                self.assertIn("capabilities:", manifest)
+                self.assertIn("emit_fixed_result_event", manifest)
+                self.assertIn("error: ./schema/error.yml", manifest)
+                self.assertTrue({"code", "safe_diagnostic", "original_input_ref", "healing_context", "correlation_id", "causation_id"} <= required_fields(error_schema))
+                self.assertIn("schema: ../../schema/error.yml", error_event)
+                self.assertIn("idempotency_key_is_valid", contract)
+                self.assertIn("same idempotency_key and same causal context", contract)
 
     def test_each_action_has_exactly_two_source_linked_skill_kinds(self) -> None:
         for action in ACTIONS:
