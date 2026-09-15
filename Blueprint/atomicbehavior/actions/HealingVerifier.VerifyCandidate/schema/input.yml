@@ -4,14 +4,32 @@ type: object
 additionalProperties: false
 required:
   - "hypothesis"
+  - "hypothesis_hash"
   - "candidate"
+  - "candidate_hash"
+  - "producer_actor_id"
+  - "producer_execution_id"
+  - "verifier_actor_id"
+  - "verifier_execution_id"
   - "predicted_effects"
   - "verification_plan"
 properties:
   hypothesis:
     semantic_type: HealingHypothesis
+  hypothesis_hash:
+    semantic_type: HypothesisHash
   candidate:
     semantic_type: CandidateArtifact
+  candidate_hash:
+    semantic_type: ContentHash
+  producer_actor_id:
+    semantic_type: ActorIdentity
+  producer_execution_id:
+    semantic_type: ExecutionId
+  verifier_actor_id:
+    semantic_type: ActorIdentity
+  verifier_execution_id:
+    semantic_type: ExecutionId
   predicted_effects:
     semantic_type: PredictedEffectList
   verification_plan:
