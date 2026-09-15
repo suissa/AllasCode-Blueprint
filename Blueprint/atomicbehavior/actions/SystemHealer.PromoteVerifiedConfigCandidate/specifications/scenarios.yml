@@ -1,0 +1,10 @@
+scenarios:
+  - name: approved
+    given: "supported independent verification and approval exist"
+    expected: "Ok with promoted hash"
+  - name: immutable-property
+    given: "requested key is not healable"
+    expected: "Error with no promotion"
+  - name: mixed-scope
+    given: "candidate contains code and config"
+    expected: "Error with no mutation"

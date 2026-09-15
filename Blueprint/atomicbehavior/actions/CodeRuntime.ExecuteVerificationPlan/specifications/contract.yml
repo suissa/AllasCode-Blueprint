@@ -1,0 +1,29 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "candidate_hash_is_valid"
+  - "verification_plan_is_bounded"
+  - "sandbox_policy_is_available"
+postconditions:
+  Ok:
+    - "plan_completes_in_isolated_sandbox"
+    - "evidence_is_content_addressed_and_provenanced"
+  Error:
+    - "candidate_and_workspace_remain_unchanged"
+    - "timeout_or_policy_violation_is_reported"
+invariants:
+  - id: INV-RUN-001
+    rule: "verification executes without production writes or network authority"
+  - id: INV-RUN-002
+    rule: "candidate hash and environment snapshot hash are preserved"
+  - id: INV-RUN-003
+    rule: "a timeout is evidence, not a successful verification"
+  - id: INV-IDEMP-EXECUTEVERIFIC
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "write production artifacts"
+  - "access undeclared network endpoints"
+  - "treat timeout as success"
+verification:
+  independent_when_mutation_is_involved: false
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

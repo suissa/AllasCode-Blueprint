@@ -18,6 +18,11 @@ ACTIONS = (
     "HealingVerifier.VerifyCandidate",
     "CodeKnowledge.PublishHealingCase",
     "HumanHealing.RequestContext",
+    "CodeRuntime.ExecuteVerificationPlan",
+    "CodeRuntime.CaptureRuntimeEvidence",
+    "CodeHealer.PromoteVerifiedCodeCandidate",
+    "SystemHealer.PromoteVerifiedConfigCandidate",
+    "CodeHealer.RevertCandidate",
 )
 
 REQUIRED = (

@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeHealer.PromoteVerifiedCodeCandidate.output
+type: object
+additionalProperties: false
+required:
+  - "promotion_id"
+  - "promoted_hash"
+  - "target_action"
+  - "promoter_actor_id"
+  - "created_at"
+properties:
+  promotion_id:
+    semantic_type: PromotionId
+  promoted_hash:
+    semantic_type: ContentHash
+  target_action:
+    semantic_type: ActionIdentity
+  promoter_actor_id:
+    semantic_type: ActorIdentity
+  created_at:
+    semantic_type: Timestamp

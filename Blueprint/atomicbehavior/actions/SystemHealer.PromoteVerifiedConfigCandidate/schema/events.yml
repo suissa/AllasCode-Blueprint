@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: SystemHealer.PromoteVerifiedConfigCandidate.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: SystemHealer.PromoteVerifiedConfigCandidate.Ok
+    schema: ./output.yml
+  Error:
+    event: SystemHealer.PromoteVerifiedConfigCandidate.Error
+    schema: ./error.yml
+configurable_result_events: false

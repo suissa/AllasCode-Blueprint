@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeHealer.RevertCandidate.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeHealer.RevertCandidate.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeHealer.RevertCandidate.Error
+    schema: ./error.yml
+configurable_result_events: false

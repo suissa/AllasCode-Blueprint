@@ -52,6 +52,31 @@ actions:
     manifest: ./HumanHealing.RequestContext/manifest.yml
     authoring_skill: ./HumanHealing.RequestContext/skills/authoring/SKILL.md
     semantics_skill: ./HumanHealing.RequestContext/skills/semantics/SKILL.md
+  - order: 11
+    canonical_label: CodeRuntime.ExecuteVerificationPlan
+    manifest: ./CodeRuntime.ExecuteVerificationPlan/manifest.yml
+    authoring_skill: ./CodeRuntime.ExecuteVerificationPlan/skills/authoring/SKILL.md
+    semantics_skill: ./CodeRuntime.ExecuteVerificationPlan/skills/semantics/SKILL.md
+  - order: 12
+    canonical_label: CodeRuntime.CaptureRuntimeEvidence
+    manifest: ./CodeRuntime.CaptureRuntimeEvidence/manifest.yml
+    authoring_skill: ./CodeRuntime.CaptureRuntimeEvidence/skills/authoring/SKILL.md
+    semantics_skill: ./CodeRuntime.CaptureRuntimeEvidence/skills/semantics/SKILL.md
+  - order: 13
+    canonical_label: CodeHealer.PromoteVerifiedCodeCandidate
+    manifest: ./CodeHealer.PromoteVerifiedCodeCandidate/manifest.yml
+    authoring_skill: ./CodeHealer.PromoteVerifiedCodeCandidate/skills/authoring/SKILL.md
+    semantics_skill: ./CodeHealer.PromoteVerifiedCodeCandidate/skills/semantics/SKILL.md
+  - order: 14
+    canonical_label: SystemHealer.PromoteVerifiedConfigCandidate
+    manifest: ./SystemHealer.PromoteVerifiedConfigCandidate/manifest.yml
+    authoring_skill: ./SystemHealer.PromoteVerifiedConfigCandidate/skills/authoring/SKILL.md
+    semantics_skill: ./SystemHealer.PromoteVerifiedConfigCandidate/skills/semantics/SKILL.md
+  - order: 15
+    canonical_label: CodeHealer.RevertCandidate
+    manifest: ./CodeHealer.RevertCandidate/manifest.yml
+    authoring_skill: ./CodeHealer.RevertCandidate/skills/authoring/SKILL.md
+    semantics_skill: ./CodeHealer.RevertCandidate/skills/semantics/SKILL.md
 global_invariants:
   - skill_is_generated_from_canonical_artifact_sources
   - code_and_configuration_mutation_authorities_are_disjoint

@@ -1,0 +1,18 @@
+artifact:
+  canonical_label: CodeHealer.PromoteVerifiedCodeCandidate
+  version: 0.1.0
+property:
+  authority_and_causality_law: ../laws/core.law
+verification:
+  status: specified
+  proof_obligations:
+    - INV-PROMOTECODE-001
+    - INV-PROMOTECODE-002
+    - INV-PROMOTECODE-003
+    - idempotency_replay
+  specification_evidence:
+    - ../../tests/contract.test.yml
+  open_obligations:
+    - runtime_authority_enforcement
+    - independent_runtime_conformance
+  note: "Specification evidence does not discharge runtime or independent conformance obligations."

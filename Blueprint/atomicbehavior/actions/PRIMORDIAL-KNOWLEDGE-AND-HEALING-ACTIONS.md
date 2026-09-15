@@ -40,3 +40,16 @@ previous healing success != universal command
 ```
 
 These Actions are version `0.1.0` and maturity `specified`. They become `proved` only after a runtime binding and independent conformance evidence exist.
+
+
+## Extended runtime and promotion Actions
+
+The first operational loop also includes:
+
+11. CodeRuntime.ExecuteVerificationPlan — Execute a bounded verification plan against an isolated candidate and return content-addressed runtime evidence.
+12. CodeRuntime.CaptureRuntimeEvidence — Normalize one completed execution's observed streams into provenance-preserving evidence without inferring a cause.
+13. CodeHealer.PromoteVerifiedCodeCandidate — Promote one independently verified code candidate after an explicit approval gate.
+14. SystemHealer.PromoteVerifiedConfigCandidate — Promote one independently verified configuration candidate after an explicit approval gate.
+15. CodeHealer.RevertCandidate — Restore the exact pre-candidate code snapshot when rollback is authorized.
+
+Promotion is intentionally split between code and configuration authorities. Runtime execution remains sandboxed and evidence capture never infers a cause.

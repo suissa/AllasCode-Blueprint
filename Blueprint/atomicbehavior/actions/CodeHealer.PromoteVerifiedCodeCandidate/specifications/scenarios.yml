@@ -1,0 +1,10 @@
+scenarios:
+  - name: approved
+    given: "supported independent verification and approval exist"
+    expected: "Ok with promoted hash"
+  - name: unverified
+    given: "verification is inconclusive"
+    expected: "Error with no promotion"
+  - name: scope-escape
+    given: "candidate includes config files"
+    expected: "Error with no mutation"

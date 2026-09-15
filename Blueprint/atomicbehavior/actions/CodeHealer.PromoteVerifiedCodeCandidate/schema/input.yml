@@ -1,0 +1,27 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeHealer.PromoteVerifiedCodeCandidate.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "candidate"
+  - "candidate_hash"
+  - "verification"
+  - "verification_evidence_hash"
+  - "approval_ref"
+  - "target_action"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  candidate:
+    semantic_type: CandidateArtifact
+  candidate_hash:
+    semantic_type: ContentHash
+  verification:
+    semantic_type: VerificationResult
+  verification_evidence_hash:
+    semantic_type: EvidenceHash
+  approval_ref:
+    semantic_type: ApprovalReference
+  target_action:
+    semantic_type: ActionIdentity
