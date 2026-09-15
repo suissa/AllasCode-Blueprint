@@ -3,7 +3,11 @@ law CodeKnowledge_PublishHealingCase_AuthorityAndCausality
 For every execution e of CodeKnowledge.PublishHealingCase:
 
 1. e emits exactly one terminal result in {CodeKnowledge.PublishHealingCase.Ok, CodeKnowledge.PublishHealingCase.Error}.
-2. every mutation performed by e is contained in its declared write scope.
+2. every publication performed by e is contained in its declared authority scope.
 3. e preserves the original Intent and all declared invariants.
 4. evidence used by e retains provenance and content identity.
-5. if a precondition or authority check fails, no candidate mutation becomes authoritative.
+5. the verification hypothesis_hash must equal the published hypothesis_hash.
+6. the verification candidate_hash must equal the published candidate_hash.
+7. replay eligibility requires disposition=supported and independently verified provenance.
+8. falsified cases remain negative knowledge and inconclusive cases remain non-authoritative.
+9. if provenance, independence, precondition, or authority checks fail, no trusted replay-eligible case is published.
