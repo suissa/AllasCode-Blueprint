@@ -1,10 +1,14 @@
 preconditions:
-  - "hypothesis_fault_class_is_code"
+  - "hypothesis_fault_class_is_code_or_coupled"
   - "hypothesis_hash_is_valid"
+  - "candidate_hypothesis_hash_matches_hypothesis"
+  - "candidate_observation_hash_matches_hypothesis"
+  - "base_hash_matches_hypothesis_artifact_snapshot"
+  - "hypothesis_created_before_candidate"
   - "target_matches_authorized_mutation_scope"
 postconditions:
   Ok:
-    - "candidate_is_isolated_and_content_addressed"
+    - "candidate_is_isolated_content_addressed_and_causally_bound"
     - "only_authorized_implementation_files_differ"
   Error:
     - "base_remains_unchanged"
@@ -18,11 +22,16 @@ invariants:
     rule: "the candidate cannot promote or verify itself"
   - id: INV-CODESTAGE-004
     rule: "the patch is minimal with respect to the declared causal dimension"
+  - id: INV-CODESTAGE-005
+    rule: "candidate hypothesis, observation, and base hashes must match the immutable hypothesis causal basis"
+  - id: INV-CODESTAGE-006
+    rule: "candidate creation time must be after hypothesis creation time"
 forbidden:
   - "edit tests to make the candidate pass"
   - "change configs/core.yml"
   - "commit or merge"
   - "weaken an invariant"
+  - "stage a patch that predates or is not causally bound to its hypothesis"
 verification:
   independent_when_mutation_is_involved: true
   preserve_original_intent: true
