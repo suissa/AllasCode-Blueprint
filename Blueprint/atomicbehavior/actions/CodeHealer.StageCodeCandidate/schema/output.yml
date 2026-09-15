@@ -5,6 +5,12 @@ additionalProperties: false
 required:
   - "candidate_id"
   - "candidate_hash"
+  - "hypothesis_hash"
+  - "observation_hash"
+  - "base_hash"
+  - "producer_actor_id"
+  - "producer_execution_id"
+  - "created_at"
   - "diff"
   - "requested_tests"
 properties:
@@ -12,6 +18,18 @@ properties:
     semantic_type: CandidateId
   candidate_hash:
     semantic_type: ContentHash
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  observation_hash:
+    semantic_type: EvidenceHash
+  base_hash:
+    semantic_type: ContentHash
+  producer_actor_id:
+    semantic_type: ActorIdentity
+  producer_execution_id:
+    semantic_type: ExecutionId
+  created_at:
+    semantic_type: Timestamp
   diff:
     semantic_type: BoundedDiff
   requested_tests:
