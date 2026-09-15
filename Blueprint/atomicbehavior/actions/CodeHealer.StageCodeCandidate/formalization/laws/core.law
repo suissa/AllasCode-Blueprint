@@ -6,4 +6,7 @@ For every execution e of CodeHealer.StageCodeCandidate:
 2. every mutation performed by e is contained in its declared write scope.
 3. e preserves the original Intent and all declared invariants.
 4. evidence used by e retains provenance and content identity.
-5. if a precondition or authority check fails, no candidate mutation becomes authoritative.
+5. every staged candidate C must bind to exactly one immutable hypothesis H through matching hypothesis_hash and observation_hash values.
+6. C.base_hash must equal H.artifact_snapshot_hash and H.created_at must precede C.created_at.
+7. C records producer_actor_id and producer_execution_id as immutable provenance.
+8. if a precondition or authority check fails, no candidate mutation becomes authoritative.
