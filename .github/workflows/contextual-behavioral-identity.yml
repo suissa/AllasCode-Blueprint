@@ -1,0 +1,30 @@
+name: Contextual Behavioral Identity
+
+on:
+  pull_request:
+    paths:
+      - "src/compiler/behavioral-identity/**"
+      - "Blueprint/compiler/behavioral-identity/**"
+      - "Blueprint/tests/compiler/behavioral-identity/**"
+      - ".github/workflows/contextual-behavioral-identity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/compiler/behavioral-identity/**"
+      - "Blueprint/compiler/behavioral-identity/**"
+      - "Blueprint/tests/compiler/behavioral-identity/**"
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Run contextual behavioral identity conformance
+        run: node --test Blueprint/tests/compiler/behavioral-identity/contextual-behavioral-identity.test.mjs
