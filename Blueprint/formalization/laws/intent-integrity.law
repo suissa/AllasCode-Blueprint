@@ -1,0 +1,39 @@
+LAW IntentIntegrity
+
+OutcomeSatisfaction != IntentSatisfaction
+FunctionalRecovery != CausalCorrection
+
+CausalAdequacy(H, F, E_before, E_after) :=
+  HypothesisPresent(H)
+  && EvidenceSupports(E_before, H)
+  && FixTargetsCausalVariable(F, H)
+  && EvidenceMatchesPredictedChange(E_after, H)
+  && !MaskingDetected(F, E_before, E_after)
+
+IntentSatisfaction(I, T, S, V, C, Inv, E, H, F) :=
+  Outcome(I, S)
+  && InvariantsSatisfied(Inv, T, S)
+  && CapabilitiesAllowed(T, C)
+  && AuthorizedTrajectory(I, T)
+  && VerifierTrusted(V, T)
+  && ProvenanceComplete(E, T)
+  && CausalAdequacy(H, F, E.before, E.after)
+
+SEPARATION ModifierCriticalWrites(T) INTERSECT VerifierCriticalResources(V) = EMPTY
+
+ACCEPT I IFF IntentSatisfaction(I, T, S, V, C, Inv, E, H, F)
+
+REJECT Verified WHEN VerifierTrusted(V, T) = false
+REJECT Verified WHEN CapabilitiesAllowed(T, C) = false
+REJECT Verified WHEN InvariantsSatisfied(Inv, T, S) = false
+REJECT Verified WHEN ProvenanceComplete(E, T) = false
+REJECT Verified WHEN HypothesisPresent(H) = false
+REJECT Verified WHEN EvidenceSupports(E.before, H) = false
+REJECT Verified WHEN FixTargetsCausalVariable(F, H) = false
+REJECT Verified WHEN EvidenceMatchesPredictedChange(E.after, H) = false
+REJECT Verified WHEN MaskingDetected(F, E.before, E.after) = true
+
+STATUS := Verified | Compromised | Blocked | Inconclusive
+
+MASKING WITHOUT DIRECT INTEGRITY VIOLATION => Inconclusive
+INCONCLUSIVE MUST NOT IMPLY Verified

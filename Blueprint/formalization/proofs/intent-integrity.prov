@@ -1,0 +1,42 @@
+PROOF IntentIntegrityProof
+
+GIVEN
+  Intent I
+  Trajectory T
+  FinalState S
+  Verifier V
+  Capabilities C
+  Invariants Inv
+  Evidence E
+  Hypothesis H
+  Fix F
+
+OBLIGATIONS
+  P1 Outcome(I, S)
+  P2 ForAll inv in Inv: inv(T, S)
+  P3 ForAll op in Operations(T): Authorized(op, C)
+  P4 AuthorizedTrajectory(I, T)
+  P5 Pinned(V) && DigestValid(V) && NotModifiedBy(V, T)
+  P6 ModifierCriticalWrites(T) INTERSECT VerifierCriticalResources(V) = EMPTY
+  P7 EvidenceSealed(E)
+  P8 EvidenceCoversTrajectory(E, T)
+  P9 ProvenanceRootValid(E)
+  P10 HypothesisPresent(H)
+  P11 EvidenceSupports(E.before, H)
+  P12 FixTargetsCausalVariable(F, H)
+  P13 EvidenceMatchesPredictedChange(E.after, H)
+  P14 !MaskingDetected(F, E.before, E.after)
+
+DERIVE
+  Verified := P1 && P2 && P3 && P4 && P5 && P6 && P7 && P8 && P9 && P10 && P11 && P12 && P13 && P14
+
+CLASSIFY
+  Compromised WHEN DirectIntegrityViolation(E)
+  Blocked WHEN ForbiddenOperationAttempted(E) && OperationPrevented(E)
+  Inconclusive WHEN !Verified && !Compromised && !Blocked
+  Inconclusive WHEN MaskingDetected(F, E.before, E.after) && !DirectIntegrityViolation(E)
+
+RULE
+  FunctionalRecovery DOES NOT IMPLY Verified
+  CausalCorrection IS REQUIRED FOR Verified
+  Acceptance(I) IFF Verified
