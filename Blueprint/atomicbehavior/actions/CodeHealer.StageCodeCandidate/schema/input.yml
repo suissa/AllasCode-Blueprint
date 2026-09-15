@@ -4,15 +4,21 @@ type: object
 additionalProperties: false
 required:
   - "hypothesis"
+  - "hypothesis_hash"
+  - "observation_hash"
   - "target_action"
   - "base_hash"
   - "patch"
 properties:
   hypothesis:
     semantic_type: HealingHypothesis
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  observation_hash:
+    semantic_type: EvidenceHash
   target_action:
     semantic_type: ActionIdentity
   base_hash:
     semantic_type: ContentHash
   patch:
-    semantic_type: CandidatePatch
+    semantic_type: ProposedIntervention
