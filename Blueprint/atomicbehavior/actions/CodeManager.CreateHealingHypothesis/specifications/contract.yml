@@ -4,6 +4,7 @@ preconditions:
 postconditions:
   Ok:
     - "hypothesis_precedes_mutation"
+    - "hypothesis_is_bound_to_observation_and_artifact_snapshot"
     - "mechanism_connects_evidence_to_predicted_intervention_effect"
   Error:
     - "fault_class_is_unknown_when_evidence_is_underdetermined"
@@ -12,11 +13,15 @@ invariants:
   - id: INV-HYP-001
     rule: "the CodeManager has no mutation authority"
   - id: INV-HYP-002
-    rule: "fault class is exactly code, system, or unknown"
+    rule: "fault class is exactly code, system, coupled, or unknown"
   - id: INV-HYP-003
     rule: "every hypothesis states supporting evidence, contrary or missing evidence, alternatives, predictions, and falsification criteria"
   - id: INV-HYP-004
     rule: "known verified cases are contextual priors, never unconditional commands"
+  - id: INV-HYP-005
+    rule: "the immutable hypothesis records its observation hash, artifact snapshot hash, and creation time before any candidate is generated"
+  - id: INV-HYP-006
+    rule: "a coupled fault class may describe multi-artifact causality but never authorizes simultaneous code and configuration mutation in one experiment"
 forbidden:
   - "request simultaneous code and config mutation in one experiment"
   - "derive cause only from the final error"
