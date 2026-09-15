@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "observation_and_artifact_hashes_are_valid"
   - "skill_index_version_is_pinned"
 postconditions:
@@ -17,6 +18,8 @@ invariants:
     rule: "exact fingerprints outrank semantic resemblance when both are compatible"
   - id: INV-SKRES-004
     rule: "only the minimum dependency-closed bundle enters context"
+  - id: INV-IDEMP-RESOLVESKILL
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "load every known Skill"
   - "auto-install external Skills"

@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "hypothesis_fault_class_is_system_or_coupled"
   - "hypothesis_hash_is_valid"
   - "candidate_hypothesis_hash_matches_hypothesis"
@@ -27,6 +28,8 @@ invariants:
     rule: "candidate hypothesis, observation, and base hashes must match the immutable hypothesis causal basis"
   - id: INV-CONFSTAGE-006
     rule: "candidate creation time must be after hypothesis creation time"
+  - id: INV-IDEMP-STAGECONFIGCAN
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "modify code"
   - "change immutable or operator-only properties"

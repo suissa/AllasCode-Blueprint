@@ -3,6 +3,7 @@ title: CodeKnowledge.BuildObservationEnvelope.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "execution_id"
   - "intent"
   - "actions"
@@ -12,6 +13,8 @@ required:
   - "logs"
   - "error"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   execution_id:
     semantic_type: ExecutionId
   intent:

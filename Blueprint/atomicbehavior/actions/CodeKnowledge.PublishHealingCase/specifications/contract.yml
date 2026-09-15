@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "all_provenance_hashes_are_valid"
   - "verification_disposition_is_final"
   - "verification_is_independent"
@@ -24,6 +25,8 @@ invariants:
     rule: "the case records versions, evidence, mechanism, intervention, predictions, effects, regressions, and disposition"
   - id: INV-CASE-005
     rule: "replay eligibility requires supported disposition, independent verification, and exact hypothesis and candidate hash matches"
+  - id: INV-IDEMP-PUBLISHHEALING
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "erase failed experiments"
   - "generalize beyond recorded compatibility constraints"

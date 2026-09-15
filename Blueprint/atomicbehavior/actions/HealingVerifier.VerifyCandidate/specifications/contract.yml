@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "hypothesis_and_candidate_hashes_are_valid"
   - "candidate_hypothesis_hash_matches_hypothesis"
   - "producer_actor_id_differs_from_verifier_actor_id"
@@ -25,6 +26,8 @@ invariants:
     rule: "producer actor and execution identities must differ from verifier actor and execution identities"
   - id: INV-VERIFY-006
     rule: "verification hypothesis and candidate hashes must exactly match the immutable inputs"
+  - id: INV-IDEMP-VERIFYCANDIDAT
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "mutate the candidate"
   - "change the hypothesis after observing results"

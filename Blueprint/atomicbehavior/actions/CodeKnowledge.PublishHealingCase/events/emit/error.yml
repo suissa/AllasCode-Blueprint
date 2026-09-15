@@ -2,10 +2,7 @@ canonical_label: CodeKnowledge.PublishHealingCase.Error
 kind: result
 status: Error
 payload:
-  error:
-    semantic_type: HealingActionError
-  evidence_reference:
-    semantic_type: OptionalEvidenceHash
+  schema: ../../schema/error.yml
 correlation:
   required: true
 causation:

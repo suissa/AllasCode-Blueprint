@@ -3,6 +3,10 @@ execution:
   idempotent: true
   network: false
   deterministic_when_inputs_are_equal: true
+  effect_identity:
+    source: input.idempotency_key
+    scope: execution_context
+    duplicate_result: replay_original_terminal_result
 sandbox:
   enabled: true
   workspace_only: true

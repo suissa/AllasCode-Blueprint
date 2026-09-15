@@ -3,11 +3,14 @@ title: CodeKnowledge.ResolveSkill.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "observation_envelope"
   - "artifact_resolution"
   - "query_mode"
   - "maximum_bundle_size"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   observation_envelope:
     semantic_type: ObservationEnvelope
   artifact_resolution:

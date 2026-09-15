@@ -3,6 +3,7 @@ title: CodeKnowledge.PublishHealingCase.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "hypothesis"
   - "hypothesis_hash"
   - "candidate"
@@ -12,6 +13,8 @@ required:
   - "verifier_actor_id"
   - "context_constraints"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   hypothesis:
     semantic_type: HealingHypothesis
   hypothesis_hash:

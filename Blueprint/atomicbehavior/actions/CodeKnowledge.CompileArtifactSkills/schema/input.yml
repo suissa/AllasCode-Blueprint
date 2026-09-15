@@ -3,11 +3,14 @@ title: CodeKnowledge.CompileArtifactSkills.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "canonical_label"
   - "artifact_kind"
   - "artifact_snapshot"
   - "source_hash"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   canonical_label:
     semantic_type: CanonicalLabel
   artifact_kind:

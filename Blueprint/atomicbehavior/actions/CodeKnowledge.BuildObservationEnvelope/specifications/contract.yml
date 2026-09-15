@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "execution_id_is_known"
   - "intent_contract_is_versioned"
   - "all_received_evidence_has_source"
@@ -16,6 +17,8 @@ invariants:
     rule: "source, timestamp, execution, correlation, and causation provenance are preserved"
   - id: INV-OBS-003
     rule: "canonical serialization of identical evidence produces the same evidence hash"
+  - id: INV-IDEMP-BUILDOBSERVATI
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "infer a root cause"
   - "mutate code or configuration"

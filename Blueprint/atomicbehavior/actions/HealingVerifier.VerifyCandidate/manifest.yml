@@ -21,12 +21,22 @@ authority:
 contract:
   input: ./schema/input.yml
   output: ./schema/output.yml
+  error: ./schema/error.yml
   events: ./schema/events.yml
   specification: ./specifications/contract.yml
   scenarios: ./specifications/scenarios.yml
   healing: ./healing/pipeline.yml
   law: ./formalization/laws/core.law
   proof_evidence: ./formalization/proofs/core.prov
+capabilities:
+  - name: read_declared_inputs
+    mode: read
+  - name: read_declared_scope
+    mode: read
+  - name: write_declared_scope
+    mode: effect
+  - name: emit_fixed_result_event
+    mode: emit
 skills:
   authoring: ./skills/authoring/SKILL.md
   semantics: ./skills/semantics/SKILL.md

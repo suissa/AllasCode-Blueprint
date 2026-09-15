@@ -3,6 +3,7 @@ title: CodeHealer.StageCodeCandidate.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "hypothesis"
   - "hypothesis_hash"
   - "observation_hash"
@@ -10,6 +11,8 @@ required:
   - "base_hash"
   - "patch"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   hypothesis:
     semantic_type: HealingHypothesis
   hypothesis_hash:

@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "observation_envelope_hash_is_valid"
   - "artifact_index_is_versioned"
 postconditions:
@@ -15,6 +16,8 @@ invariants:
     rule: "confidence below threshold yields ambiguous or unknown, never an invented identity"
   - id: INV-ARTRES-003
     rule: "the resolver is read-only and cannot change the evidence it ranks"
+  - id: INV-IDEMP-RESOLVEARTIFAC
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "select only from terminal error text"
   - "hide contradictory candidates"

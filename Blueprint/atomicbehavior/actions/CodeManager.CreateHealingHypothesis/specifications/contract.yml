@@ -1,4 +1,5 @@
 preconditions:
+  - "idempotency_key_is_valid"
   - "all_input_hashes_are_valid"
   - "the_complete_failed_intent_is_available"
 postconditions:
@@ -22,6 +23,8 @@ invariants:
     rule: "the immutable hypothesis records its observation hash, artifact snapshot hash, and creation time before any candidate is generated"
   - id: INV-HYP-006
     rule: "a coupled fault class may describe multi-artifact causality but never authorizes simultaneous code and configuration mutation in one experiment"
+  - id: INV-IDEMP-CREATEHEALINGH
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
 forbidden:
   - "request simultaneous code and config mutation in one experiment"
   - "derive cause only from the final error"

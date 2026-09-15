@@ -3,10 +3,13 @@ title: CodeKnowledge.ResolveArtifact.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "observation_envelope"
   - "candidate_scope"
   - "minimum_confidence"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   observation_envelope:
     semantic_type: ObservationEnvelope
   candidate_scope:

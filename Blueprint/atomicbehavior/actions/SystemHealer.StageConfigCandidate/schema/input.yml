@@ -3,6 +3,7 @@ title: SystemHealer.StageConfigCandidate.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "hypothesis"
   - "hypothesis_hash"
   - "observation_hash"
@@ -11,6 +12,8 @@ required:
   - "current_value"
   - "candidate_value"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   hypothesis:
     semantic_type: HealingHypothesis
   hypothesis_hash:

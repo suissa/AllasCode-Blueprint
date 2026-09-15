@@ -3,6 +3,7 @@ title: HealingVerifier.VerifyCandidate.input
 type: object
 additionalProperties: false
 required:
+  - "idempotency_key"
   - "hypothesis"
   - "hypothesis_hash"
   - "candidate"
@@ -14,6 +15,8 @@ required:
   - "predicted_effects"
   - "verification_plan"
 properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
   hypothesis:
     semantic_type: HealingHypothesis
   hypothesis_hash:

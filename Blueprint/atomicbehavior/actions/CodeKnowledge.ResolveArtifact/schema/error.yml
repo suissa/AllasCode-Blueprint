@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.ResolveArtifact.error
+type: object
+additionalProperties: false
+required:
+  - "code"
+  - "safe_diagnostic"
+  - "original_input_ref"
+  - "healing_context"
+  - "correlation_id"
+  - "causation_id"
+properties:
+  code:
+    semantic_type: HealingActionErrorCode
+  safe_diagnostic:
+    semantic_type: SafeDiagnostic
+  original_input_ref:
+    semantic_type: InputReference
+  healing_context:
+    semantic_type: HealingContext
+  correlation_id:
+    semantic_type: CorrelationId
+  causation_id:
+    semantic_type: CausationId
