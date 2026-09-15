@@ -1,0 +1,19 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: ReleasePaymentAuthorization
+semantic_id: commerce.action.release-payment-authorization
+owner: CheckoutAgent
+purpose: compensate_an_authorized_payment_when_purchase_cannot_commit
+input: PaymentAuthorization
+output: ReleasedPaymentAuthorization
+result: InternalResult<ReleasedPaymentAuthorization,PaymentReleaseError>
+capabilities: [Payment.release]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+compensating: true
+invariants:
+  - release_targets_same_authorization
+  - release_is_idempotent
+  - release_preserves_original_trace_id

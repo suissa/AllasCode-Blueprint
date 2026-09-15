@@ -1,0 +1,66 @@
+api_version: allascode/v1
+kind: InvariantSet
+behavior: CheckoutAgent.BuyOneProduct
+
+invariants:
+  - id: INV-BUY-001
+    statement: quantity == 1
+
+  - id: INV-BUY-002
+    statement: only Runtime may invoke executable Behavior or Action functions
+
+  - id: INV-BUY-003
+    statement: Agent, Actor, Behavior implementation and Action implementation never emit public events directly
+
+  - id: INV-BUY-004
+    statement: terminal_event == canonical_label + '.' + internal_result.status
+
+  - id: INV-BUY-005
+    statement: terminal_event.status in {Ok, Error}
+
+  - id: INV-BUY-006
+    statement: exactly one terminal event exists for one completed Behavior execution
+
+  - id: INV-BUY-007
+    statement: trace_id is constant for the whole Intent execution, compensation and healing resume
+
+  - id: INV-BUY-008
+    statement: authoritative_price is resolved at execution time and never trusted from client input
+
+  - id: INV-BUY-009
+    statement: stock_available >= 1 before reservation
+
+  - id: INV-BUY-010
+    statement: stock is reserved before payment authorization
+
+  - id: INV-BUY-011
+    statement: sale may be registered only after successful payment authorization
+
+  - id: INV-BUY-012
+    statement: stock decrement is committed only after sale registration
+
+  - id: INV-BUY-013
+    statement: committed stock cannot become negative
+
+  - id: INV-BUY-014
+    statement: idempotency_key identifies at most one successful purchase result
+
+  - id: INV-BUY-015
+    statement: failure after a reversible effect requires compensation before terminal Error is published
+
+  - id: INV-BUY-016
+    statement: unresolved Error is routed to Healing and may terminate only at Human-in-the-Healing-Loop, never as an unhandled exception
+
+proof_obligations:
+  - RuntimeExecutionAuthority
+  - RuntimeEventAuthority
+  - ResultEventCorrespondence
+  - SingleTerminalEvent
+  - QuantityExactlyOne
+  - PriceAuthority
+  - ReservationBeforeAuthorization
+  - AuthorizationBeforeSale
+  - SaleBeforeStockCommit
+  - IdempotentCompensation
+  - TraceContinuity
+  - NoNegativeStock

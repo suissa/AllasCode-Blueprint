@@ -1,0 +1,20 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: RegisterSale
+semantic_id: commerce.action.register-sale
+owner: CheckoutAgent
+purpose: persist_the_sale_after_payment_authorization
+input: AuthorizedPurchase
+output: RegisteredSale
+result: InternalResult<RegisteredSale,SaleRegistrationError>
+capabilities: [Sale.record.write]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+invariants:
+  - sale_quantity_equals_1
+  - sale_amount_equals_authorized_amount
+  - sale_currency_equals_authorized_currency
+  - sale_is_idempotent_by_idempotency_key
+  - sale_requires_valid_payment_authorization

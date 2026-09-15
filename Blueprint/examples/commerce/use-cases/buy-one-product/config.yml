@@ -1,0 +1,22 @@
+behavior: CheckoutAgent.BuyOneProduct
+currency: BRL
+quantity: 1
+price:
+  authority: Product.price
+  trust_client_price: false
+stock:
+  reservation_ttl_ms: 120000
+  commit_after_sale_registration: true
+payment:
+  authorize_before_sale: true
+  capture_mode: authorization
+idempotency:
+  required: true
+  scope: buyer-product-intent
+runtime:
+  only_runtime_executes_functions: true
+  runtime_is_event_emitter: true
+  event_label_strategy: derived_from_behavior_and_internal_result
+healing:
+  automatic_attempts: 3
+  fallback: HumanInTheHealingLoop

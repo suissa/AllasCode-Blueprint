@@ -1,0 +1,20 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: ReleaseStockReservation
+semantic_id: commerce.action.release-stock-reservation
+owner: CheckoutAgent
+purpose: compensate_an_uncommitted_stock_reservation
+input: StockReservation
+output: ReleasedStockReservation
+result: InternalResult<ReleasedStockReservation,StockReleaseError>
+capabilities: [Stock.reservation.write]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+compensating: true
+invariants:
+  - release_targets_same_reservation
+  - release_is_idempotent
+  - committed_stock_is_never_restored_by_this_action
+  - release_preserves_original_trace_id

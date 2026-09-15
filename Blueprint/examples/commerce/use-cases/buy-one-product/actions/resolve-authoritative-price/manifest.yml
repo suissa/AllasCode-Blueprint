@@ -1,0 +1,18 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: ResolveAuthoritativePrice
+semantic_id: commerce.action.resolve-authoritative-price
+owner: CheckoutAgent
+purpose: resolve_the_current_authoritative_unit_price
+input: ResolvedProduct
+output: PricedProduct
+result: InternalResult<PricedProduct,PriceResolutionError>
+capabilities: [Product.price.read]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+invariants:
+  - amount_must_be_non_negative
+  - currency_must_be_supported
+  - client_supplied_price_is_not_authoritative

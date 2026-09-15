@@ -1,0 +1,23 @@
+api_version: allascode/v1
+kind: Agent
+name: CheckoutAgent
+semantic_id: commerce.agent.checkout
+actor: ../../actors/checkout-actor/manifest.yml
+intents:
+  - BuyOneProductIntent
+behaviors:
+  - ../../behaviors/buy-one-product/manifest.yml
+capabilities: ./capabilities.yml
+runtime:
+  executable_directly: false
+  function_execution_authority: Runtime
+  action_result_delivery: local_event
+  self_healing_on_action_error: mandatory
+  predecessor_binding:
+    source: Intent.2flow
+    persistence: runtime_only
+    static_config: forbidden
+    injected_field: previous_agent
+    purpose:
+      - subscribe_to_previous_agent_ok
+      - route_unrecoverable_error_upstream
