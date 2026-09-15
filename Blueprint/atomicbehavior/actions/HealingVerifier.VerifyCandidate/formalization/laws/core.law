@@ -3,7 +3,11 @@ law HealingVerifier_VerifyCandidate_AuthorityAndCausality
 For every execution e of HealingVerifier.VerifyCandidate:
 
 1. e emits exactly one terminal result in {HealingVerifier.VerifyCandidate.Ok, HealingVerifier.VerifyCandidate.Error}.
-2. every mutation performed by e is contained in its declared write scope.
+2. e performs no candidate mutation or promotion.
 3. e preserves the original Intent and all declared invariants.
 4. evidence used by e retains provenance and content identity.
-5. if a precondition or authority check fails, no candidate mutation becomes authoritative.
+5. the candidate producer_actor_id must differ from verifier_actor_id.
+6. the candidate producer_execution_id must differ from verifier_execution_id.
+7. the verification result must bind to the exact hypothesis_hash and candidate_hash supplied as immutable inputs.
+8. inconclusive evidence cannot produce a supported disposition.
+9. if any independence, provenance, precondition, or authority check fails, no candidate becomes authoritative.
