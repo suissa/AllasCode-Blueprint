@@ -3,7 +3,10 @@ law CodeManager_CreateHealingHypothesis_AuthorityAndCausality
 For every execution e of CodeManager.CreateHealingHypothesis:
 
 1. e emits exactly one terminal result in {CodeManager.CreateHealingHypothesis.Ok, CodeManager.CreateHealingHypothesis.Error}.
-2. every mutation performed by e is contained in its declared write scope.
+2. e performs no code or configuration mutation.
 3. e preserves the original Intent and all declared invariants.
 4. evidence used by e retains provenance and content identity.
-5. if a precondition or authority check fails, no candidate mutation becomes authoritative.
+5. every successful hypothesis H records immutable observation_hash, artifact_snapshot_hash, and created_at values.
+6. no candidate C may be causally authorized by H unless H.created_at precedes C.created_at and C binds to H.hypothesis_hash, H.observation_hash, and H.artifact_snapshot_hash.
+7. a coupled fault class may describe multi-artifact causality but cannot authorize simultaneous code and configuration mutation in one experiment.
+8. if a precondition or authority check fails, no candidate mutation becomes authoritative.
