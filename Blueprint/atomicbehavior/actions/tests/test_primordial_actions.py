@@ -45,6 +45,13 @@ def read(action: str, relative: str) -> str:
     return (ROOT / action / relative).read_text(encoding="utf-8")
 
 
+def required_fields(schema: str) -> set[str]:
+    match = re.search(r"(?ms)^required:\n(?P<body>(?:  - .+\n)+)", schema)
+    if not match:
+        return set()
+    return set(re.findall(r'^  - "([^"]+)"$', match.group("body"), re.M))
+
+
 class PrimordialActionContracts(unittest.TestCase):
     def test_every_action_has_complete_specified_layout(self) -> None:
         for action in ACTIONS:
@@ -110,28 +117,65 @@ class PrimordialActionContracts(unittest.TestCase):
         self.assertRegex(verifier, r"write_scope:\n\s+\[\]")
         self.assertRegex(manager, r"write_scope:\n\s+\[\]")
 
-    def test_hypothesis_precedes_every_candidate_mutation(self) -> None:
-        for action in (
-            "CodeHealer.StageCodeCandidate",
-            "SystemHealer.StageConfigCandidate",
-        ):
-            with self.subTest(action=action):
-                schema = read(action, "schema/input.yml")
-                contract = read(action, "specifications/contract.yml")
-                self.assertIn('- "hypothesis"', schema)
-                self.assertIn("hypothesis_hash_is_valid", contract)
+    def test_hypothesis_precedes_and_binds_every_candidate_mutation(self) -> None:
+        hypothesis_output = read("CodeManager.CreateHealingHypothesis", "schema/output.yml")
+        hypothesis_fields = required_fields(hypothesis_output)
+        self.assertTrue({"hypothesis_hash", "observation_hash", "artifact_snapshot_hash", "created_at"} <= hypothesis_fields)
 
-    def test_verifier_cannot_mutate_or_promote(self) -> None:
+        for action in ("CodeHealer.StageCodeCandidate", "SystemHealer.StageConfigCandidate"):
+            with self.subTest(action=action):
+                input_schema = read(action, "schema/input.yml")
+                output_schema = read(action, "schema/output.yml")
+                contract = read(action, "specifications/contract.yml")
+                self.assertTrue({"hypothesis", "hypothesis_hash", "observation_hash", "base_hash"} <= required_fields(input_schema))
+                self.assertTrue({"hypothesis_hash", "observation_hash", "base_hash", "producer_actor_id", "producer_execution_id", "created_at"} <= required_fields(output_schema))
+                self.assertIn("base_hash_matches_hypothesis_artifact_snapshot", contract)
+                self.assertIn("hypothesis_created_before_candidate", contract)
+                self.assertIn("candidate_hypothesis_hash_matches_hypothesis", contract)
+
+    def test_coupled_faults_do_not_authorize_multi_dimension_mutation(self) -> None:
+        manager = read("CodeManager.CreateHealingHypothesis", "specifications/contract.yml")
+        self.assertIn("code, system, coupled, or unknown", manager)
+        self.assertIn("never authorizes simultaneous code and configuration mutation", manager)
+        self.assertIn("request simultaneous code and config mutation in one experiment", manager)
+
+    def test_verifier_independence_is_machine_verifiable(self) -> None:
+        input_schema = read("HealingVerifier.VerifyCandidate", "schema/input.yml")
+        output_schema = read("HealingVerifier.VerifyCandidate", "schema/output.yml")
         contract = read("HealingVerifier.VerifyCandidate", "specifications/contract.yml")
+        self.assertTrue({"hypothesis_hash", "candidate_hash", "producer_actor_id", "producer_execution_id", "verifier_actor_id", "verifier_execution_id"} <= required_fields(input_schema))
+        self.assertTrue({"hypothesis_hash", "candidate_hash", "verifier_actor_id", "verifier_execution_id"} <= required_fields(output_schema))
+        self.assertIn("producer_actor_id_differs_from_verifier_actor_id", contract)
+        self.assertIn("producer_execution_id_differs_from_verifier_execution_id", contract)
         self.assertIn('"mutate the candidate"', contract)
         self.assertIn('"promote directly"', contract)
-        self.assertIn("the proposing Agent cannot verify or promote its own candidate", contract)
 
-    def test_only_supported_cases_can_be_replay_eligible(self) -> None:
+    def test_replay_eligibility_requires_bound_independent_verification(self) -> None:
+        schema = read("CodeKnowledge.PublishHealingCase", "schema/input.yml")
         contract = read("CodeKnowledge.PublishHealingCase", "specifications/contract.yml")
+        self.assertTrue({"hypothesis_hash", "candidate_hash", "verification_evidence_hash", "verifier_actor_id"} <= required_fields(schema))
+        self.assertIn("verification_is_independent", contract)
+        self.assertIn("verification_candidate_hash_matches_candidate", contract)
+        self.assertIn("verification_hypothesis_hash_matches_hypothesis", contract)
         self.assertIn("only independently supported cases may be replay-eligible", contract)
         self.assertIn("falsified cases remain negative knowledge", contract)
         self.assertIn("inconclusive cases cannot authorize autonomous mutation", contract)
+
+    def test_causal_chain_proofs_expose_open_runtime_obligations(self) -> None:
+        for action in (
+            "CodeManager.CreateHealingHypothesis",
+            "CodeHealer.StageCodeCandidate",
+            "SystemHealer.StageConfigCandidate",
+            "HealingVerifier.VerifyCandidate",
+            "CodeKnowledge.PublishHealingCase",
+        ):
+            with self.subTest(action=action):
+                proof = read(action, "formalization/proofs/core.prov")
+                self.assertIn("status: specified", proof)
+                self.assertIn("specification_evidence:", proof)
+                self.assertIn("open_obligations:", proof)
+                self.assertNotIn("holes: 0", proof)
+                self.assertNotIn("executable_evidence:", proof)
 
     def test_catalog_contains_each_action_once(self) -> None:
         catalog = (ROOT / "primordial-knowledge-and-healing-actions.yml").read_text(encoding="utf-8")
