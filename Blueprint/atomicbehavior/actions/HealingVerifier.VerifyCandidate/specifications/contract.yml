@@ -1,9 +1,13 @@
 preconditions:
   - "hypothesis_and_candidate_hashes_are_valid"
+  - "candidate_hypothesis_hash_matches_hypothesis"
+  - "producer_actor_id_differs_from_verifier_actor_id"
+  - "producer_execution_id_differs_from_verifier_execution_id"
   - "verifier_is_independent_from_candidate_producer"
 postconditions:
   Ok:
     - "disposition_is_supported_falsified_or_inconclusive"
+    - "verification_result_is_bound_to_hypothesis_candidate_and_verifier"
     - "prediction_comparison_and_all_test_evidence_are_recorded"
   Error:
     - "no_candidate_is_promoted"
@@ -17,11 +21,16 @@ invariants:
     rule: "all original Intent invariants and hidden acceptance obligations remain authoritative"
   - id: INV-VERIFY-004
     rule: "inconclusive evidence never becomes supported"
+  - id: INV-VERIFY-005
+    rule: "producer actor and execution identities must differ from verifier actor and execution identities"
+  - id: INV-VERIFY-006
+    rule: "verification hypothesis and candidate hashes must exactly match the immutable inputs"
 forbidden:
   - "mutate the candidate"
   - "change the hypothesis after observing results"
   - "hide failed tests"
   - "promote directly"
+  - "verify a candidate produced by the same actor or execution"
 verification:
   independent_when_mutation_is_involved: true
   preserve_original_intent: true
