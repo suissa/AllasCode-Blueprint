@@ -10,7 +10,13 @@ verification:
     - INV-CONFSTAGE-002
     - INV-CONFSTAGE-003
     - INV-CONFSTAGE-004
-  executable_evidence:
+    - INV-CONFSTAGE-005
+    - INV-CONFSTAGE-006
+  specification_evidence:
     - ../../tests/contract.test.yml
-  holes: 0
-  note: "Runtime binding and independent conformance evidence are required before status may become proved."
+  open_obligations:
+    - runtime_write_scope_enforcement
+    - hypothesis_temporal_precedence
+    - causal_hash_binding
+    - independent_runtime_conformance
+  note: "Specification evidence does not discharge runtime or independent conformance obligations."
