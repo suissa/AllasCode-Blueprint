@@ -1,0 +1,27 @@
+suite:
+  canonical_label: CodeKnowledge.CompileArtifactSkills.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: complete-action
+    scenario: ../specifications/scenarios.yml#complete-action
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: stable-rebuild
+    scenario: ../specifications/scenarios.yml#stable-rebuild
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: missing-invariants
+    scenario: ../specifications/scenarios.yml#missing-invariants
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false

@@ -1,0 +1,29 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "execution_id_is_known"
+  - "all_streams_have_source_metadata"
+  - "canonical_serializer_is_versioned"
+postconditions:
+  Ok:
+    - "only_observed_values_are_retained"
+    - "evidence_hash_matches_canonical_serialization"
+  Error:
+    - "contradictory_or_missing_streams_are_reported"
+    - "no_observation_is_presented_as_complete"
+invariants:
+  - id: INV-CAPTURE-001
+    rule: "no root cause or repair is inferred"
+  - id: INV-CAPTURE-002
+    rule: "source timestamps and correlation are preserved"
+  - id: INV-CAPTURE-003
+    rule: "identical streams serialize to the same evidence hash"
+  - id: INV-IDEMP-CAPTURERUNTIME
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "invent missing telemetry"
+  - "rewrite a source claim"
+  - "mutate code or configuration"
+verification:
+  independent_when_mutation_is_involved: false
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

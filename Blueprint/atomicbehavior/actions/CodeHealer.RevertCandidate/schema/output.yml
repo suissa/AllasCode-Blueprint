@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeHealer.RevertCandidate.output
+type: object
+additionalProperties: false
+required:
+  - "rollback_id"
+  - "restored_hash"
+  - "target_action"
+  - "created_at"
+properties:
+  rollback_id:
+    semantic_type: RollbackId
+  restored_hash:
+    semantic_type: ContentHash
+  target_action:
+    semantic_type: ActionIdentity
+  created_at:
+    semantic_type: Timestamp

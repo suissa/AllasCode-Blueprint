@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeHealer.PromoteVerifiedCodeCandidate.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeHealer.PromoteVerifiedCodeCandidate.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeHealer.PromoteVerifiedCodeCandidate.Error
+    schema: ./error.yml
+configurable_result_events: false

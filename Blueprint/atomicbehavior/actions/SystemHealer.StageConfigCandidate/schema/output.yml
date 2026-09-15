@@ -1,0 +1,36 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: SystemHealer.StageConfigCandidate.output
+type: object
+additionalProperties: false
+required:
+  - "candidate_id"
+  - "candidate_hash"
+  - "hypothesis_hash"
+  - "observation_hash"
+  - "base_hash"
+  - "producer_actor_id"
+  - "producer_execution_id"
+  - "created_at"
+  - "config_diff"
+  - "requested_tests"
+properties:
+  candidate_id:
+    semantic_type: CandidateId
+  candidate_hash:
+    semantic_type: ContentHash
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  observation_hash:
+    semantic_type: EvidenceHash
+  base_hash:
+    semantic_type: ContentHash
+  producer_actor_id:
+    semantic_type: ActorIdentity
+  producer_execution_id:
+    semantic_type: ExecutionId
+  created_at:
+    semantic_type: Timestamp
+  config_diff:
+    semantic_type: BoundedConfigDiff
+  requested_tests:
+    semantic_type: VerificationPlan

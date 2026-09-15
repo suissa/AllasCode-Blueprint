@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeKnowledge.PublishHealingCase.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeKnowledge.PublishHealingCase.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeKnowledge.PublishHealingCase.Error
+    semantic_type: HealingActionError
+configurable_result_events: false

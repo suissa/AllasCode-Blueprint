@@ -1,0 +1,22 @@
+artifact:
+  canonical_label: HealingVerifier.VerifyCandidate
+  version: 0.1.0
+property:
+  authority_and_causality_law: ../laws/core.law
+verification:
+  status: specified
+  proof_obligations:
+    - INV-VERIFY-001
+    - INV-VERIFY-002
+    - INV-VERIFY-003
+    - INV-VERIFY-004
+    - INV-VERIFY-005
+    - INV-VERIFY-006
+  specification_evidence:
+    - ../../tests/contract.test.yml
+  open_obligations:
+    - runtime_verifier_identity_binding
+    - producer_verifier_independence
+    - hidden_acceptance_execution
+    - independent_runtime_conformance
+  note: "Specification evidence does not discharge runtime or independent conformance obligations."

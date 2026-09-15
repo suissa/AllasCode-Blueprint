@@ -1,0 +1,10 @@
+canonical_label: CodeKnowledge.ResolveSkill.Error
+kind: result
+status: Error
+payload:
+  schema: ../../schema/error.yml
+correlation:
+  required: true
+causation:
+  required: true
+fallback: Human-in-the-Healing-Loop

@@ -1,0 +1,27 @@
+suite:
+  canonical_label: CodeHealer.StageCodeCandidate.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: authorized-single-file
+    scenario: ../specifications/scenarios.yml#authorized-single-file
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: test-mutation
+    scenario: ../specifications/scenarios.yml#test-mutation
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: stale-base
+    scenario: ../specifications/scenarios.yml#stale-base
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false

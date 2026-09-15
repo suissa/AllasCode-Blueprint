@@ -1,0 +1,27 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeHealer.StageCodeCandidate.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "hypothesis"
+  - "hypothesis_hash"
+  - "observation_hash"
+  - "target_action"
+  - "base_hash"
+  - "patch"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  hypothesis:
+    semantic_type: HealingHypothesis
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  observation_hash:
+    semantic_type: EvidenceHash
+  target_action:
+    semantic_type: ActionIdentity
+  base_hash:
+    semantic_type: ContentHash
+  patch:
+    semantic_type: ProposedIntervention

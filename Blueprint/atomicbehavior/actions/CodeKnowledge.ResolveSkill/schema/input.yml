@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.ResolveSkill.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "observation_envelope"
+  - "artifact_resolution"
+  - "query_mode"
+  - "maximum_bundle_size"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  observation_envelope:
+    semantic_type: ObservationEnvelope
+  artifact_resolution:
+    semantic_type: ArtifactResolution
+  query_mode:
+    semantic_type: SkillQueryMode
+  maximum_bundle_size:
+    semantic_type: PositiveInteger

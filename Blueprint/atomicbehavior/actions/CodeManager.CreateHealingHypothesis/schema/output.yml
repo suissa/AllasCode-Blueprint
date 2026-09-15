@@ -1,0 +1,30 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeManager.CreateHealingHypothesis.output
+type: object
+additionalProperties: false
+required:
+  - "hypothesis"
+  - "hypothesis_hash"
+  - "observation_hash"
+  - "artifact_snapshot_hash"
+  - "created_at"
+  - "fault_class"
+  - "mutation_scope"
+  - "falsification_criteria"
+properties:
+  hypothesis:
+    semantic_type: HealingHypothesis
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  observation_hash:
+    semantic_type: EvidenceHash
+  artifact_snapshot_hash:
+    semantic_type: ContentHash
+  created_at:
+    semantic_type: Timestamp
+  fault_class:
+    semantic_type: FaultClass
+  mutation_scope:
+    semantic_type: MutationScope
+  falsification_criteria:
+    semantic_type: FalsificationCriterionList

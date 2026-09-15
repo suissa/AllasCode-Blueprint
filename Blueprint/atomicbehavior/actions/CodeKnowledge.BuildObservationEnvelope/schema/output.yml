@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.BuildObservationEnvelope.output
+type: object
+additionalProperties: false
+required:
+  - "observation_envelope"
+  - "evidence_hash"
+  - "missing_evidence"
+  - "provenance"
+properties:
+  observation_envelope:
+    semantic_type: ObservationEnvelope
+  evidence_hash:
+    semantic_type: EvidenceHash
+  missing_evidence:
+    semantic_type: EvidenceGapList
+  provenance:
+    semantic_type: EvidenceProvenance

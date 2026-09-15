@@ -1,0 +1,31 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "verification_is_supported_and_independent"
+  - "verification_hashes_match_candidate"
+  - "approval_is_explicit"
+  - "config_property_is_declared_healable"
+  - "candidate_is_inside_config_scope"
+postconditions:
+  Ok:
+    - "only_authorized_property_is_promoted"
+    - "promoted_hash_matches_candidate_hash"
+  Error:
+    - "authoritative_configuration_remains_unchanged"
+    - "approval_or_scope_failure_is_reported"
+invariants:
+  - id: INV-PROMOTECONFIG-001
+    rule: "code and contracts remain read-only"
+  - id: INV-PROMOTECONFIG-002
+    rule: "promotion requires independent verification and approval"
+  - id: INV-PROMOTECONFIG-003
+    rule: "the promoted value equals the verified candidate value"
+  - id: INV-IDEMP-PROMOTEVERIFIE
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "promote an unverified candidate"
+  - "modify code"
+  - "change immutable or operator-only properties"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

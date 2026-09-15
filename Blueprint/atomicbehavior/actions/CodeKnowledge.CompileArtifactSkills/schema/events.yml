@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeKnowledge.CompileArtifactSkills.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeKnowledge.CompileArtifactSkills.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeKnowledge.CompileArtifactSkills.Error
+    semantic_type: HealingActionError
+configurable_result_events: false

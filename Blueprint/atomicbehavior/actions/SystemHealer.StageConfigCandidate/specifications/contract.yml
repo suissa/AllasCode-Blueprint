@@ -1,0 +1,42 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "hypothesis_fault_class_is_system_or_coupled"
+  - "hypothesis_hash_is_valid"
+  - "candidate_hypothesis_hash_matches_hypothesis"
+  - "candidate_observation_hash_matches_hypothesis"
+  - "base_hash_matches_hypothesis_artifact_snapshot"
+  - "hypothesis_created_before_candidate"
+  - "config_property_is_declared_healable"
+  - "candidate_value_is_inside_safety_bounds"
+postconditions:
+  Ok:
+    - "exactly_the_authorized_configuration_dimension_changes"
+    - "candidate_is_isolated_content_addressed_and_causally_bound"
+  Error:
+    - "base_configuration_remains_unchanged"
+    - "authorization_or_bound_violation_is_reported"
+invariants:
+  - id: INV-CONFSTAGE-001
+    rule: "only configs/core.yml and only an authorized healable property may change"
+  - id: INV-CONFSTAGE-002
+    rule: "Action implementations and semantic contracts are read-only"
+  - id: INV-CONFSTAGE-003
+    rule: "one causal configuration dimension changes per experiment whenever operationally safe"
+  - id: INV-CONFSTAGE-004
+    rule: "the candidate cannot promote or verify itself"
+  - id: INV-CONFSTAGE-005
+    rule: "candidate hypothesis, observation, and base hashes must match the immutable hypothesis causal basis"
+  - id: INV-CONFSTAGE-006
+    rule: "candidate creation time must be after hypothesis creation time"
+  - id: INV-IDEMP-STAGECONFIGCAN
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "modify code"
+  - "change immutable or operator-only properties"
+  - "change multiple unrelated settings"
+  - "commit or merge"
+  - "stage a configuration intervention that predates or is not causally bound to its hypothesis"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

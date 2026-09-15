@@ -1,0 +1,30 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "observation_and_artifact_hashes_are_valid"
+  - "skill_index_version_is_pinned"
+postconditions:
+  Ok:
+    - "bundle_is_minimal_and_dependency_closed"
+    - "every_skill_is_trusted_available_and_context_compatible"
+  Error:
+    - "no_untrusted_or_incompatible_skill_is_loaded"
+    - "missing_dependencies_are_explicit"
+invariants:
+  - id: INV-SKRES-001
+    rule: "hard compatibility and trust gates precede lexical, semantic, and topological ranking"
+  - id: INV-SKRES-002
+    rule: "retrieval cannot expand mutation authority or writable scope"
+  - id: INV-SKRES-003
+    rule: "exact fingerprints outrank semantic resemblance when both are compatible"
+  - id: INV-SKRES-004
+    rule: "only the minimum dependency-closed bundle enters context"
+  - id: INV-IDEMP-RESOLVESKILL
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "load every known Skill"
+  - "auto-install external Skills"
+  - "treat similarity as causal proof"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

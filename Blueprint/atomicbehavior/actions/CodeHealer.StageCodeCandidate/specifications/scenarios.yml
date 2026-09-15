@@ -1,0 +1,10 @@
+scenarios:
+  - name: authorized-single-file
+    given: "the patch touches only the target implementation"
+    expected: "Ok with isolated candidate"
+  - name: test-mutation
+    given: "the patch also changes a test"
+    expected: "Error and discard candidate"
+  - name: stale-base
+    given: "base hash differs from the hypothesis context"
+    expected: "Error requiring re-resolution"

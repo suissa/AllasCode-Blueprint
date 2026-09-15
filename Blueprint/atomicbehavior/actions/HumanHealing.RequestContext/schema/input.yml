@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: HumanHealing.RequestContext.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "intent_id"
+  - "execution_id"
+  - "evidence_gaps"
+  - "questions"
+  - "checkpoint"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  intent_id:
+    semantic_type: IntentId
+  execution_id:
+    semantic_type: ExecutionId
+  evidence_gaps:
+    semantic_type: EvidenceGapList
+  questions:
+    semantic_type: HumanQuestionList
+  checkpoint:
+    semantic_type: ExecutionCheckpoint

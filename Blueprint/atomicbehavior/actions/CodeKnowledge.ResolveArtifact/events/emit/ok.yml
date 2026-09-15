@@ -1,0 +1,9 @@
+canonical_label: CodeKnowledge.ResolveArtifact.Ok
+kind: result
+status: Ok
+payload:
+  schema: ../../schema/output.yml
+correlation:
+  required: true
+causation:
+  required: true

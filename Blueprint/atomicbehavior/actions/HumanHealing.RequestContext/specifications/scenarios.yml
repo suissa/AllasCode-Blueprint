@@ -1,0 +1,10 @@
+scenarios:
+  - name: single-evidence-gap
+    given: "one configuration provenance value is missing"
+    expected: "Ok with one focused question"
+  - name: authorization-needed
+    given: "a safe mutation requires operator approval"
+    expected: "Ok with explicit bounded authorization request"
+  - name: unreachable-channel
+    given: "the human channel is unavailable"
+    expected: "Error event while execution remains resumable"

@@ -1,0 +1,27 @@
+suite:
+  canonical_label: CodeKnowledge.ResolveSkill.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: exact-error-fingerprint
+    scenario: ../specifications/scenarios.yml#exact-error-fingerprint
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: semantic-only-match
+    scenario: ../specifications/scenarios.yml#semantic-only-match
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: dependency-gap
+    scenario: ../specifications/scenarios.yml#dependency-gap
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false

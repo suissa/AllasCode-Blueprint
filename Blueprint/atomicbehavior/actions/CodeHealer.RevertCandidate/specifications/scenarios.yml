@@ -1,0 +1,10 @@
+scenarios:
+  - name: active-candidate
+    given: "active candidate and authorized base exist"
+    expected: "Ok with restored hash"
+  - name: unknown-base
+    given: "base snapshot is unavailable"
+    expected: "Error with no mutation"
+  - name: duplicate
+    given: "same rollback key is replayed"
+    expected: "Ok replaying original result"

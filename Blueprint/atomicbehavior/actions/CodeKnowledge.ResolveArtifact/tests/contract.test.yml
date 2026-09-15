@@ -1,0 +1,27 @@
+suite:
+  canonical_label: CodeKnowledge.ResolveArtifact.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: exact-symbol
+    scenario: ../specifications/scenarios.yml#exact-symbol
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: cross-artifact-effect
+    scenario: ../specifications/scenarios.yml#cross-artifact-effect
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: ambiguous-label
+    scenario: ../specifications/scenarios.yml#ambiguous-label
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false
