@@ -10,7 +10,12 @@ verification:
     - INV-CASE-002
     - INV-CASE-003
     - INV-CASE-004
-  executable_evidence:
+    - INV-CASE-005
+  specification_evidence:
     - ../../tests/contract.test.yml
-  holes: 0
-  note: "Runtime binding and independent conformance evidence are required before status may become proved."
+  open_obligations:
+    - runtime_chain_of_custody_binding
+    - verifier_independence_enforcement
+    - replay_eligibility_enforcement
+    - independent_runtime_conformance
+  note: "Specification evidence does not discharge runtime or independent conformance obligations."
