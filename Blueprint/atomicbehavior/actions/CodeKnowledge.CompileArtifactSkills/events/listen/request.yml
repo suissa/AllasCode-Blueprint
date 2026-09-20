@@ -1,0 +1,9 @@
+canonical_label: CodeKnowledge.CompileArtifactSkills.Requested
+kind: request
+injected_at_actor_creation: true
+payload:
+  schema: ../../schema/input.yml
+correlation:
+  required: true
+causation:
+  required: true

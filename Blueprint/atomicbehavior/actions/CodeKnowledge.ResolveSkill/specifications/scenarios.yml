@@ -1,0 +1,10 @@
+scenarios:
+  - name: exact-error-fingerprint
+    given: "a verified case matches version, symbol, event, and metric"
+    expected: "Ok with replay-eligible case"
+  - name: semantic-only-match
+    given: "text is similar but hard versions conflict"
+    expected: "Error or lower-ranked exclusion"
+  - name: dependency-gap
+    given: "a required protocol Skill is unavailable"
+    expected: "Error with unmet dependency"

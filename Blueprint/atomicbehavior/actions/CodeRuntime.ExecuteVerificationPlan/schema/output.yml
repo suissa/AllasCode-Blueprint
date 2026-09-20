@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeRuntime.ExecuteVerificationPlan.output
+type: object
+additionalProperties: false
+required:
+  - "run_id"
+  - "candidate_hash"
+  - "exit_status"
+  - "evidence_hash"
+  - "observations"
+  - "created_at"
+properties:
+  run_id:
+    semantic_type: VerificationRunId
+  candidate_hash:
+    semantic_type: ContentHash
+  exit_status:
+    semantic_type: VerificationExitStatus
+  evidence_hash:
+    semantic_type: EvidenceHash
+  observations:
+    semantic_type: RuntimeObservationList
+  created_at:
+    semantic_type: Timestamp

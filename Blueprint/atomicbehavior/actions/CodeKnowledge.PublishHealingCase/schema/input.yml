@@ -1,0 +1,33 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.PublishHealingCase.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "hypothesis"
+  - "hypothesis_hash"
+  - "candidate"
+  - "candidate_hash"
+  - "verification"
+  - "verification_evidence_hash"
+  - "verifier_actor_id"
+  - "context_constraints"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  hypothesis:
+    semantic_type: HealingHypothesis
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  candidate:
+    semantic_type: CandidateArtifact
+  candidate_hash:
+    semantic_type: ContentHash
+  verification:
+    semantic_type: VerificationResult
+  verification_evidence_hash:
+    semantic_type: EvidenceHash
+  verifier_actor_id:
+    semantic_type: ActorIdentity
+  context_constraints:
+    semantic_type: CompatibilityConstraintSet

@@ -1,0 +1,43 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+identity:
+  canonical_label: SystemHealer.PromoteVerifiedConfigCandidate
+  version: 0.1.0
+  maturity: specified
+role:
+  actor: SystemHealerAgent
+purpose: "Promote one independently verified configuration candidate after an explicit approval gate."
+authority:
+  mode: bounded_config_write
+  read_scope:
+    - "CandidateArtifact"
+    - "VerificationResult"
+    - "verification evidence"
+    - "configuration policy"
+    - "healable-property declaration"  write_scope:
+    - "configs/core.yml#<authorized-healable-property>"
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+  events: ./schema/events.yml
+  specification: ./specifications/contract.yml
+  scenarios: ./specifications/scenarios.yml
+  healing: ./healing/pipeline.yml
+  law: ./formalization/laws/core.law
+  proof_evidence: ./formalization/proofs/core.prov
+capabilities:
+  - name: read_declared_inputs
+    mode: read
+  - name: read_declared_scope
+    mode: read
+  - name: write_declared_scope
+    mode: effect
+  - name: emit_fixed_result_event
+    mode: emit
+skills:
+  authoring: ./skills/authoring/SKILL.md
+  semantics: ./skills/semantics/SKILL.md
+results:
+  Ok: SystemHealer.PromoteVerifiedConfigCandidate.Ok
+  Error: SystemHealer.PromoteVerifiedConfigCandidate.Error

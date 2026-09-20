@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeHealer.StageCodeCandidate.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeHealer.StageCodeCandidate.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeHealer.StageCodeCandidate.Error
+    semantic_type: HealingActionError
+configurable_result_events: false

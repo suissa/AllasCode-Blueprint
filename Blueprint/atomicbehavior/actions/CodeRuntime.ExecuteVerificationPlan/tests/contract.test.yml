@@ -1,0 +1,27 @@
+suite:
+  canonical_label: CodeRuntime.ExecuteVerificationPlan.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: bounded-tests
+    scenario: ../specifications/scenarios.yml#bounded-tests
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: timeout
+    scenario: ../specifications/scenarios.yml#timeout
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: network-attempt
+    scenario: ../specifications/scenarios.yml#network-attempt
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false

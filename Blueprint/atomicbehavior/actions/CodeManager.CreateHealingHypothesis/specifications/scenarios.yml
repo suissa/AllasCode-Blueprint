@@ -1,0 +1,10 @@
+scenarios:
+  - name: verified-exact-case
+    given: "all compatibility gates and evidence signatures match"
+    expected: "Ok by deterministic template instantiation without an LLM"
+  - name: novel-supported-case
+    given: "multiple evidence families support one mechanism"
+    expected: "Ok with new falsifiable hypothesis"
+  - name: underdetermined
+    given: "code and configuration causes remain observationally equivalent"
+    expected: "Error with unknown class and evidence request"

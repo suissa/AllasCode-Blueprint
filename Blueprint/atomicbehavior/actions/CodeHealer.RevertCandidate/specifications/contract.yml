@@ -1,0 +1,30 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "candidate_is_active"
+  - "base_snapshot_is_available"
+  - "rollback_is_authorized"
+  - "target_matches_code_scope"
+postconditions:
+  Ok:
+    - "target_matches_base_hash"
+    - "rollback_provenance_is_recorded"
+  Error:
+    - "target_remains_unchanged"
+    - "rollback_failure_is_reported_for_human_recovery"
+invariants:
+  - id: INV-REVERT-001
+    rule: "rollback restores the exact base snapshot"
+  - id: INV-REVERT-002
+    rule: "configuration and contracts remain read-only"
+  - id: INV-REVERT-003
+    rule: "rollback is itself idempotent and content-addressed"
+  - id: INV-IDEMP-REVERTCANDIDAT
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "restore an untrusted snapshot"
+  - "modify configuration"
+  - "erase rollback provenance"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

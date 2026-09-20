@@ -1,0 +1,10 @@
+scenarios:
+  - name: complete-action
+    given: "a versioned Action contains required contracts and tests"
+    expected: "Ok with two Skills"
+  - name: stable-rebuild
+    given: "the same snapshot is compiled twice"
+    expected: "Ok with identical output hash"
+  - name: missing-invariants
+    given: "the artifact omits mandatory invariants"
+    expected: "Error and no published Skills"

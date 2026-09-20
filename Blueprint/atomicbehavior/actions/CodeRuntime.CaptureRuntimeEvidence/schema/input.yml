@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeRuntime.CaptureRuntimeEvidence.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "execution_id"
+  - "streams"
+  - "source_metadata"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  execution_id:
+    semantic_type: ExecutionId
+  streams:
+    semantic_type: RuntimeStreamBundle
+  source_metadata:
+    semantic_type: EvidenceSourceMetadata

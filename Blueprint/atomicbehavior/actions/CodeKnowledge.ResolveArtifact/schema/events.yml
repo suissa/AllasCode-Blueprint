@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeKnowledge.ResolveArtifact.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeKnowledge.ResolveArtifact.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeKnowledge.ResolveArtifact.Error
+    semantic_type: HealingActionError
+configurable_result_events: false

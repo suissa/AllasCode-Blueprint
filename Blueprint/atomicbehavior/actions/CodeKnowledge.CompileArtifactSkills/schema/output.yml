@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.CompileArtifactSkills.output
+type: object
+additionalProperties: false
+required:
+  - "authoring_skill"
+  - "semantics_skill"
+  - "index_record"
+  - "output_hash"
+properties:
+  authoring_skill:
+    semantic_type: SkillArtifact
+  semantics_skill:
+    semantic_type: SkillArtifact
+  index_record:
+    semantic_type: SkillIndexRecord
+  output_hash:
+    semantic_type: ContentHash

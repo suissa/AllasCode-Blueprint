@@ -1,0 +1,15 @@
+artifact:
+  canonical_label: CodeKnowledge.ResolveArtifact
+  version: 0.1.0
+property:
+  authority_and_causality_law: ../laws/core.law
+verification:
+  status: specified
+  proof_obligations:
+    - INV-ARTRES-001
+    - INV-ARTRES-002
+    - INV-ARTRES-003
+  executable_evidence:
+    - ../../tests/contract.test.yml
+  holes: 0
+  note: "Runtime binding and independent conformance evidence are required before status may become proved."

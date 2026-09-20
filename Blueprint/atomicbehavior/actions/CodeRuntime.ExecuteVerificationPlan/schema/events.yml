@@ -1,0 +1,12 @@
+listen:
+  injected_at_creation: true
+  event: CodeRuntime.ExecuteVerificationPlan.Requested
+  schema: ./input.yml
+emit:
+  Ok:
+    event: CodeRuntime.ExecuteVerificationPlan.Ok
+    schema: ./output.yml
+  Error:
+    event: CodeRuntime.ExecuteVerificationPlan.Error
+    schema: ./error.yml
+configurable_result_events: false

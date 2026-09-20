@@ -1,0 +1,10 @@
+scenarios:
+  - name: complete-evidence
+    given: "all required evidence families are present"
+    expected: "Ok with complete envelope"
+  - name: missing-trace
+    given: "trace evidence is unavailable"
+    expected: "Ok with an explicit evidence gap; never fabricate spans"
+  - name: unversioned-intent
+    given: "the Intent contract has no resolvable version"
+    expected: "Error with no complete envelope"

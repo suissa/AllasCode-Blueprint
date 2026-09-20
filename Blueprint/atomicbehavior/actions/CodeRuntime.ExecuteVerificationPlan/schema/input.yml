@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeRuntime.ExecuteVerificationPlan.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "candidate"
+  - "candidate_hash"
+  - "verification_plan"
+  - "environment_snapshot_hash"
+  - "budget"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  candidate:
+    semantic_type: CandidateArtifact
+  candidate_hash:
+    semantic_type: ContentHash
+  verification_plan:
+    semantic_type: VerificationPlan
+  environment_snapshot_hash:
+    semantic_type: ContentHash
+  budget:
+    semantic_type: ExecutionBudget

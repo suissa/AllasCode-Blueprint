@@ -1,0 +1,10 @@
+scenarios:
+  - name: complete-streams
+    given: "all streams carry source metadata"
+    expected: "Ok with normalized evidence"
+  - name: missing-source
+    given: "a stream lacks provenance"
+    expected: "Error requiring context"
+  - name: contradiction
+    given: "streams disagree"
+    expected: "Ok only if contradiction is explicit"

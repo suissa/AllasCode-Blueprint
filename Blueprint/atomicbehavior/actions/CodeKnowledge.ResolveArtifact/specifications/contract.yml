@@ -1,0 +1,28 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "observation_envelope_hash_is_valid"
+  - "artifact_index_is_versioned"
+postconditions:
+  Ok:
+    - "selected_artifact_satisfies_hard_compatibility_filters"
+    - "resolution_exposes_supporting_and_contradicting_signals"
+  Error:
+    - "no_artifact_is_silently_selected"
+    - "ambiguity_or_absence_is_preserved"
+invariants:
+  - id: INV-ARTRES-001
+    rule: "version, language, artifact kind, and canonical identity filters run before similarity ranking"
+  - id: INV-ARTRES-002
+    rule: "confidence below threshold yields ambiguous or unknown, never an invented identity"
+  - id: INV-ARTRES-003
+    rule: "the resolver is read-only and cannot change the evidence it ranks"
+  - id: INV-IDEMP-RESOLVEARTIFAC
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "select only from terminal error text"
+  - "hide contradictory candidates"
+  - "grant capabilities"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

@@ -1,0 +1,33 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.BuildObservationEnvelope.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "execution_id"
+  - "intent"
+  - "actions"
+  - "events"
+  - "metrics"
+  - "traces"
+  - "logs"
+  - "error"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  execution_id:
+    semantic_type: ExecutionId
+  intent:
+    semantic_type: IntentDescriptor
+  actions:
+    semantic_type: ActionDescriptorList
+  events:
+    semantic_type: EventEvidenceList
+  metrics:
+    semantic_type: MetricEvidenceMap
+  traces:
+    semantic_type: TraceEvidenceList
+  logs:
+    semantic_type: LogEvidenceList
+  error:
+    semantic_type: ErrorObservation

@@ -1,0 +1,10 @@
+scenarios:
+  - name: bounded-timeout
+    given: "the hypothesis authorizes one timeout within bounds"
+    expected: "Ok with one-property diff"
+  - name: immutable-property
+    given: "the requested key is not healable"
+    expected: "Error with no candidate"
+  - name: mixed-intervention
+    given: "the request combines timeout and code changes"
+    expected: "Error preserving disjoint authority"

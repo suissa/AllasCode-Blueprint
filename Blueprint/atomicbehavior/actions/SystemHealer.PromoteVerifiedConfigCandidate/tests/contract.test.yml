@@ -1,0 +1,27 @@
+suite:
+  canonical_label: SystemHealer.PromoteVerifiedConfigCandidate.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: approved
+    scenario: ../specifications/scenarios.yml#approved
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: immutable-property
+    scenario: ../specifications/scenarios.yml#immutable-property
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: mixed-scope
+    scenario: ../specifications/scenarios.yml#mixed-scope
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false

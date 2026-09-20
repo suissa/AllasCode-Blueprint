@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeRuntime.CaptureRuntimeEvidence.output
+type: object
+additionalProperties: false
+required:
+  - "evidence_hash"
+  - "normalized_observations"
+  - "provenance"
+  - "created_at"
+properties:
+  evidence_hash:
+    semantic_type: EvidenceHash
+  normalized_observations:
+    semantic_type: RuntimeObservationList
+  provenance:
+    semantic_type: EvidenceProvenance
+  created_at:
+    semantic_type: Timestamp

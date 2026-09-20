@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.ResolveArtifact.input
+type: object
+additionalProperties: false
+required:
+  - "idempotency_key"
+  - "observation_envelope"
+  - "candidate_scope"
+  - "minimum_confidence"
+properties:
+  idempotency_key:
+    semantic_type: IdempotencyKey
+  observation_envelope:
+    semantic_type: ObservationEnvelope
+  candidate_scope:
+    semantic_type: OptionalArtifactScope
+  minimum_confidence:
+    semantic_type: ConfidenceThreshold

@@ -1,0 +1,10 @@
+scenarios:
+  - name: exact-symbol
+    given: "a code symbol and manifest path identify one Action"
+    expected: "Ok with exact artifact"
+  - name: cross-artifact-effect
+    given: "the visible error occurs downstream of the causal artifact"
+    expected: "Ok with causal explanation"
+  - name: ambiguous-label
+    given: "two compatible versions remain equally supported"
+    expected: "Error with ambiguous disposition"

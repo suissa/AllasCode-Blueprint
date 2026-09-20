@@ -1,0 +1,38 @@
+preconditions:
+  - "idempotency_key_is_valid"
+  - "all_provenance_hashes_are_valid"
+  - "verification_disposition_is_final"
+  - "verification_is_independent"
+  - "verification_candidate_hash_matches_candidate"
+  - "verification_hypothesis_hash_matches_hypothesis"
+  - "verification_evidence_hash_is_valid"
+postconditions:
+  Ok:
+    - "case_preserves_context_and_verifier_disposition"
+    - "case_is_cryptographically_bound_to_hypothesis_candidate_and_verification"
+    - "supported_and_falsified_knowledge_are_distinguishable"
+  Error:
+    - "no_trusted_case_is_published"
+    - "provenance_gap_is_reported"
+invariants:
+  - id: INV-CASE-001
+    rule: "only independently supported cases may be replay-eligible"
+  - id: INV-CASE-002
+    rule: "falsified cases remain negative knowledge that prevents repeated failed interventions"
+  - id: INV-CASE-003
+    rule: "inconclusive cases cannot authorize autonomous mutation"
+  - id: INV-CASE-004
+    rule: "the case records versions, evidence, mechanism, intervention, predictions, effects, regressions, and disposition"
+  - id: INV-CASE-005
+    rule: "replay eligibility requires supported disposition, independent verification, and exact hypothesis and candidate hash matches"
+  - id: INV-IDEMP-PUBLISHHEALING
+    rule: "same idempotency_key and same causal context produce at most one logical effect and replay the original terminal result"
+forbidden:
+  - "erase failed experiments"
+  - "generalize beyond recorded compatibility constraints"
+  - "publish unsigned external content as trusted"
+  - "publish a replay-eligible case whose verification is not bound to the same hypothesis and candidate"
+verification:
+  independent_when_mutation_is_involved: true
+  preserve_original_intent: true
+  event_results_are_fixed: [Ok, Error]

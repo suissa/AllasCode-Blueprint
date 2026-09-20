@@ -1,0 +1,30 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: HealingVerifier.VerifyCandidate.output
+type: object
+additionalProperties: false
+required:
+  - "disposition"
+  - "hypothesis_hash"
+  - "candidate_hash"
+  - "verifier_actor_id"
+  - "verifier_execution_id"
+  - "observed_effects"
+  - "evidence_hash"
+  - "failed_invariants"
+properties:
+  disposition:
+    semantic_type: VerificationDisposition
+  hypothesis_hash:
+    semantic_type: HypothesisHash
+  candidate_hash:
+    semantic_type: ContentHash
+  verifier_actor_id:
+    semantic_type: ActorIdentity
+  verifier_execution_id:
+    semantic_type: ExecutionId
+  observed_effects:
+    semantic_type: ObservedEffectList
+  evidence_hash:
+    semantic_type: EvidenceHash
+  failed_invariants:
+    semantic_type: InvariantViolationList

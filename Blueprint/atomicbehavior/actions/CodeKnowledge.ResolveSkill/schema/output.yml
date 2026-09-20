@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: CodeKnowledge.ResolveSkill.output
+type: object
+additionalProperties: false
+required:
+  - "skill_bundle"
+  - "retrieval_trace"
+  - "disposition"
+  - "unmet_dependencies"
+properties:
+  skill_bundle:
+    semantic_type: SkillBundle
+  retrieval_trace:
+    semantic_type: SkillRetrievalTrace
+  disposition:
+    semantic_type: ResolutionDisposition
+  unmet_dependencies:
+    semantic_type: SkillDependencyList

@@ -1,0 +1,10 @@
+scenarios:
+  - name: bounded-tests
+    given: "a candidate and bounded plan are supplied"
+    expected: "Ok with evidence hash"
+  - name: timeout
+    given: "the plan exceeds its budget"
+    expected: "Error with no production mutation"
+  - name: network-attempt
+    given: "a check requests undeclared network access"
+    expected: "Error with policy violation"

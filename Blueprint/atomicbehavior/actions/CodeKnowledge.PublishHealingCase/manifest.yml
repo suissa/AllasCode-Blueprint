@@ -1,0 +1,44 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+identity:
+  canonical_label: CodeKnowledge.PublishHealingCase
+  version: 0.1.0
+  maturity: specified
+role:
+  actor: CodeKnowledgeAgent
+purpose: "Convert a completed healing experiment into versioned positive or negative causal knowledge with verifiable provenance."
+authority:
+  mode: bounded_knowledge_write
+  read_scope:
+    - "HealingHypothesis"
+    - "CandidateArtifact"
+    - "VerificationResult"
+    - "runtime evidence"
+  write_scope:
+    - "knowledge/healing-cases/**"
+    - "generated/skills/healing-cases/**"
+contract:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+  events: ./schema/events.yml
+  specification: ./specifications/contract.yml
+  scenarios: ./specifications/scenarios.yml
+  healing: ./healing/pipeline.yml
+  law: ./formalization/laws/core.law
+  proof_evidence: ./formalization/proofs/core.prov
+capabilities:
+  - name: read_declared_inputs
+    mode: read
+  - name: read_declared_scope
+    mode: read
+  - name: write_declared_scope
+    mode: effect
+  - name: emit_fixed_result_event
+    mode: emit
+skills:
+  authoring: ./skills/authoring/SKILL.md
+  semantics: ./skills/semantics/SKILL.md
+results:
+  Ok: CodeKnowledge.PublishHealingCase.Ok
+  Error: CodeKnowledge.PublishHealingCase.Error

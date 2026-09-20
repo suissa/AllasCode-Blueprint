@@ -1,0 +1,27 @@
+suite:
+  canonical_label: HealingVerifier.VerifyCandidate.contract
+  source: ../specifications/contract.yml
+cases:
+  - name: predictions-match
+    scenario: ../specifications/scenarios.yml#predictions-match
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: test-passes-mechanism-fails
+    scenario: ../specifications/scenarios.yml#test-passes-mechanism-fails
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: missing-hidden-evidence
+    scenario: ../specifications/scenarios.yml#missing-hidden-evidence
+    assert:
+      - fixed_result_event
+      - declared_authority_scope
+      - preserved_original_intent
+  - name: authority-boundary
+    mutate_outside_declared_scope: true
+    expected:
+      result: Error
+      mutation_applied: false
