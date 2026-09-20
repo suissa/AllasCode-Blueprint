@@ -1,0 +1,54 @@
+Only(Runtime, ExecuteFunction)
+Not(Agent, ExecuteFunction)
+Not(Actor, ExecuteFunction)
+Not(Action, ExecuteFunction)
+
+ExecuteAction(Runtime, Agent, Intent, Action, Input) -> ActionResult
+ActionResult = Ok(Value) | Error(Cause)
+
+# Ok/Error semantically originate in the Action execution.
+# The Runtime materializes the Action result as a local event because only the Runtime executes functions and owns event publication.
+ExecuteAction(...) = Ok(Value)
+  -> SideEffect(Runtime, EmitLocal(Action.Ok, Value, owner=Agent))
+
+ExecuteAction(...) = Error(Cause)
+  -> SideEffect(Runtime, EmitLocal(Action.Error, Cause, owner=Agent))
+
+# The owning Agent consumes the local Action result.
+Receive(Agent, Action.Ok) & HasNextAction(Intent.2flow, Action)
+  -> ExecuteAction(Runtime, Agent, Intent, NextAction(Intent.2flow, Action), Value)
+
+# Agent Ok is NOT the direct projection of an Action Ok.
+# It is emitted only when the Runtime proves that the Agent has no remaining Action in the Intent 2flow.
+Receive(Agent, Action.Ok) & Not(HasNextAction(Intent.2flow, Action))
+  -> SideEffect(Runtime, EmitPublic(Agent.Intent.Ok, Value))
+
+# Action Error is consumed by the owning Agent and enters the mandatory self-healing pipeline.
+Receive(Agent, Action.Error)
+  -> Enter(SelfHealingPipeline, Agent, Intent, Action, Cause)
+
+HealingResolved(SelfHealingPipeline, Resolution)
+  -> Resume(Runtime, Agent, Intent, Resolution)
+
+# Public Agent Error exists only after the last self-healing stage fails to recover execution.
+HealingExhausted(SelfHealingPipeline, FinalCause)
+  -> SideEffect(Runtime, EmitPublic(Agent.Intent.Error, FinalCause, route=PreviousAgent))
+
+# The only foreign Agent identity visible inside an Agent runtime instance is its predecessor.
+# It is never authored in the Agent source config.
+Read(Intent.2flow) -> BuildRuntimeAgentInstances
+Edge(PreviousAgent, Agent) -> InjectRuntime(Agent, previous_agent=PreviousAgent.name)
+Not(PersistedInSourceConfig(Agent, previous_agent))
+
+# The injected predecessor identity is used to subscribe to the predecessor's successful completion
+# and to route an unrecoverable Error back to that predecessor.
+Injected(Agent, previous_agent=P)
+  -> Subscribe(Agent, P.Intent.Ok)
+
+HealingExhausted(SelfHealingPipeline, FinalCause) & Injected(Agent, previous_agent=P)
+  -> Route(Agent.Intent.Error, P)
+
+# No downstream Agent name is required in the Agent context.
+# Successful choreography is event-driven: downstream Agents subscribe from runtime-injected 2flow wiring.
+NoStaticForeignAgentDependency(Agent)
+EventWiringSource = Intent.2flow

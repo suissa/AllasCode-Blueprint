@@ -1,0 +1,22 @@
+api_version: allascode/v1
+kind: Actor
+name: CheckoutActor
+semantic_id: commerce.actor.checkout
+agent: CheckoutAgent
+supervisor: ./supervision.yml
+mailbox: ./mailbox.yml
+actions:
+  - ResolveProduct
+  - ResolveAuthoritativePrice
+  - ReserveOneStockUnit
+  - AuthorizePayment
+  - RegisterSale
+  - CommitStockReservation
+  - ReleasePaymentAuthorization
+  - ReleaseStockReservation
+state:
+  ownership: private
+  mutation: actor_local_only
+runtime:
+  function_execution_authority: Runtime
+  may_emit_events: false

@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$title: BuyOneProductInput
+type: object
+additionalProperties: false
+required:
+  - buyer_id
+  - product_ref
+  - payment_method
+  - idempotency_key
+properties:
+  buyer_id:
+    type: string
+    minLength: 1
+  product_ref:
+    type: string
+    minLength: 1
+  payment_method:
+    type: string
+    minLength: 1
+  idempotency_key:
+    type: string
+    minLength: 1
+  quantity:
+    const: 1

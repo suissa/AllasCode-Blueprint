@@ -1,0 +1,20 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: CommitStockReservation
+semantic_id: commerce.action.commit-stock-reservation
+owner: CheckoutAgent
+purpose: commit_the_reserved_unit_as_a_stock_decrement
+input: RegisteredSaleWithReservation
+output: CommittedPurchase
+result: InternalResult<CommittedPurchase,StockCommitError>
+capabilities: [Stock.reservation.write]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+invariants:
+  - committed_quantity_equals_1
+  - reservation_must_exist
+  - reservation_must_belong_to_same_trace
+  - commit_is_idempotent
+  - stock_cannot_become_negative

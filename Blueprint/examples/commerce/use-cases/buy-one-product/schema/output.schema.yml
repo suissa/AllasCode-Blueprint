@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$title: BuyOneProductOutput
+type: object
+additionalProperties: false
+required:
+  - sale_id
+  - product_id
+  - quantity
+  - amount
+  - currency
+  - payment_id
+properties:
+  sale_id: { type: string, minLength: 1 }
+  product_id: { type: string, minLength: 1 }
+  quantity: { const: 1 }
+  amount: { type: number, minimum: 0 }
+  currency: { const: BRL }
+  payment_id: { type: string, minLength: 1 }

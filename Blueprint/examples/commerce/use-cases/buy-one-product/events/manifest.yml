@@ -1,0 +1,58 @@
+api_version: allascode/v1
+kind: EventContract
+behavior: CheckoutAgent.BuyOneProduct
+
+input_trigger:
+  name: BuyOneProductRequested
+  origin:
+    - GatewayAgent
+    - UIAgent
+  creates_trace_id: true
+
+action_result_events:
+  scope: agent_local
+  semantic_origin: Action
+  publication_authority: Runtime
+  statuses: [Ok, Error]
+  rules:
+    - action_ok_is_consumed_by_owning_agent
+    - action_error_is_consumed_by_owning_agent
+    - action_error_enters_self_healing
+    - action_result_events_are_not_cross_agent_completion_events
+
+agent_completion_events:
+  scope: public_choreography
+  Ok:
+    event: CheckoutAgent.BuyOneProduct.Ok
+    condition: no_remaining_action_in_intent_2flow
+    publication_authority: Runtime
+  Error:
+    event: CheckoutAgent.BuyOneProduct.Error
+    condition: self_healing_pipeline_exhausted
+    publication_authority: Runtime
+    route: previous_agent
+
+runtime_wiring:
+  source: Intent.2flow
+  previous_agent:
+    storage: runtime_injected_only
+    static_agent_config: forbidden
+    uses:
+      - subscribe_to_previous_agent_ok
+      - route_unrecoverable_error_to_previous_agent
+
+envelope:
+  required:
+    - event_id
+    - trace_id
+    - causation_id
+    - canonical_label
+    - occurred_at
+    - payload
+
+rules:
+  - runtime_is_the_only_function_execution_authority
+  - ok_error_semantically_originate_from_action_execution
+  - agent_ok_requires_2flow_exhaustion
+  - agent_error_requires_exhausted_self_healing
+  - cross_agent_dependencies_come_only_from_runtime_2flow_wiring

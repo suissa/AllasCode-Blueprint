@@ -1,0 +1,19 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+name: ReserveOneStockUnit
+semantic_id: commerce.action.reserve-one-stock-unit
+owner: CheckoutAgent
+purpose: reserve_exactly_one_available_stock_unit
+input: PricedProduct
+output: StockReservation
+result: InternalResult<StockReservation,StockReservationError>
+capabilities: [Stock.availability.read, Stock.reservation.write]
+public_events: none
+execution:
+  authority: Runtime
+  direct_invocation: forbidden
+invariants:
+  - reserved_quantity_equals_1
+  - available_quantity_must_be_at_least_1
+  - reservation_is_idempotent_by_trace_and_product
+  - reservation_does_not_commit_stock_decrement

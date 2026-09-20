@@ -24,6 +24,8 @@ policies:
     allowed-in: [validation, self-healing]
   terminal-events: [Ok, Error]
 
+# This section configures the TypeScript reference harness CI only.
+# It does not define the canonical AllasCode Runtime, which is Zig 0.16.
 ci:
   source: AllasCode-infra
   platform: github-actions
