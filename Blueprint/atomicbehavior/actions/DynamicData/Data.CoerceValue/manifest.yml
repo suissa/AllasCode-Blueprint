@@ -1,0 +1,19 @@
+api_version: allascode/v1
+kind: AtomicAction
+identity:
+  canonical_label: Data.CoerceValue
+  version: 1.0.0
+  description: "converts one bounded value to a target structural type"
+classification:
+  atomic_behavior: true
+  deterministic: true
+  idempotent: true
+  unknown_data_safe: true
+ownership:
+  reads: [bounded-local-data, declared-plan, schema-or-observation-reference]
+  writes: []
+  forbidden: [network, remote-publication, arbitrary-code, source-mutation, orchestration, retry-policy]
+contract_catalog: ../ACTIONS.yml
+runtime:
+  result_authority: Runtime
+  action_direct_terminal_event_emission: forbidden

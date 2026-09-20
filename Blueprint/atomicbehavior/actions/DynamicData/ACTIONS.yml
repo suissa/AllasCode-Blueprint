@@ -1,0 +1,350 @@
+api_version: allascode/v1
+kind: AtomicActionCatalog
+identity:
+  canonical_label: Data.DynamicProcessing
+  version: 1.0.0
+  purpose: >-
+    A functionally complete, composable basis for bounded local processing of
+    data whose schema, field names, types and semantic meaning are unknown at
+    request time.
+global_contract:
+  unknown_data_rule: >-
+    An Action may access only bounded local data and explicitly declared field
+    paths. It must consume an observation/schema reference or produce one.
+    Missing, ambiguous, incompatible and low-confidence facts remain evidence,
+    never inferred facts.
+  authority:
+    allowed: [ram.read, local-disk.read]
+    conditional: [local-disk.write-for-MaterializeProjection]
+    forbidden: [network, remote-publication, arbitrary-code, source-mutation, orchestration, retry-policy]
+  runtime:
+    result_authority: Runtime
+    terminal_events: ["{Agent-name}.{Intent-name}.Ok", "{Agent-name}.{Intent-name}.Error"]
+    action_direct_terminal_event_emission: forbidden
+  common_acceptance:
+    - succeeds only for authorized bounded input and declared plan
+    - replay with same effect identity yields same logical result
+    - undeclared field, operator or required observation produces structured healing evidence
+    - source data remains unchanged
+    - a capability request outside declared authority is denied
+actions:
+  - canonical_label: Data.InspectValueShape
+    purpose: "observes the structural form of an unknown value without interpreting business meaning"
+    input: [value_ref, observation_scope]
+    output: [shape, nullability, cardinality_hint, evidence]
+    micro_skill:
+      procedure: "Distinguish missing, null, scalar, sequence, mapping, binary and reference; never infer business semantics."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "shape observation is reproducible from the same bounded value"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.InferSchema
+    purpose: "derives a conservative structural schema from observed unknown records"
+    input: [dataset_ref, sampling_policy, observation_ref]
+    output: [schema, confidence, evidence]
+    micro_skill:
+      procedure: "Infer paths, value kinds, nullability and stable constraints only where evidence supports them."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "uncertain fields never become required"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.ProfileDataset
+    purpose: "computes bounded descriptive facts for an unknown dataset"
+    input: [dataset_ref, field_paths, profile_plan]
+    output: [profile, field_statistics, evidence]
+    micro_skill:
+      procedure: "Compute counts, missingness, distinctness, ranges and frequency summaries only for available paths."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "statistics identify their sample/window"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.ResolveFieldPath
+    purpose: "resolves a logical path against an inferred schema and current shape"
+    input: [schema_ref, logical_path, resolution_policy]
+    output: [resolved_path, value_kind, evidence]
+    micro_skill:
+      procedure: "Return one resolved path, an ambiguity diagnosis, or an absence diagnosis."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "ambiguous paths are never silently chosen"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.ClassifyFieldSemantics
+    purpose: "assigns a semantic class only with evidence and confidence"
+    input: [field_profile_ref, classification_policy]
+    output: [semantic_classification, confidence, evidence]
+    micro_skill:
+      procedure: "Classify identifier, date, amount, categorical label, free text or sensitive candidate; retain alternatives when uncertain."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "classification remains advisory"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.NormalizeValue
+    purpose: "applies an explicit canonicalization plan to one bounded value"
+    input: [value_ref, normalization_plan]
+    output: [normalized_value, normalization_provenance]
+    micro_skill:
+      procedure: "Apply declared trim, unicode, locale, date or unit rules; do not invent corrections."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "normalization is idempotent and original is retained by reference"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.CoerceValue
+    purpose: "converts one bounded value to a target structural type"
+    input: [value_ref, target_type, loss_policy]
+    output: [coerced_value, coercion_evidence]
+    micro_skill:
+      procedure: "Convert only when the target contract is satisfied; otherwise return healing evidence."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "lossless conversion is required unless named loss is permitted"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.ProjectFields
+    purpose: "produces records containing only declared resolved fields"
+    input: [dataset_ref, resolved_fields, projection_policy]
+    output: [projected_dataset_ref, lineage]
+    micro_skill:
+      procedure: "Copy declared paths, preserve identity, and make absences explicit."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "no unlisted field may be exposed"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.FilterRecords
+    purpose: "selects records through a declarative predicate"
+    input: [dataset_ref, predicate_ast, schema_ref]
+    output: [filtered_dataset_ref, selection_evidence]
+    micro_skill:
+      procedure: "Evaluate approved predicate AST only; arbitrary code and implicit access are forbidden."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "every retained record satisfies the predicate"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.MapRecords
+    purpose: "derives record representations from a declarative pure transformation"
+    input: [dataset_ref, transform_ast, schema_ref]
+    output: [mapped_dataset_ref, lineage]
+    micro_skill:
+      procedure: "Apply only whitelisted pure transforms; never call tools, network or mutate sources."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "no undeclared external effect occurs"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.GroupRecords
+    purpose: "partitions records by a declared tuple of keys"
+    input: [dataset_ref, grouping_keys]
+    output: [groups_ref, grouping_evidence]
+    micro_skill:
+      procedure: "Build deterministic groups with declared missing-key treatment."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "each source record occurs in exactly one group unless exclusion is explicit"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.AggregateRecords
+    purpose: "computes declared aggregates over bounded input"
+    input: [dataset_ref, aggregate_plan]
+    output: [aggregate_result, evidence]
+    micro_skill:
+      procedure: "Use allow-listed count, sum, min, max, average, quantile or frequency operations."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "operator, input, window and null policy accompany every result"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.SortRecords
+    purpose: "orders records by declared keys and stable tie-breaking"
+    input: [dataset_ref, sort_keys, null_order]
+    output: [sorted_dataset_ref, ordering_evidence]
+    micro_skill:
+      procedure: "Perform stable ordering with explicit locale, numeric and date comparison modes."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "equal keys preserve original relative order"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.DeduplicateRecords
+    purpose: "removes duplicates using declared identity evidence"
+    input: [dataset_ref, identity_plan, survivor_policy]
+    output: [deduplicated_dataset_ref, duplicate_clusters]
+    micro_skill:
+      procedure: "Build clusters from explicit exact/fuzzy rules; uncertain matches remain unresolved."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "one declared survivor is retained per duplicate cluster"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.JoinDatasets
+    purpose: "combines datasets through declared keys and join policy"
+    input: [left_dataset_ref, right_dataset_ref, join_plan]
+    output: [joined_dataset_ref, join_evidence]
+    micro_skill:
+      procedure: "Resolve keys before inner, left, right, full or semi join; assign collisions explicitly."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "output retains lineage and enforces declared cardinality"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.UnionDatasets
+    purpose: "concatenates compatible datasets after explicit alignment"
+    input: [dataset_refs, alignment_plan]
+    output: [union_dataset_ref, alignment_evidence]
+    micro_skill:
+      procedure: "Validate compatibility, align paths and append with lineage."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "no source field is dropped or coerced without a rule"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.PartitionDataset
+    purpose: "splits a dataset into named deterministic partitions"
+    input: [dataset_ref, partition_plan]
+    output: [partitions_ref, partition_evidence]
+    micro_skill:
+      procedure: "Partition by range, predicate, key or size; overlap and uncovered cases remain explicit."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "membership follows declared coverage/exclusivity"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.EvaluateConstraint
+    purpose: "checks a declarative structural, statistical or business-neutral constraint"
+    input: [dataset_ref, constraint_ast, evaluation_scope]
+    output: [constraint_result, violations, evidence]
+    micro_skill:
+      procedure: "Evaluate requiredness, type, range, uniqueness, relation or distribution constraints."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "evaluation never repairs or mutates data"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.RedactFields
+    purpose: "creates a privacy-preserving derived representation"
+    input: [dataset_ref, redaction_plan, authorization_ref]
+    output: [redacted_dataset_ref, redaction_evidence]
+    micro_skill:
+      procedure: "Verify authorization and remove, mask, hash or generalize declared fields only."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "output cannot recover originals through undeclared fields or metadata"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
+  - canonical_label: Data.MaterializeProjection
+    purpose: "writes a named derived local dataset or view"
+    input: [derived_result_ref, projection_identity, idempotency_key]
+    output: [projection_ref, version]
+    micro_skill:
+      procedure: "Persist declared result and lineage locally; sharing, publication and replication are separate Actions."
+      forbidden: [assume-unknown-field-or-type, arbitrary-code, network, source-mutation, invented-fact]
+    invariants:
+      - "same effect identity cannot create a second logical projection"
+      - declared-plan-only
+      - evidence-and-lineage-preserved
+      - replay-safe
+    healing:
+      retryable: false
+      quarantine_when: [unbounded-input, unauthorized-access, ambiguous-path, incompatible-structure]
+      evidence: [safe-diagnostic, original-input-reference, observation-or-schema-reference, declared-plan]
