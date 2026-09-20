@@ -1,0 +1,23 @@
+# Behavior-Oriented Actor Model conformance rules
+
+INV-BOA-001: one runtime Actor belongs to exactly one Agent.
+INV-BOA-002: every executable Action has exactly one Supervisor.
+INV-BOA-003: cross-Agent imperative commands are forbidden as the default semantic coordination mechanism.
+INV-BOA-004: an Actor MUST NOT directly mutate another Actor's private local state.
+INV-BOA-005: every Action MUST be declared as a Semantic AtomicBehavior.
+INV-BOA-006: a composite Behavior MUST preserve every constituent Action invariant.
+INV-BOA-007: every Action side effect MUST be covered by a declared Capability.
+INV-BOA-008: accepted Actor state changes MUST be represented by local events.
+INV-BOA-009: every Behavior execution MUST be governed by an Intent.
+INV-BOA-010: Intent semantic identity MUST remain immutable during one execution instance.
+INV-BOA-011: Intent-level outcomes MUST use the canonical Ok/Error protocol.
+INV-BOA-012: implementation language MUST NOT alter semantic identity.
+
+PO-BOA-001: prove Actor private-state isolation.
+PO-BOA-002: prove Intent immutability.
+PO-BOA-003: prove Action atomic acceptance or transition to healing.
+PO-BOA-004: prove invariant preservation under Behavior composition.
+PO-BOA-005: prove event-choreography autonomy between Agents.
+PO-BOA-006: prove capability confinement of Action effects.
+PO-BOA-007: prove Event-Sourced state replay equivalence.
+PO-BOA-008: prove semantic result totality for valid in-scope invocations.
