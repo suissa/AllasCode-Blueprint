@@ -47,7 +47,7 @@ class ReleaseEvidenceValidatorTests(unittest.TestCase):
     def test_empty_evidence_value_is_rejected(self):
         path = self.evidence_dir / "staging-pilot.json"
         path.write_text(json.dumps({
-            "status": "passed", "environment": "staging",
+            "status": "passed", "environment": "staging", "purchase_evidence": "",
             "evidence_owner": "operator", "evidence_uri": "https://example.test/evidence",
             "completed_at": "2026-10-16T10:00:00Z"
         }), encoding="utf-8")
