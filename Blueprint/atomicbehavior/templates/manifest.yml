@@ -1,0 +1,76 @@
+api_version: allascode/v1
+kind: AtomicBehavior
+
+identity:
+  canonical_label: Domain.operation
+  name: operation
+  version: 1.0.0
+  universal_url: "allascode://atomicbehavior/Domain.operation"
+
+semantic:
+  behavior_type: action
+  entity:
+    canonical_label: DomainEntity
+  context:
+    canonical_label: DomainContext
+  description: >
+    REPLACE_WITH_USER_CONFIRMED_CANONICAL_FUNCTION
+  canonical_scenario: >
+    REPLACE_WITH_USER_CONFIRMED_CANONICAL_SCENARIO
+  types:
+    input: InputType
+    output: OutputType
+
+usage:
+  entities:
+    allow:
+      - DomainEntity
+  contexts:
+    allow:
+      - DomainContext
+
+invocation:
+  mode: request
+  actor:
+    enabled: true
+  authorization:
+    policy: restricted
+    agents:
+      allow:
+        - AuthorizedAgent
+    human_in_the_loop:
+      enabled: false
+      fallback: deny
+  request:
+    event: Domain.operation.requested
+  response:
+    event: Domain.operation.responded
+
+events:
+  listen:
+    - Domain.operation.requested
+  emit:
+    - Domain.operation.responded
+    - Domain.operation.denied
+
+formalization:
+  behavior_type: Behavior.Typed
+  evidence:
+    required: true
+
+execution:
+  sandbox:
+    enabled: true
+  state:
+    mode: stateless
+  inference:
+    enabled: true
+
+schema:
+  input: ./schema/input.yml
+  output: ./schema/output.yml
+  error: ./schema/error.yml
+  events: ./schema/events.yml
+
+implementation:
+  directory: ./implementation
