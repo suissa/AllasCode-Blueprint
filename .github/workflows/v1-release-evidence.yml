@@ -1,0 +1,26 @@
+name: v1.0 Release Evidence Gate
+
+on:
+  pull_request:
+    paths:
+      - "scripts/validate-v1-release-evidence.py"
+      - "release/evidence/v1.0/**"
+      - ".github/workflows/v1-release-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release-evidence:
+    name: Validate real pilot and operator evidence
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate evidence package
+        run: python scripts/validate-v1-release-evidence.py
