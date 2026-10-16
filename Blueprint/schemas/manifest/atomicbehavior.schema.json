@@ -1,0 +1,413 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://allascode.dev/schemas/atomicbehavior-manifest.schema.json",
+  "title": "AllasCode AtomicBehavior Manifest",
+  "type": "object",
+  "required": [
+    "api_version",
+    "kind",
+    "identity",
+    "semantic",
+    "usage",
+    "invocation",
+    "events",
+    "formalization",
+    "execution",
+    "schema",
+    "implementation"
+  ],
+  "properties": {
+    "api_version": {
+      "const": "allascode/v1"
+    },
+    "kind": {
+      "const": "AtomicBehavior"
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "canonical_label",
+        "name",
+        "version",
+        "universal_url"
+      ],
+      "properties": {
+        "canonical_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "universal_url": {
+          "type": "string",
+          "pattern": "^allascode://atomicbehavior/.+"
+        }
+      },
+      "additionalProperties": true
+    },
+    "semantic": {
+      "type": "object",
+      "required": [
+        "behavior_type",
+        "entity",
+        "context",
+        "description",
+        "canonical_scenario",
+        "types"
+      ],
+      "properties": {
+        "behavior_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity": {
+          "type": "object",
+          "required": [
+            "canonical_label"
+          ],
+          "properties": {
+            "canonical_label": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "context": {
+          "type": "object",
+          "required": [
+            "canonical_label"
+          ],
+          "properties": {
+            "canonical_label": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_scenario": {
+          "type": "string",
+          "minLength": 1
+        },
+        "types": {
+          "type": "object",
+          "required": [
+            "input",
+            "output"
+          ],
+          "properties": {
+            "input": {
+              "type": "string",
+              "minLength": 1
+            },
+            "output": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "usage": {
+      "type": "object",
+      "required": [
+        "entities",
+        "contexts"
+      ],
+      "properties": {
+        "entities": {
+          "type": "object",
+          "required": [
+            "allow"
+          ],
+          "properties": {
+            "allow": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "contexts": {
+          "type": "object",
+          "required": [
+            "allow"
+          ],
+          "properties": {
+            "allow": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "invocation": {
+      "type": "object",
+      "required": [
+        "mode",
+        "actor",
+        "authorization",
+        "request",
+        "response"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        },
+        "authorization": {
+          "type": "object",
+          "required": [
+            "policy",
+            "agents",
+            "human_in_the_loop"
+          ],
+          "properties": {
+            "policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "agents": {
+              "type": "object",
+              "required": [
+                "allow"
+              ],
+              "properties": {
+                "allow": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "additionalProperties": true
+            },
+            "human_in_the_loop": {
+              "type": "object",
+              "required": [
+                "enabled",
+                "fallback"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "fallback": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "request": {
+          "type": "object",
+          "required": [
+            "event"
+          ],
+          "properties": {
+            "event": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "response": {
+          "type": "object",
+          "required": [
+            "event"
+          ],
+          "properties": {
+            "event": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "events": {
+      "type": "object",
+      "required": [
+        "listen",
+        "emit"
+      ],
+      "properties": {
+        "listen": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "emit": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "formalization": {
+      "type": "object",
+      "required": [
+        "behavior_type",
+        "evidence"
+      ],
+      "properties": {
+        "behavior_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "object",
+          "required": [
+            "required"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "sandbox",
+        "state",
+        "inference"
+      ],
+      "properties": {
+        "sandbox": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        },
+        "state": {
+          "type": "object",
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "inference": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "schema": {
+      "type": "object",
+      "required": [
+        "input",
+        "output",
+        "events"
+      ],
+      "properties": {
+        "input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error": {
+          "type": "string",
+          "minLength": 1
+        },
+        "events": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "implementation": {
+      "type": "object",
+      "required": [
+        "directory"
+      ],
+      "properties": {
+        "directory": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
