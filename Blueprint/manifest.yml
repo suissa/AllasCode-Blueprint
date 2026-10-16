@@ -22,6 +22,10 @@ semantic:
   description: >
     Determines whether a payment amount is between two boundaries.
 
+  canonical_scenario: >
+    Use when a caller needs to determine whether a payment amount falls
+    within an explicitly supplied lower and upper boundary.
+
   types:
     input: Money
     output: Boolean
