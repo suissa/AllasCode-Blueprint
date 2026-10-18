@@ -518,3 +518,12 @@ The semantic RFC collection is located at [`concepts/Semantics/RFCs`](concepts/S
 - [Architecture Conformance Engine — RFC-0220](concepts/Semantics/RFCs/0220-Semantic-Agent-Architecture-Conformance-Engine-Specification.md)
 
 The RFCs exist so that the architecture itself is subject to the same principle as its runtime: **meaning must be explicit before implementation can claim conformance.**
+
+
+---
+
+## Runtime contracts and conformance
+
+The implementation-neutral runtime contracts define the required guarantees for execution lifecycle, mailbox semantics, distributed authority, privacy/security, and authoritative state/Data Plane behavior. They are linked to candidate reference modules and required verification evidence.
+
+Start at the [Runtime Contract Index](Blueprint/runtime/contracts/README.md), then consult the [Conformance Matrix](Blueprint/runtime/contracts/CONFORMANCE-MATRIX.md). Implementation presence is not equivalent to conformance: every guarantee must be tied to a specific version and reproducible evidence. Unverified behavior must remain explicitly unverified.
